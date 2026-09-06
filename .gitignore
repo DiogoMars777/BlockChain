@@ -20,3 +20,6 @@ tmp/
 Thumbs.db
 .DS_Store
 *.log
+
+# Claude Code local settings
+.claude/settings.local.json
