@@ -13,8 +13,9 @@ from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
 from app.core.config import settings
-from app.models.tenant import Tenant
-from app.models.user import User
+from app.models.cu001_tenants.tenant import Tenant
+from app.models.cu002_usuarios.user import User
+from app.models.cu002_usuarios.usuario_tenant import UsuarioTenant
 from app.core.security import hash_password
 
 engine = create_engine(settings.DATABASE_URL)
@@ -53,28 +54,29 @@ def client(db_session):
 @pytest.fixture(scope="function")
 def setup_test_data(db_session):
     """Sets up Tenant 1, Tenant 2, User 1, and User 2 for testing."""
-    t1 = Tenant(name="Empresa Test 1", slug="empresa-test-1", is_active=True)
-    t2 = Tenant(name="Empresa Test 2", slug="empresa-test-2", is_active=True)
+    t1 = Tenant(nombre="Empresa Test 1", razonsocial="Empresa Test 1 S.A.", nit="1111111", email="test1@empresa.com", activo=True)
+    t2 = Tenant(nombre="Empresa Test 2", razonsocial="Empresa Test 2 S.A.", nit="2222222", email="test2@empresa.com", activo=True)
     db_session.add_all([t1, t2])
     db_session.flush()
 
     u1 = User(
-        tenant_id=t1.id,
+        nombrecompleto="Usuario Uno",
         email="user1@test.com",
-        password_hash=hash_password("MiClave@123"),
-        first_name="Usuario",
-        last_name="Uno",
-        is_active=True
+        contrasenahash=hash_password("MiClave@123"),
+        activo=True
     )
     u2 = User(
-        tenant_id=t2.id,
-        email="user1@test.com",
-        password_hash=hash_password("OtroPassword@456"),
-        first_name="Usuario",
-        last_name="Dos",
-        is_active=True
+        nombrecompleto="Usuario Dos",
+        email="user2@test.com",
+        contrasenahash=hash_password("OtroPassword@456"),
+        activo=True
     )
     db_session.add_all([u1, u2])
+    db_session.flush()
+
+    ut1 = UsuarioTenant(idusuario=u1.idusuario, idtenant=t1.idtenant)
+    ut2 = UsuarioTenant(idusuario=u2.idusuario, idtenant=t2.idtenant)
+    db_session.add_all([ut1, ut2])
     db_session.commit()
 
     return {"tenant1": t1, "tenant2": t2, "user1": u1, "user2": u2}

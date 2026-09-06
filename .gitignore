@@ -6,6 +6,7 @@ __pycache__/
 venv/
 ENV/
 .pytest_cache/
+.env
 
 # Node / Angular
 node_modules/

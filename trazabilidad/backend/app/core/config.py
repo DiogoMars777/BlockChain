@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str = "postgresql+psycopg://postgres:postgres@localhost:5432/trazabilidad"
 
-    JWT_SECRET: str = "super-secret-jwt-key-change-in-production-123456789"
+    JWT_SECRET: str
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
@@ -22,9 +22,9 @@ class Settings(BaseSettings):
 
     SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 587
-    SMTP_USER: str = "diogomars2020@gmail.com"
-    SMTP_PASSWORD: str = "ckllbyewhdfbinky"
-    SMTP_FROM: str = "diogomars2020@gmail.com"
+    SMTP_USER: str
+    SMTP_PASSWORD: str
+    SMTP_FROM: str
     SMTP_STARTTLS: bool = True
 
     model_config = SettingsConfigDict(

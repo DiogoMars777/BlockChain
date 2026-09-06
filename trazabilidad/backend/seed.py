@@ -6,35 +6,37 @@ from sqlalchemy import select
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.db.session import SessionLocal
-from app.models.tenant import Tenant
-from app.models.user import User
+from app.models.cu001_tenants.tenant import Tenant
+from app.models.cu002_usuarios.user import User
+from app.models.cu002_usuarios.usuario_tenant import UsuarioTenant
 from app.core.security import hash_password, validate_password_strength
 
 
 def run_seed():
     db: Session = SessionLocal()
     try:
-        # 1. Ensure Tenant 'Empresa Demo' exists
-        stmt_tenant = select(Tenant).where(Tenant.slug == "empresa-demo")
+        # 1. Ensure Tenant 'Importadora Bolivia S.A.' exists
+        stmt_tenant = select(Tenant).where(Tenant.idtenant == 1)
         tenant = db.execute(stmt_tenant).scalar_one_or_none()
         if not tenant:
             tenant = Tenant(
-                name="Empresa Demo",
-                slug="empresa-demo",
-                is_active=True
+                idtenant=1,
+                nombre="Importadora Bolivia S.A.",
+                razonsocial="Importadora Bolivia Sociedad Anónima",
+                nit="123456789",
+                email="importadora@bolivia.com",
+                telefono="70000000",
+                activo=True
             )
             db.add(tenant)
             db.flush()
-            print("Tenant 'Empresa Demo' creado exitosamente.")
+            print("Tenant 'Importadora Bolivia S.A.' creado exitosamente.")
         else:
-            print("Tenant 'Empresa Demo' ya existe.")
+            print(f"Tenant existente: '{tenant.nombre}' (ID: {tenant.idtenant}).")
 
-        # 2. Ensure User 'diogomars2026@gmail.com' exists
-        email = "diogomars2026@gmail.com"
-        stmt_user = select(User).where(
-            User.tenant_id == tenant.id,
-            User.email == email
-        )
+        # 2. Ensure User 'admin@trazabilidad.com' exists with valid hash
+        email = "admin@trazabilidad.com"
+        stmt_user = select(User).where(User.email == email)
         user = db.execute(stmt_user).scalar_one_or_none()
 
         password = os.getenv("SEED_PASSWORD", "Admin123.")
@@ -45,21 +47,37 @@ def run_seed():
 
         if not user:
             user = User(
-                tenant_id=tenant.id,
+                nombrecompleto="Administrador General",
                 email=email,
-                password_hash=hash_password(password),
-                first_name="Diogo",
-                last_name="Mars",
-                is_active=True
+                contrasenahash=hash_password(password),
+                activo=True
             )
             db.add(user)
-            print(f"Usuario '{email}' creado exitosamente para 'Empresa Demo'.")
+            db.flush()
+            print(f"Usuario '{email}' creado exitosamente.")
         else:
-            user.password_hash = hash_password(password)
-            user.is_active = True
-            print(f"Usuario '{email}' actualizado exitosamente con nueva contraseña.")
+            user.contrasenahash = hash_password(password)
+            user.activo = True
+            print(f"Usuario '{email}' actualizado exitosamente con contraseña válida.")
+
+        # 3. Ensure UsuarioTenant link exists
+        stmt_link = select(UsuarioTenant).where(
+            UsuarioTenant.idusuario == user.idusuario,
+            UsuarioTenant.idtenant == tenant.idtenant
+        )
+        link = db.execute(stmt_link).scalar_one_or_none()
+        if not link:
+            link = UsuarioTenant(
+                idusuario=user.idusuario,
+                idtenant=tenant.idtenant
+            )
+            db.add(link)
+            print(f"Vínculo UsuarioTenant creado entre User {user.idusuario} y Tenant {tenant.idtenant}.")
+        else:
+            print("Vínculo UsuarioTenant ya existe.")
 
         db.commit()
+        print("SEED ejecutado correctamente con las tablas del cliente.")
 
     except Exception as e:
         db.rollback()
