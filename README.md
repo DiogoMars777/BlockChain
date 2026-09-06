@@ -17,6 +17,11 @@ uvicorn app.main:app --reload
 
 API: http://127.0.0.1:8000 — Docs: http://127.0.0.1:8000/docs
 
+`alembic upgrade head` crea las 41 tablas completas del esquema (las 20 que ya
+usa el código de Sprint 0/1, más las 21 de sprints futuros que todavía no
+tienen modelos/controllers pero ya existen en el diseño de base de datos).
+Cada compañero migra su propia base local — no comparten la misma DB.
+
 ## Frontend
 
 ```powershell
