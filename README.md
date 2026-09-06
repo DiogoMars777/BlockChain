@@ -22,6 +22,11 @@ usa el código de Sprint 0/1, más las 21 de sprints futuros que todavía no
 tienen modelos/controllers pero ya existen en el diseño de base de datos).
 Cada compañero migra su propia base local — no comparten la misma DB.
 
+Si ya habías corrido `alembic upgrade head` antes y te quedaron solo 4 tablas
+(o cualquier número menor a 41), hacé `git pull` para traer las migraciones
+nuevas y volvé a correr `python -m alembic upgrade head` — no hace falta
+borrar la base, sigue desde donde quedó.
+
 ## Frontend
 
 ```powershell
