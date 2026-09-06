@@ -1,0 +1,199 @@
+<div class="user-wrapper">
+  <header class="user-nav">
+    <div class="brand">
+      <span class="logo-icon">👥</span>
+      <span class="brand-name">Gestión de Usuarios del Sistema</span>
+    </div>
+    <div class="nav-actions" style="display: flex; gap: 0.5rem; align-items: center;">
+      @if (tenants().length > 0) {
+        <select 
+          [value]="currentUser()?.tenant?.idtenant" 
+          (change)="onTenantSwitch($event)"
+          style="background: #1e293b; color: #38bdf8; border: 1px solid #0284c7; padding: 0.4rem 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; max-width: 220px;">
+          @for (t of tenants(); track t.idtenant) {
+            <option [value]="t.idtenant">
+              🏢 {{ t.nombre }} (NIT: {{ t.nit }})
+            </option>
+          }
+        </select>
+      }
+      <button class="btn-secondary" (click)="navigateToDashboard()">
+        ← Volver al Dashboard
+      </button>
+      <button class="btn-primary" (click)="openCreateModal()">
+        + Nuevo Usuario
+      </button>
+    </div>
+  </header>
+
+  <main class="user-content">
+    <!-- Messages -->
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        ✓ {{ successMessage() }}
+      </div>
+    }
+    @if (errorMessage() && !showModal()) {
+      <div class="alert alert-danger">
+        ⚠ {{ errorMessage() }}
+      </div>
+    }
+
+    <!-- Search & Filter Bar -->
+    <div class="filter-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          placeholder="Buscar por Nombre Completo o Correo..."
+          [ngModel]="searchQuery()" 
+          (ngModelChange)="searchQuery.set($event); onSearchChange()" 
+        />
+      </div>
+      <div class="search-box" style="max-width: 260px;">
+        <select 
+          [ngModel]="selectedTenantFilter()" 
+          (ngModelChange)="selectedTenantFilter.set($event ? +$event : null); onSearchChange()"
+          style="width: 100%; background: transparent; color: #f8fafc; border: none; font-size: 0.9rem; padding: 0.4rem; cursor: pointer;">
+          <option [value]="null" style="background: #1e293b; color: #f8fafc;">🏢 Empresa Activa Actual</option>
+          <option [value]="-1" style="background: #1e293b; color: #f8fafc;">🌐 Todas las Empresas (SuperAdmin)</option>
+          @for (t of tenants(); track t.idtenant) {
+            <option [value]="t.idtenant" style="background: #1e293b; color: #f8fafc;">
+              🏢 {{ t.nombre }}
+            </option>
+          }
+        </select>
+      </div>
+      <div class="total-count">
+        Total usuarios: <strong>{{ totalUsers() }}</strong>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        Cargando listado de usuarios...
+      </div>
+    } @else {
+      <div class="table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre Completo</th>
+              <th>Correo Electrónico</th>
+              <th>Empresa (Tenant)</th>
+              <th>Fecha Registro</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.idusuario) {
+              <tr>
+                <td class="code-id">#{{ user.idusuario }}</td>
+                <td class="font-bold">{{ user.nombrecompleto }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <span class="tenant-tag">
+                    {{ user.tenant?.nombre || 'General' }}
+                  </span>
+                </td>
+                <td>{{ user.fecharegistro ? (user.fecharegistro | date:'shortDate') : 'N/A' }}</td>
+                <td>
+                  <span class="status-badge" [class.active]="user.activo" [class.inactive]="!user.activo">
+                    {{ user.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td class="actions-cell">
+                  <button class="btn-icon edit" (click)="openEditModal(user)" title="Editar">
+                    ✏️
+                  </button>
+                  <button class="btn-icon delete" (click)="onDelete(user)" title="Desactivar">
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-state">
+                  No se encontraron usuarios registrados.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+
+  <!-- Modal Form -->
+  @if (showModal()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ isEditing() ? 'Editar Usuario' : 'Registrar Nuevo Usuario' }}</h3>
+          <button class="btn-close" (click)="closeModal()">✕</button>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert alert-danger modal-alert">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="modal-body">
+          <div class="form-group">
+            <label>Nombre Completo *</label>
+            <input type="text" formControlName="nombrecompleto" placeholder="ej. Juan Pérez" />
+            @if (userForm.get('nombrecompleto')?.touched && userForm.get('nombrecompleto')?.invalid) {
+              <span class="field-error">El nombre completo es obligatorio.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Correo Electrónico *</label>
+            <input type="email" formControlName="email" placeholder="ej. usuario@empresa.com" />
+            @if (userForm.get('email')?.touched && userForm.get('email')?.invalid) {
+              <span class="field-error">Ingrese un correo electrónico válido.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Contraseña {{ isEditing() ? '(Dejar en blanco para conservar actual)' : '*' }}</label>
+            <input type="password" formControlName="contrasena" placeholder="Mínimo 8 caracteres" />
+            @if (userForm.get('contrasena')?.touched && userForm.get('contrasena')?.invalid) {
+              <span class="field-error">La contraseña debe tener al menos 8 caracteres.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Empresa (Tenant) *</label>
+            <select formControlName="idtenant">
+              @for (tenant of tenants(); track tenant.idtenant) {
+                <option [value]="tenant.idtenant">
+                  {{ tenant.nombre }} (NIT: {{ tenant.nit }})
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="activo" />
+              <span>Usuario Activo</span>
+            </label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeModal()">Cancelar</button>
+            <button type="submit" class="btn-primary">
+              {{ isEditing() ? 'Guardar Cambios' : 'Registrar Usuario' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

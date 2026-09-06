@@ -1,0 +1,175 @@
+<div class="tenant-wrapper">
+  <header class="tenant-nav">
+    <div class="brand">
+      <span class="logo-icon">🏢</span>
+      <span class="brand-name">Gestión de Empresas (Tenants)</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-secondary" (click)="navigateToDashboard()">
+        ← Volver al Dashboard
+      </button>
+      <button class="btn-primary" (click)="openCreateModal()">
+        + Nueva Empresa
+      </button>
+    </div>
+  </header>
+
+  <main class="tenant-content">
+    <!-- Messages -->
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        ✓ {{ successMessage() }}
+      </div>
+    }
+    @if (errorMessage() && !showModal()) {
+      <div class="alert alert-danger">
+        ⚠ {{ errorMessage() }}
+      </div>
+    }
+
+    <!-- Search & Filter Bar -->
+    <div class="filter-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          placeholder="Buscar por Nombre, Razón Social o NIT..."
+          [ngModel]="searchQuery()" 
+          (ngModelChange)="searchQuery.set($event); onSearchChange()" 
+        />
+      </div>
+      <div class="total-count">
+        Total empresas: <strong>{{ totalTenants() }}</strong>
+      </div>
+    </div>
+
+    <!-- Tenants Table -->
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        Cargando listado de empresas...
+      </div>
+    } @else {
+      <div class="table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre Comercial</th>
+              <th>Razón Social</th>
+              <th>NIT</th>
+              <th>Correo Electrónico</th>
+              <th>Teléfono</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tenant of tenants(); track tenant.idtenant) {
+              <tr>
+                <td class="code-id">#{{ tenant.idtenant }}</td>
+                <td class="font-bold">{{ tenant.nombre }}</td>
+                <td>{{ tenant.razonsocial }}</td>
+                <td><span class="badge-nit">{{ tenant.nit }}</span></td>
+                <td>{{ tenant.email }}</td>
+                <td>{{ tenant.telefono || 'N/A' }}</td>
+                <td>
+                  <span class="status-badge" [class.active]="tenant.activo" [class.inactive]="!tenant.activo">
+                    {{ tenant.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td class="actions-cell">
+                  <button class="btn-icon edit" (click)="openEditModal(tenant)" title="Editar">
+                    ✏️
+                  </button>
+                  <button class="btn-icon delete" (click)="onDelete(tenant)" title="Desactivar">
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="empty-state">
+                  No se encontraron empresas registradas.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+
+  <!-- Modal Form -->
+  @if (showModal()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ isEditing() ? 'Editar Empresa' : 'Registrar Nueva Empresa' }}</h3>
+          <button class="btn-close" (click)="closeModal()">✕</button>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert alert-danger modal-alert">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <form [formGroup]="tenantForm" (ngSubmit)="onSubmit()" class="modal-body">
+          <div class="form-group">
+            <label>Nombre Comercial *</label>
+            <input type="text" formControlName="nombre" placeholder="ej. Importadora Bolivia S.A." />
+            @if (tenantForm.get('nombre')?.touched && tenantForm.get('nombre')?.invalid) {
+              <span class="field-error">El nombre comercial es obligatorio.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Razón Social *</label>
+            <input type="text" formControlName="razonsocial" placeholder="ej. Importadora Bolivia Sociedad Anónima" />
+            @if (tenantForm.get('razonsocial')?.touched && tenantForm.get('razonsocial')?.invalid) {
+              <span class="field-error">La razón social es obligatoria.</span>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>NIT *</label>
+              <input type="text" formControlName="nit" placeholder="ej. 123456789" />
+              @if (tenantForm.get('nit')?.touched && tenantForm.get('nit')?.invalid) {
+                <span class="field-error">El NIT es obligatorio.</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>Teléfono</label>
+              <input type="text" formControlName="telefono" placeholder="ej. 70000000" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Correo Electrónico *</label>
+            <input type="email" formControlName="email" placeholder="ej. contacto@empresa.com" />
+            @if (tenantForm.get('email')?.touched && tenantForm.get('email')?.invalid) {
+              <span class="field-error">Ingrese un correo electrónico válido.</span>
+            }
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="activo" />
+              <span>Empresa Activa</span>
+            </label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeModal()">Cancelar</button>
+            <button type="submit" class="btn-primary">
+              {{ isEditing() ? 'Guardar Cambios' : 'Registrar Empresa' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

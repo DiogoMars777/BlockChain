@@ -1,0 +1,281 @@
+<div class="prod-wrapper">
+  <header class="prod-nav">
+    <div class="brand">
+      <span class="logo-icon">📦</span>
+      <span class="brand-name">Gestión de Productos y Variantes (CU-006)</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-secondary" (click)="navigateToDashboard()">
+        ← Volver al Dashboard
+      </button>
+    </div>
+  </header>
+
+  <main class="prod-content">
+    @if (successMessage()) {
+      <div class="alert-success">✓ {{ successMessage() }}</div>
+    }
+
+    <div class="filter-bar">
+      <div class="filter-inputs">
+        <input 
+          type="text" 
+          [ngModel]="searchFilter()" 
+          (ngModelChange)="searchFilter.set($event); onFilter()" 
+          placeholder="Buscar por nombre, modelo..."
+        />
+
+        <select [ngModel]="categoryFilter()" (ngModelChange)="categoryFilter.set($event ? Number($event) : undefined); onFilter()">
+          <option [value]="undefined">Todas las categorías</option>
+          @for (c of categories(); track c.idcategoria) {
+            <option [value]="c.idcategoria">{{ c.nombrecategoria }}</option>
+          }
+        </select>
+      </div>
+
+      <button class="btn-primary" (click)="openCreateProductModal()">
+        + Nuevo Producto
+      </button>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">Cargando catálogo de productos...</div>
+    } @else {
+      <div class="grid-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Producto</th>
+              <th>Modelo</th>
+              <th>Categoría</th>
+              <th>País Origen</th>
+              <th>Variantes</th>
+              <th>Estado</th>
+              <th style="text-align: right;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of products(); track p.idproducto) {
+              <tr [class.inactive-row]="!p.activo">
+                <td class="code-id">#{{ p.idproducto }}</td>
+                <td class="font-bold">{{ p.nombre }}</td>
+                <td class="code-id">{{ p.modelo || '-' }}</td>
+                <td>
+                  <span class="category-tag">
+                    {{ p.categoria?.nombrecategoria || 'Sin categoría' }}
+                  </span>
+                </td>
+                <td>{{ p.paisorigen || '-' }}</td>
+                <td>
+                  <button class="badge-variant" (click)="openVariantsModal(p)">
+                    ⚙️ {{ p.variantes.length }} Variante(s)
+                  </button>
+                </td>
+                <td>
+                  <span class="status-badge" [class.active]="p.activo" [class.inactive]="!p.activo">
+                    {{ p.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td style="text-align: right;">
+                  <button class="btn-sm-edit" (click)="openEditProductModal(p)">✏️ Editar</button>
+                  <button class="btn-sm-delete" (click)="deleteProduct(p)">🚫 Desactivar</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="empty-state">No hay productos registrados en el catálogo.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+
+  <!-- Product Modal -->
+  @if (isProductModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>{{ editingProduct() ? 'Editar Producto' : 'Nuevo Producto' }}</h3>
+          <button class="btn-close" (click)="closeProductModal()">×</button>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert-error">⚠️ {{ errorMessage() }}</div>
+        }
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nombre del Producto *</label>
+            <input 
+              type="text" 
+              [ngModel]="pNombre()" 
+              (ngModelChange)="pNombre.set($event)"
+              placeholder="Ej. iPhone 15 Pro, MacBook Air..."
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Modelo</label>
+              <input 
+                type="text" 
+                [ngModel]="pModelo()" 
+                (ngModelChange)="pModelo.set($event)"
+                placeholder="Ej. A2849"
+              />
+            </div>
+
+            <div class="form-group half">
+              <label>Categoría</label>
+              <select [ngModel]="pIdCategoria()" (ngModelChange)="pIdCategoria.set($event ? Number($event) : undefined)">
+                <option [value]="undefined">Seleccionar...</option>
+                @for (c of categories(); track c.idcategoria) {
+                  <option [value]="c.idcategoria">{{ c.nombrecategoria }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>País de Origen</label>
+            <input 
+              type="text" 
+              [ngModel]="pPaisOrigen()" 
+              (ngModelChange)="pPaisOrigen.set($event)"
+              placeholder="Ej. Estados Unidos, China, Taiwán"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea 
+              rows="3"
+              [ngModel]="pDescripcion()" 
+              (ngModelChange)="pDescripcion.set($event)"
+              placeholder="Especificaciones del producto..."
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeProductModal()">Cancelar</button>
+          <button class="btn-primary" (click)="saveProduct()">Guardar Producto</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Variants Modal -->
+  @if (isVariantModalOpen() && selectedProductForVariants()) {
+    <div class="modal-backdrop">
+      <div class="modal-card wide">
+        <div class="modal-header">
+          <h3>Gestión de Variantes - {{ selectedProductForVariants()?.nombre }}</h3>
+          <button class="btn-close" (click)="closeVariantModal()">×</button>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert-error">⚠️ {{ errorMessage() }}</div>
+        }
+
+        <div class="modal-body">
+          <!-- Variants List -->
+          <div class="variant-list">
+            <h4>Variantes Registradas</h4>
+            <table class="sub-table">
+              <thead>
+                <tr>
+                  <th>SKU</th>
+                  <th>Capacidad</th>
+                  <th>Color</th>
+                  <th>Precio USD</th>
+                  <th style="text-align: right;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (v of selectedProductForVariants()?.variantes; track v.idvariante) {
+                  <tr>
+                    <td class="code-id">{{ v.sku }}</td>
+                    <td>{{ v.capacidad || '-' }}</td>
+                    <td>{{ v.color || '-' }}</td>
+                    <td class="price-usd">${{ v.preciousd }}</td>
+                    <td style="text-align: right;">
+                      <button class="btn-sm-edit" (click)="openEditVariantForm(v)">✏️</button>
+                      <button class="btn-sm-delete" (click)="deleteVariant(v.idvariante)">🗑️</button>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="empty-state">No existen variantes cargadas para este producto.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Add / Edit Variant Form -->
+          <div class="variant-form-box">
+            <h4>{{ editingVariant() ? 'Editar Variante' : 'Añadir Nueva Variante' }}</h4>
+            <div class="form-row">
+              <div class="form-group quarter">
+                <label>SKU *</label>
+                <input 
+                  type="text" 
+                  [ngModel]="vSku()" 
+                  (ngModelChange)="vSku.set($event)"
+                  placeholder="SKU-128-BLK"
+                />
+              </div>
+
+              <div class="form-group quarter">
+                <label>Capacidad</label>
+                <input 
+                  type="text" 
+                  [ngModel]="vCapacidad()" 
+                  (ngModelChange)="vCapacidad.set($event)"
+                  placeholder="256GB / 16GB RAM"
+                />
+              </div>
+
+              <div class="form-group quarter">
+                <label>Color</label>
+                <input 
+                  type="text" 
+                  [ngModel]="vColor()" 
+                  (ngModelChange)="vColor.set($event)"
+                  placeholder="Negro Titanio"
+                />
+              </div>
+
+              <div class="form-group quarter">
+                <label>Precio USD ($) *</label>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  [ngModel]="vPrecioUSD()" 
+                  (ngModelChange)="vPrecioUSD.set($event)"
+                />
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;">
+              @if (editingVariant()) {
+                <button class="btn-secondary" (click)="cancelEditVariant()">Cancelar Edición</button>
+              }
+              <button class="btn-primary" (click)="saveVariant()">
+                {{ editingVariant() ? 'Guardar Cambios' : '+ Agregar Variante' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeVariantModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

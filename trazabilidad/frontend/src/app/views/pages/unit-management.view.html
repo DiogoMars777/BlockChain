@@ -1,0 +1,196 @@
+<div class="unit-wrapper">
+  <header class="unit-nav">
+    <div class="brand">
+      <span class="logo-icon">📱</span>
+      <span class="brand-name">Unidades de Producto Serial/IMEI (CU-015)</span>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a routerLink="/dashboard" class="btn-secondary">Volver al Panel</a>
+      <button class="btn-primary" (click)="openCreateModal()">+ Registrar Unidad (Serial/IMEI)</button>
+    </div>
+  </header>
+
+  <main class="unit-content">
+    @if (successMessage()) {
+      <div class="alert-success">{{ successMessage() }}</div>
+    }
+    @if (errorMessage()) {
+      <div class="alert-error">{{ errorMessage() }}</div>
+    }
+
+    <div class="filter-bar">
+      <div class="filter-inputs">
+        <input 
+          type="text" 
+          placeholder="Buscar por Nº Serie, IMEI1, IMEI2, UUID..." 
+          [ngModel]="searchQuery()" 
+          (ngModelChange)="searchQuery.set($event)"
+          (keyup.enter)="onSearch()"
+        />
+        <select [ngModel]="selectedEstado()" (ngModelChange)="selectedEstado.set($event); onSearch()">
+          <option value="">-- Todos los Estados --</option>
+          @for (est of estadosUnidad; track est.value) {
+            <option [value]="est.value">{{ est.label }}</option>
+          }
+        </select>
+        <button class="btn-secondary" (click)="onSearch()">Filtrar</button>
+      </div>
+      <div class="total-count">
+        Total: <strong>{{ total() }}</strong> unidades registradas
+      </div>
+    </div>
+
+    <div class="grid-card">
+      @if (isLoading()) {
+        <div style="padding: 2rem; text-align: center; color: #94a3b8;">Cargando unidades de producto...</div>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID / UUID Público</th>
+              <th>Variante de Producto</th>
+              <th>Número de Serie / IMEIs</th>
+              <th>Custodio / Ubicación</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (unit of units(); track unit.idunidad) {
+              <tr>
+                <td>
+                  <div class="code-id">#{{ unit.idunidad }}</div>
+                  <div class="uuid-text" title="{{ unit.uuidpublico }}">{{ unit.uuidpublico.substring(0, 13) }}...</div>
+                </td>
+                <td>
+                  @if (unit.variante) {
+                    <div style="font-weight: 700; color: #f8fafc;">{{ unit.variante.sku }}</div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">
+                      {{ unit.variante.capacidad }} | {{ unit.variante.color }}
+                    </div>
+                  } @else {
+                    <div class="code-id">Variante #{{ unit.idvariante }}</div>
+                  }
+                </td>
+                <td>
+                  <div style="font-weight: 700; color: #38bdf8; font-family: monospace;">S/N: {{ unit.numeroserie }}</div>
+                  @if (unit.imei1) {
+                    <div style="font-size: 0.8rem; color: #cbd5e1; font-family: monospace;">IMEI1: {{ unit.imei1 }}</div>
+                  }
+                  @if (unit.imei2) {
+                    <div style="font-size: 0.75rem; color: #94a3b8; font-family: monospace;">IMEI2: {{ unit.imei2 }}</div>
+                  }
+                </td>
+                <td>
+                  <div>
+                    <span style="color: #94a3b8; font-size: 0.8rem;">Custodio:</span> 
+                    <strong>{{ unit.custodio ? unit.custodio.nombre : 'N/A' }}</strong>
+                  </div>
+                  <div>
+                    <span style="color: #94a3b8; font-size: 0.8rem;">Ubicación:</span> 
+                    <strong>{{ unit.ubicacion ? unit.ubicacion.nombre : 'N/A' }}</strong>
+                  </div>
+                </td>
+                <td>
+                  <span class="status-badge" [ngClass]="unit.estado || 'disponible'">
+                    {{ unit.estado || 'disponible' }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn-sm-edit" (click)="openEditModal(unit)">Editar</button>
+                  <button class="btn-sm-delete" (click)="deleteUnit(unit)">Eliminar</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 2rem; color: #64748b;">
+                  No hay unidades físicas registradas en el sistema.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </main>
+
+  <!-- Modal Registrar/Editar Unidad -->
+  @if (isModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>{{ isEditMode() ? 'Editar Unidad de Producto' : 'Registrar Unidad (Serial/IMEI)' }}</h3>
+          <button class="btn-close" (click)="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Variante de Producto *</label>
+            <select [ngModel]="unitForm.idvariante" (ngModelChange)="unitForm.idvariante = Number($event)">
+              @for (v of allVariants(); track v.idvariante) {
+                <option [value]="v.idvariante">{{ v.sku }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Número de Serie (S/N) *</label>
+              <input type="text" [(ngModel)]="unitForm.numeroserie" placeholder="Ej. SN260001999" />
+            </div>
+            <div class="form-group half">
+              <label>EID (eSIM)</label>
+              <input type="text" [(ngModel)]="unitForm.eid" placeholder="Ej. EID89049032" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>IMEI 1 (Principal)</label>
+              <input type="text" [(ngModel)]="unitForm.imei1" placeholder="Ej. 35294740433840" />
+            </div>
+            <div class="form-group half">
+              <label>IMEI 2 (Secundario)</label>
+              <input type="text" [(ngModel)]="unitForm.imei2" placeholder="Ej. 35880827239769" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Custodio Actual</label>
+              <select [ngModel]="unitForm.idcustodioactual" (ngModelChange)="unitForm.idcustodioactual = $event ? Number($event) : undefined">
+                <option [ngValue]="undefined">-- Ninguno --</option>
+                @for (a of actors(); track a.idactor) {
+                  <option [value]="a.idactor">{{ a.nombre }} ({{ a.tipoactor }})</option>
+                }
+              </select>
+            </div>
+            <div class="form-group half">
+              <label>Ubicación Actual</label>
+              <select [ngModel]="unitForm.idubicacionactual" (ngModelChange)="unitForm.idubicacionactual = $event ? Number($event) : undefined">
+                <option [ngValue]="undefined">-- Ninguna --</option>
+                @for (l of locations(); track l.idubicacion) {
+                  <option [value]="l.idubicacion">{{ l.nombre }} ({{ l.tipo }})</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Estado de la Unidad</label>
+            <select [(ngModel)]="unitForm.estado">
+              @for (est of estadosUnidad; track est.value) {
+                <option [value]="est.value">{{ est.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button class="btn-primary" (click)="saveUnit()">
+            {{ isEditMode() ? 'Guardar Cambios' : 'Registrar Unidad' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

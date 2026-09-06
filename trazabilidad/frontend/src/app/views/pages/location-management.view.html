@@ -1,0 +1,156 @@
+<div class="loc-wrapper">
+  <header class="loc-nav">
+    <div class="brand">
+      <span class="logo-icon">📍</span>
+      <span class="brand-name">Gestión de Ubicaciones Físicas (CU-014)</span>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a routerLink="/dashboard" class="btn-secondary">Volver al Panel</a>
+      <button class="btn-primary" (click)="openCreateModal()">+ Nueva Ubicación</button>
+    </div>
+  </header>
+
+  <main class="loc-content">
+    @if (successMessage()) {
+      <div class="alert-success">{{ successMessage() }}</div>
+    }
+    @if (errorMessage()) {
+      <div class="alert-error">{{ errorMessage() }}</div>
+    }
+
+    <div class="filter-bar">
+      <div class="filter-inputs">
+        <input 
+          type="text" 
+          placeholder="Buscar por nombre, ciudad, país..." 
+          [ngModel]="searchQuery()" 
+          (ngModelChange)="searchQuery.set($event)"
+          (keyup.enter)="onSearch()"
+        />
+        <select [ngModel]="selectedTipo()" (ngModelChange)="selectedTipo.set($event); onSearch()">
+          <option value="">-- Todos los Tipos --</option>
+          @for (tipo of tiposUbicacion; track tipo.value) {
+            <option [value]="tipo.value">{{ tipo.label }}</option>
+          }
+        </select>
+        <button class="btn-secondary" (click)="onSearch()">Filtrar</button>
+      </div>
+      <div class="total-count">
+        Total: <strong>{{ total() }}</strong> ubicaciones
+      </div>
+    </div>
+
+    <div class="grid-card">
+      @if (isLoading()) {
+        <div style="padding: 2rem; text-align: center; color: #94a3b8;">Cargando ubicaciones...</div>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre Ubicación</th>
+              <th>Dirección / Ciudad / País</th>
+              <th>Actor Asociado</th>
+              <th>Tipo</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (loc of locations(); track loc.idubicacion) {
+              <tr>
+                <td class="code-id">#{{ loc.idubicacion }}</td>
+                <td style="font-weight: 700; color: #f8fafc;">{{ loc.nombre }}</td>
+                <td>
+                  <div>{{ loc.direccion || 'Sin dirección' }}</div>
+                  <div style="font-size: 0.8rem; color: #94a3b8;">
+                    {{ loc.ciudad ? loc.ciudad + ', ' : '' }}{{ loc.pais || '' }}
+                  </div>
+                </td>
+                <td>
+                  @if (loc.actor) {
+                    <span class="actor-tag">{{ loc.actor.nombre }}</span>
+                  } @else {
+                    <span style="color: #64748b;">N/A</span>
+                  }
+                </td>
+                <td>
+                  <span class="type-badge">{{ loc.tipo }}</span>
+                </td>
+                <td>
+                  <button class="btn-sm-edit" (click)="openEditModal(loc)">Editar</button>
+                  <button class="btn-sm-delete" (click)="deleteLocation(loc)">Eliminar</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 2rem; color: #64748b;">
+                  No hay ubicaciones registradas.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </main>
+
+  <!-- Modal Registrar/Editar Ubicación -->
+  @if (isModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>{{ isEditMode() ? 'Editar Ubicación' : 'Registrar Nueva Ubicación' }}</h3>
+          <button class="btn-close" (click)="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nombre de la Ubicación *</label>
+            <input type="text" [(ngModel)]="locationForm.nombre" placeholder="Ej. Almacén Central Santa Cruz / Apple Park" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Actor Asociado (Opcional)</label>
+              <select [ngModel]="locationForm.idactor" (ngModelChange)="locationForm.idactor = $event ? Number($event) : undefined">
+                <option [ngValue]="undefined">-- Ninguno --</option>
+                @for (actor of actors(); track actor.idactor) {
+                  <option [value]="actor.idactor">{{ actor.nombre }} ({{ actor.tipoactor }})</option>
+                }
+              </select>
+            </div>
+            <div class="form-group half">
+              <label>Tipo de Ubicación *</label>
+              <select [(ngModel)]="locationForm.tipo">
+                @for (tipo of tiposUbicacion; track tipo.value) {
+                  <option [value]="tipo.value">{{ tipo.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Dirección</label>
+            <input type="text" [(ngModel)]="locationForm.direccion" placeholder="Av. Banzer Km 8, Santa Cruz" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Ciudad</label>
+              <input type="text" [(ngModel)]="locationForm.ciudad" placeholder="Santa Cruz" />
+            </div>
+            <div class="form-group half">
+              <label>País</label>
+              <input type="text" [(ngModel)]="locationForm.pais" placeholder="Bolivia" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button class="btn-primary" (click)="saveLocation()">
+            {{ isEditMode() ? 'Guardar Cambios' : 'Registrar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

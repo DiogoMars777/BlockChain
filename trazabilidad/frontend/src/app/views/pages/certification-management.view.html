@@ -1,0 +1,158 @@
+<div class="cert-wrapper">
+  <header class="cert-nav">
+    <div class="brand">
+      <span class="logo-icon">📜</span>
+      <span class="brand-name">Certificaciones Técnicas de Calidad (CU-007)</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-secondary" (click)="navigateToDashboard()">
+        ← Volver al Dashboard
+      </button>
+    </div>
+  </header>
+
+  <main class="cert-content">
+    @if (successMessage()) {
+      <div class="alert-success">✓ {{ successMessage() }}</div>
+    }
+
+    <div class="action-header">
+      <h2>Listado de Certificaciones Técnicas</h2>
+      <button class="btn-primary" (click)="openCreateModal()">
+        + Nueva Certificación
+      </button>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">Cargando certificaciones...</div>
+    } @else {
+      <div class="grid-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Certificación</th>
+              <th>Entidad Emisora</th>
+              <th>Descripción</th>
+              <th style="text-align: right;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of certifications(); track c.idcertificacion) {
+              <tr>
+                <td class="code-id">#{{ c.idcertificacion }}</td>
+                <td class="font-bold">{{ c.nombre }}</td>
+                <td>{{ c.entidademisora || 'No especificada' }}</td>
+                <td>{{ c.descripcion || 'Sin descripción' }}</td>
+                <td style="text-align: right;">
+                  <button class="btn-sm-assign" (click)="openAssignModal(c)">🔗 Asignar a Producto</button>
+                  <button class="btn-sm-edit" (click)="openEditModal(c)">✏️ Editar</button>
+                  <button class="btn-sm-delete" (click)="deleteCertification(c)">🗑️ Eliminar</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-state">No hay certificaciones registradas.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+
+  <!-- Create / Edit Modal -->
+  @if (isModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>{{ editingCert() ? 'Editar Certificación' : 'Nueva Certificación' }}</h3>
+          <button class="btn-close" (click)="closeModal()">×</button>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert-error">⚠️ {{ errorMessage() }}</div>
+        }
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nombre de la Certificación *</label>
+            <input 
+              type="text" 
+              [ngModel]="cNombre()" 
+              (ngModelChange)="cNombre.set($event)"
+              placeholder="Ej. FCC, CE, Energy Star, RoHS..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Entidad Emisora</label>
+            <input 
+              type="text" 
+              [ngModel]="cEntidad()" 
+              (ngModelChange)="cEntidad.set($event)"
+              placeholder="Ej. Federal Communications Commission"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea 
+              rows="3"
+              [ngModel]="cDescripcion()" 
+              (ngModelChange)="cDescripcion.set($event)"
+              placeholder="Alcance y estándares de cumplimiento de la certificación..."
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button class="btn-primary" (click)="saveCertification()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Assign to Product Modal -->
+  @if (isAssignModalOpen() && selectedCertForAssign()) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Asignar {{ selectedCertForAssign()?.nombre }} a Producto</h3>
+          <button class="btn-close" (click)="closeAssignModal()">×</button>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert-error">⚠️ {{ errorMessage() }}</div>
+        }
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Seleccionar Producto *</label>
+            <select [ngModel]="selectedProductId()" (ngModelChange)="selectedProductId.set($event ? Number($event) : undefined)">
+              <option [value]="undefined">Seleccionar producto del catálogo...</option>
+              @for (p of products(); track p.idproducto) {
+                <option [value]="p.idproducto">{{ p.nombre }} (Modelo: {{ p.modelo || 'N/A' }})</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Fecha de Obtención</label>
+            <input 
+              type="date" 
+              [ngModel]="fechaObtencion()" 
+              (ngModelChange)="fechaObtencion.set($event)"
+            />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeAssignModal()">Cancelar</button>
+          <button class="btn-primary" (click)="assignToProduct()">Vincular Certificación</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

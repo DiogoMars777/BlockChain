@@ -1,0 +1,108 @@
+<div class="dashboard-wrapper">
+  <header class="dashboard-nav">
+    <div class="brand">
+      <span class="logo-icon">🛡️</span>
+      <span class="brand-name">Sistema Trazabilidad Multi-Tenant</span>
+    </div>
+    <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+      <a routerLink="/tenants" style="color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 0.35rem 0.7rem; background-color: #334155; border-radius: 6px;">
+        🏢 Empresas
+      </a>
+      <a routerLink="/users" style="color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 0.35rem 0.7rem; background-color: #334155; border-radius: 6px;">
+        👥 Usuarios
+      </a>
+      <a routerLink="/roles" style="color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 0.35rem 0.7rem; background-color: #334155; border-radius: 6px;">
+        🔑 Roles
+      </a>
+      <a routerLink="/bitacora" style="color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 0.35rem 0.7rem; background-color: #334155; border-radius: 6px;">
+        📜 Bitácora
+      </a>
+      <a routerLink="/categories" style="color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 0.35rem 0.7rem; background-color: #334155; border-radius: 6px;">
+        🏷️ Categorías
+      </a>
+      <a routerLink="/products" style="color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 0.35rem 0.7rem; background-color: #334155; border-radius: 6px;">
+        📦 Productos
+      </a>
+      <a routerLink="/certifications" style="color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 0.35rem 0.7rem; background-color: #334155; border-radius: 6px;">
+        📜 Certificaciones
+      </a>
+      <a routerLink="/tenant-catalog" style="color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 0.35rem 0.7rem; background-color: #334155; border-radius: 6px;">
+        🏬 Catálogo Empresa
+      </a>
+      <a routerLink="/actors" style="color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 0.35rem 0.7rem; background-color: #334155; border-radius: 6px;">
+        🤝 Actores Cadena
+      </a>
+      <a routerLink="/locations" style="color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 0.35rem 0.7rem; background-color: #334155; border-radius: 6px;">
+        📍 Ubicaciones
+      </a>
+      <a routerLink="/units" style="color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.8rem; padding: 0.35rem 0.7rem; background-color: #334155; border-radius: 6px;">
+        📱 Unidades (Serial/IMEI)
+      </a>
+
+      <!-- Tenant Switcher -->
+      @if (tenants().length > 0) {
+        <select 
+          [value]="currentUser()?.tenant?.idtenant" 
+          (change)="onTenantChange($event)"
+          style="background: #1e293b; color: #38bdf8; border: 1px solid #0284c7; padding: 0.35rem 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; max-width: 220px;">
+          @for (t of tenants(); track t.idtenant) {
+            <option [value]="t.idtenant">
+              🏢 {{ t.nombre }} (NIT: {{ t.nit }})
+            </option>
+          }
+        </select>
+      }
+
+      <button class="logout-btn" (click)="onLogout()">
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
+
+  <main class="dashboard-content">
+    <div class="status-banner">
+      <span class="status-icon">✓</span>
+      <h2>Sesión iniciada correctamente</h2>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">
+        Cargando información del usuario...
+      </div>
+    } @else if (currentUser()) {
+      <div class="user-card">
+        <div class="card-header">
+          <h3>Información del Usuario Autenticado</h3>
+          <span class="badge">Activo</span>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Nombre completo</span>
+            <span class="value">{{ currentUser()?.nombrecompleto || (currentUser()?.first_name ? currentUser()?.first_name + ' ' + currentUser()?.last_name : 'Administrador General') }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Correo electrónico</span>
+            <span class="value">{{ currentUser()?.email }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Empresa (Tenant)</span>
+            <span class="value">{{ currentUser()?.tenant?.nombre || currentUser()?.tenant?.name }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">NIT / Razón Social</span>
+            <span class="value code-slug">{{ currentUser()?.tenant?.nit }} - {{ currentUser()?.tenant?.razonsocial }}</span>
+          </div>
+
+          <div class="info-item full-width">
+            <span class="label">ID Usuario</span>
+            <span class="value code-id">#{{ currentUser()?.idusuario || currentUser()?.id }}</span>
+          </div>
+        </div>
+      </div>
+    }
+  </main>
+</div>

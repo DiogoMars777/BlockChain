@@ -34,12 +34,19 @@ body {
   background: var(--bg-gradient);
   color: var(--text-main);
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  margin: 0;
+  padding: 0;
   overflow-x: hidden;
 }
+
+.auth-page-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
 
 .auth-container {
   width: 100%;

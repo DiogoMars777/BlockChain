@@ -1,0 +1,235 @@
+<div class="tc-wrapper">
+  <header class="tc-nav">
+    <div class="brand">
+      <span class="logo-icon">🏢</span>
+      <span class="brand-name">Catálogo de Productos por Empresa (CU-008)</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-secondary" (click)="navigateToDashboard()">
+        ← Volver al Dashboard
+      </button>
+    </div>
+  </header>
+
+  <main class="tc-content">
+    @if (successMessage()) {
+      <div class="alert-success">✓ {{ successMessage() }}</div>
+    }
+
+    <div class="filter-bar">
+      <div class="filter-inputs">
+        <input 
+          type="text" 
+          [ngModel]="searchFilter()" 
+          (ngModelChange)="searchFilter.set($event); onFilter()" 
+          placeholder="Buscar por SKU interno, color..."
+        />
+
+        <select [ngModel]="selectedTenantFilter()" (ngModelChange)="selectedTenantFilter.set($event ? Number($event) : undefined); onFilter()">
+          <option [value]="undefined">Mi Empresa (Tenant Actual)</option>
+          @for (t of tenants(); track t.idtenant) {
+            <option [value]="t.idtenant">{{ t.nombre }} ({{ t.nit }})</option>
+          }
+        </select>
+      </div>
+
+      <button class="btn-primary" (click)="openAddModal()">
+        + Añadir al Catálogo
+      </button>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">Cargando catálogo de la empresa...</div>
+    } @else {
+      <div class="grid-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>SKU Interno</th>
+              <th>SKU Global</th>
+              <th>Variante / Especificaciones</th>
+              <th>Costo Prom. ($)</th>
+              <th>Precio Venta ($)</th>
+              <th>Estado</th>
+              <th style="text-align: right;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of catalogItems(); track item.idcatalogotenant) {
+              <tr [class.inactive-row]="!item.activo">
+                <td class="code-id">#{{ item.idcatalogotenant }}</td>
+                <td class="font-bold code-id">{{ item.skuinterno || '-' }}</td>
+                <td class="code-id">{{ item.variante?.sku || '-' }}</td>
+                <td>
+                  <span class="variant-details">
+                    {{ item.variante?.capacidad ? item.variante?.capacidad + ' - ' : '' }} {{ item.variante?.color || 'Variante Estándar' }}
+                  </span>
+                </td>
+                <td class="cost-text">${{ item.costopromedio || '0.00' }}</td>
+                <td class="price-text">${{ item.precioventa }}</td>
+                <td>
+                  <span class="status-badge" [class.active]="item.activo" [class.inactive]="!item.activo">
+                    {{ item.activo ? 'Disponible' : 'No Disponible' }}
+                  </span>
+                </td>
+                <td style="text-align: right;">
+                  <button class="btn-sm-edit" (click)="openEditModal(item)">✏️ Precios</button>
+                  <button class="btn-sm-delete" (click)="deleteItem(item)">🗑️ Remover</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="empty-state">No hay productos asignados al catálogo de esta empresa.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+
+  <!-- Add to Catalog Modal -->
+  @if (isAddModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Añadir Variante al Catálogo de la Empresa</h3>
+          <button class="btn-close" (click)="closeAddModal()">×</button>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert-error">⚠️ {{ errorMessage() }}</div>
+        }
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label>1. Seleccionar Producto *</label>
+            <select (change)="onProductSelect($any($event.target).value)">
+              <option value="">Seleccionar producto del catálogo general...</option>
+              @for (p of products(); track p.idproducto) {
+                <option [value]="p.idproducto">{{ p.nombre }} ({{ p.modelo || 'Sin modelo' }})</option>
+              }
+            </select>
+          </div>
+
+          @if (selectedProduct()) {
+            <div class="form-group">
+              <label>2. Seleccionar Variante *</label>
+              <select [ngModel]="selectedVariantId()" (ngModelChange)="selectedVariantId.set($event ? Number($event) : undefined)">
+                <option [value]="undefined">Seleccionar variante disponible...</option>
+                @for (v of selectedProduct()?.variantes; track v.idvariante) {
+                  <option [value]="v.idvariante">
+                    SKU: {{ v.sku }} | {{ v.capacidad }} {{ v.color }} (${{ v.preciousd }} USD)
+                  </option>
+                }
+              </select>
+            </div>
+          }
+
+          <div class="form-group">
+            <label>3. SKU Interno de la Empresa</label>
+            <input 
+              type="text" 
+              [ngModel]="skuInterno()" 
+              (ngModelChange)="skuInterno.set($event)"
+              placeholder="Ej. INT-SKU-101"
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Precio de Venta ($) *</label>
+              <input 
+                type="number" 
+                step="0.01"
+                [ngModel]="precioVenta()" 
+                (ngModelChange)="precioVenta.set($event)"
+              />
+            </div>
+
+            <div class="form-group half">
+              <label>Costo Promedio ($)</label>
+              <input 
+                type="number" 
+                step="0.01"
+                [ngModel]="costoPromedio()" 
+                (ngModelChange)="costoPromedio.set($event)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeAddModal()">Cancelar</button>
+          <button class="btn-primary" (click)="saveNewItem()">Agregar al Catálogo</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Edit Catalog Item Modal -->
+  @if (isEditModalOpen() && editingItem()) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Editar Precios de Catálogo #{{ editingItem()?.idcatalogotenant }}</h3>
+          <button class="btn-close" (click)="closeEditModal()">×</button>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert-error">⚠️ {{ errorMessage() }}</div>
+        }
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label>SKU Interno</label>
+            <input 
+              type="text" 
+              [ngModel]="eSkuInterno()" 
+              (ngModelChange)="eSkuInterno.set($event)"
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Precio de Venta ($) *</label>
+              <input 
+                type="number" 
+                step="0.01"
+                [ngModel]="ePrecioVenta()" 
+                (ngModelChange)="ePrecioVenta.set($event)"
+              />
+            </div>
+
+            <div class="form-group half">
+              <label>Costo Promedio ($)</label>
+              <input 
+                type="number" 
+                step="0.01"
+                [ngModel]="eCostoPromedio()" 
+                (ngModelChange)="eCostoPromedio.set($event)"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input 
+                type="checkbox" 
+                [ngModel]="eActivo()" 
+                (ngModelChange)="eActivo.set($event)"
+              />
+              Disponible en la empresa
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeEditModal()">Cancelar</button>
+          <button class="btn-primary" (click)="saveEditItem()">Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

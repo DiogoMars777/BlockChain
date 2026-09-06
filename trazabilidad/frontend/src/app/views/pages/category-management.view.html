@@ -1,0 +1,105 @@
+<div class="cat-wrapper">
+  <header class="cat-nav">
+    <div class="brand">
+      <span class="logo-icon">🏷️</span>
+      <span class="brand-name">Gestión de Categorías de Productos (CU-009)</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-secondary" (click)="navigateToDashboard()">
+        ← Volver al Dashboard
+      </button>
+    </div>
+  </header>
+
+  <main class="cat-content">
+    @if (successMessage()) {
+      <div class="alert-success">
+        ✓ {{ successMessage() }}
+      </div>
+    }
+
+    <div class="action-header">
+      <h2>Listado de Categorías</h2>
+      <button class="btn-primary" (click)="openCreateModal()">
+        + Nueva Categoría
+      </button>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">Cargando categorías...</div>
+    } @else {
+      <div class="grid-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre de Categoría</th>
+              <th>Descripción</th>
+              <th style="text-align: right;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (cat of categories(); track cat.idcategoria) {
+              <tr>
+                <td class="code-id">#{{ cat.idcategoria }}</td>
+                <td class="font-bold">{{ cat.nombrecategoria }}</td>
+                <td>{{ cat.descripcion || 'Sin descripción' }}</td>
+                <td style="text-align: right;">
+                  <button class="btn-sm-edit" (click)="openEditModal(cat)">✏️ Editar</button>
+                  <button class="btn-sm-delete" (click)="deleteCategory(cat)">🗑️ Eliminar</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="empty-state">No hay categorías registradas.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+
+  <!-- Modal -->
+  @if (isModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>{{ editingCategory() ? 'Editar Categoría' : 'Nueva Categoría' }}</h3>
+          <button class="btn-close" (click)="closeModal()">×</button>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert-error">⚠️ {{ errorMessage() }}</div>
+        }
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nombre de Categoría *</label>
+            <input 
+              type="text" 
+              [ngModel]="nombrecategoria()" 
+              (ngModelChange)="nombrecategoria.set($event)"
+              placeholder="Ej. Smartphones, Laptops..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea 
+              rows="3"
+              [ngModel]="descripcion()" 
+              (ngModelChange)="descripcion.set($event)"
+              placeholder="Descripción breve de la categoría"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button class="btn-primary" (click)="saveCategory()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

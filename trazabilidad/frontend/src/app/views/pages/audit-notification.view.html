@@ -1,0 +1,148 @@
+<div class="audit-wrapper">
+  <header class="audit-nav">
+    <div class="brand">
+      <span class="logo-icon">📜</span>
+      <span class="brand-name">Bitácora & Notificaciones del Sistema</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-secondary" (click)="navigateToDashboard()">
+        ← Volver al Dashboard
+      </button>
+    </div>
+  </header>
+
+  <main class="audit-content">
+    <!-- Tabs Header -->
+    <div class="tabs-header">
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab() === 'bitacora'" 
+        (click)="setTab('bitacora')">
+        📋 Bitácora de Auditoría ({{ totalBitacora() }})
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab() === 'notifications'" 
+        (click)="setTab('notifications')">
+        🔔 Notificaciones 
+        @if (unreadCount() > 0) {
+          <span class="unread-badge">{{ unreadCount() }}</span>
+        }
+      </button>
+    </div>
+
+    <!-- TAB 1: Bitácora de Auditoría -->
+    @if (activeTab() === 'bitacora') {
+      <div class="tab-pane">
+        <div class="filter-bar">
+          <div class="filter-inputs">
+            <select [ngModel]="accionFilter()" (ngModelChange)="accionFilter.set($event); onFilterBitacora()">
+              <option value="">Todas las acciones</option>
+              <option value="INSERT">INSERT</option>
+              <option value="UPDATE">UPDATE</option>
+              <option value="DELETE">DELETE</option>
+              <option value="LOGIN">LOGIN</option>
+            </select>
+
+            <select [ngModel]="entidadFilter()" (ngModelChange)="entidadFilter.set($event); onFilterBitacora()">
+              <option value="">Todas las entidades</option>
+              <option value="Venta">Venta</option>
+              <option value="Usuario">Usuario</option>
+              <option value="EventoTrazabilidad">EventoTrazabilidad</option>
+            </select>
+          </div>
+          <div class="total-text">
+            Registros encontrados: <strong>{{ totalBitacora() }}</strong>
+          </div>
+        </div>
+
+        @if (isLoading()) {
+          <div class="loading-state">Cargando bitácora...</div>
+        } @else {
+          <div class="table-card">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Fecha / Hora</th>
+                  <th>Acción</th>
+                  <th>Entidad</th>
+                  <th>ID Entidad</th>
+                  <th>IP Origen</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of bitacora(); track item.idbitacora) {
+                  <tr>
+                    <td class="code-id">#{{ item.idbitacora }}</td>
+                    <td>{{ item.fechahora | date:'medium' }}</td>
+                    <td>
+                      <span class="action-tag" [ngClass]="item.accion.toLowerCase()">
+                        {{ item.accion }}
+                      </span>
+                    </td>
+                    <td class="font-bold">{{ item.entidad }}</td>
+                    <td><span class="badge-entity">#{{ item.identidad }}</span></td>
+                    <td class="code-ip">{{ item.ip || 'Local/Internal' }}</td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="6" class="empty-state">No hay registros de auditoría.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- TAB 2: Notificaciones -->
+    @if (activeTab() === 'notifications') {
+      <div class="tab-pane">
+        <div class="filter-bar">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [checked]="onlyUnreadFilter()" 
+              (change)="onToggleOnlyUnread()" 
+            />
+            <span>Mostrar solo no leídas</span>
+          </label>
+        </div>
+
+        <div class="notifications-list">
+          @for (notif of notifications(); track notif.idnotificacion) {
+            <div class="notif-card" [class.unread]="!notif.leida">
+              <div class="notif-header">
+                <div class="notif-title-row">
+                  @if (!notif.leida) {
+                    <span class="dot-unread"></span>
+                  }
+                  <strong class="notif-title">{{ notif.titulo }}</strong>
+                </div>
+                <span class="notif-date">{{ notif.fechaenvio | date:'short' }}</span>
+              </div>
+              <p class="notif-body">{{ notif.contenido }}</p>
+              
+              <div class="notif-footer">
+                @if (!notif.leida) {
+                  <button class="btn-read" (click)="onMarkAsRead(notif)">
+                    ✓ Marcar como leída
+                  </button>
+                } @else {
+                  <span class="read-status">Read</span>
+                }
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-state-card">
+              <div class="empty-icon">🔔</div>
+              <h3>No tienes notificaciones pendientes</h3>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </main>
+</div>
