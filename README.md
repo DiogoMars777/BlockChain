@@ -27,6 +27,21 @@ Si ya habías corrido `alembic upgrade head` antes y te quedaron solo 4 tablas
 nuevas y volvé a correr `python -m alembic upgrade head` — no hace falta
 borrar la base, sigue desde donde quedó.
 
+### Datos de prueba
+
+`python seed.py` carga automáticamente 5 empresas de demostración con datos
+mínimos (usuario admin, roles, catálogo de productos, actores, ubicaciones y
+unidades). Es seguro correrlo varias veces, no duplica nada. Para iniciar
+sesión, usá el número de empresa como "Empresa (Slug)":
+
+| # | Empresa | Correo admin | Contraseña |
+|---|---|---|---|
+| 1 | iStore Bolivia S.A. | admin@trazabilidad.com | Admin123! |
+| 2 | TechImport Santa Cruz S.R.L. | admin@techimport.com | Admin123! |
+| 3 | Andina Digital Ltda. | admin@andinadigital.com | Admin123! |
+| 4 | ElectroSur Trading S.A. | admin@electrosur.com | Admin123! |
+| 5 | Cochabamba Wireless S.A. | admin@cochawireless.com | Admin123! |
+
 ## Frontend
 
 ```powershell
