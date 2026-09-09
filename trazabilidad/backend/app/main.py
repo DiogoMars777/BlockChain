@@ -49,6 +49,25 @@ app.include_router(location_router, prefix="/api/v1")
 app.include_router(unit_router, prefix="/api/v1")
 
 
+from fastapi import Request
+from fastapi.responses import JSONResponse
+from sqlalchemy import text
+from app.db.session import get_db
+from sqlalchemy.orm import Session
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    import traceback
+    return JSONResponse(
+        status_code=500,
+        content={"error_type": type(exc).__name__, "error_detail": str(exc), "trace": traceback.format_exc()}
+    )
+
 @app.get("/health", tags=["Health"])
-def health_check():
-    return {"status": "ok", "app": settings.APP_NAME, "architecture": "MVC"}
+def health_check(db: Session = Depends(get_db)):
+    try:
+        db.execute(text("SELECT 1")).scalar()
+        db_status = "connected"
+    except Exception as e:
+        db_status = f"error: {str(e)}"
+    return {"status": "ok", "app": settings.APP_NAME, "db": db_status}
