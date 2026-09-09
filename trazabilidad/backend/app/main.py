@@ -49,7 +49,7 @@ app.include_router(location_router, prefix="/api/v1")
 app.include_router(unit_router, prefix="/api/v1")
 
 
-from fastapi import Request
+from fastapi import Request, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from app.db.session import get_db
