@@ -33,6 +33,14 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
+    @field_validator("DATABASE_URL", mode="before")
+    def clean_database_url(cls, v: str) -> str:
+        return v.strip() if isinstance(v, str) else v
+
+    @field_validator("JWT_SECRET", mode="before")
+    def clean_jwt_secret(cls, v: str) -> str:
+        return v.strip() if isinstance(v, str) else v
+
     @field_validator("CORS_ORIGINS", mode="before")
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
         if isinstance(v, str) and not v.startswith("["):
