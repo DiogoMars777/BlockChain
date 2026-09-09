@@ -10,14 +10,15 @@ import {
   VariantCreate,
   VariantUpdate
 } from '../../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/products';
-  private variantUrl = 'http://localhost:8000/api/v1/variants';
+  private apiUrl = `${environment.apiUrl}/products`;
+  private variantUrl = `${environment.apiUrl}/variants`;
 
   productsSignal = signal<Product[]>([]);
   totalProductsSignal = signal<number>(0);

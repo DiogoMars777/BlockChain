@@ -2,13 +2,14 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { UnitItem, UnitCreate, UnitListResponse } from '../../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UnitService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/units';
+  private apiUrl = `${environment.apiUrl}/units`;
 
   unitsSignal = signal<UnitItem[]>([]);
   totalSignal = signal<number>(0);

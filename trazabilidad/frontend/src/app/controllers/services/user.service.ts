@@ -2,13 +2,14 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { User, UserCreate, UserUpdate, UserListResponse } from '../../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/users';
+  private apiUrl = `${environment.apiUrl}/users`;
 
   usersSignal = signal<User[]>([]);
   totalUsersSignal = signal<number>(0);

@@ -2,13 +2,14 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Category, CategoryCreate, CategoryUpdate } from '../../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoryService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/categories';
+  private apiUrl = `${environment.apiUrl}/categories`;
 
   categoriesSignal = signal<Category[]>([]);
   isLoadingSignal = signal<boolean>(false);

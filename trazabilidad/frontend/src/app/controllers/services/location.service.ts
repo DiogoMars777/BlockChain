@@ -2,13 +2,14 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { LocationItem, LocationCreate, LocationListResponse } from '../../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocationService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/locations';
+  private apiUrl = `${environment.apiUrl}/locations`;
 
   locationsSignal = signal<LocationItem[]>([]);
   totalSignal = signal<number>(0);

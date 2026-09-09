@@ -10,12 +10,13 @@ import {
   ResetPasswordRequest,
   MessageResponse
 } from '../../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8000/api/v1/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   currentUser = signal<User | null>(null);
   token = signal<string | null>(localStorage.getItem('access_token'));

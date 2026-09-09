@@ -7,13 +7,14 @@ import {
   TenantCatalogUpdate,
   TenantCatalogListResponse
 } from '../../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TenantCatalogService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/tenant-catalog';
+  private apiUrl = `${environment.apiUrl}/tenant-catalog`;
 
   catalogSignal = signal<TenantCatalogItem[]>([]);
   totalCatalogSignal = signal<number>(0);

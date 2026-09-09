@@ -1,6 +1,6 @@
 class ApiConfig {
-  // Use 10.0.2.2 for Android Emulator, or localhost for iOS / Web / Desktop
-  static const String baseUrl = 'http://10.0.2.2:8000/api/v1';
+  // Production backend on Railway
+  static const String baseUrl = 'https://blockchain-production-8de2.up.railway.app/api/v1';
 
   static const String login = '$baseUrl/auth/login';
   static const String refresh = '$baseUrl/auth/refresh';

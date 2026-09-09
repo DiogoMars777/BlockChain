@@ -2,13 +2,14 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { BitacoraItem, BitacoraListResponse, NotificacionItem, NotificacionListResponse } from '../../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuditNotificationService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1';
+  private apiUrl = environment.apiUrl;
 
   bitacoraSignal = signal<BitacoraItem[]>([]);
   totalBitacoraSignal = signal<number>(0);

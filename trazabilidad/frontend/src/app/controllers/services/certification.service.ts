@@ -8,14 +8,15 @@ import {
   ProductCertification,
   ProductCertificationAssign
 } from '../../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CertificationService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/certifications';
-  private productUrl = 'http://localhost:8000/api/v1/products';
+  private apiUrl = `${environment.apiUrl}/certifications`;
+  private productUrl = `${environment.apiUrl}/products`;
 
   certificationsSignal = signal<Certification[]>([]);
   isLoadingSignal = signal<boolean>(false);
