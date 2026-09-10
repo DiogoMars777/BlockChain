@@ -9,4 +9,5 @@ class ApiConfig {
   static const String forgotPassword = '$baseUrl/auth/forgot-password';
   static const String resetPassword = '$baseUrl/auth/reset-password';
   static const String notifications = '$baseUrl/notifications';
+  static const String bitacora = '$baseUrl/bitacora';
 }

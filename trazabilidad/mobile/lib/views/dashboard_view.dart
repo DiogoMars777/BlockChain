@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/notification_controller.dart';
+import '../controllers/bitacora_controller.dart';
 import 'login_view.dart';
 import 'notifications_view.dart';
+import 'bitacora_view.dart';
 
 class DashboardView extends StatefulWidget {
   final AuthController authController;
@@ -15,11 +17,13 @@ class DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends State<DashboardView> {
   late final NotificationController _notificationController;
+  late final BitacoraController _bitacoraController;
 
   @override
   void initState() {
     super.initState();
     _notificationController = NotificationController(authController: widget.authController);
+    _bitacoraController = BitacoraController();
     _notificationController.fetchNotifications().then((_) {
       if (mounted) setState(() {});
     });
@@ -41,6 +45,17 @@ class _DashboardViewState extends State<DashboardView> {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.receipt_long_outlined, color: Color(0xFF38BDF8)),
+            tooltip: 'Consultar Bitácora',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => BitacoraView(bitacoraController: _bitacoraController),
+                ),
+              );
+            },
+          ),
           Stack(
             children: [
               IconButton(
@@ -86,11 +101,12 @@ class _DashboardViewState extends State<DashboardView> {
           ),
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Banner de autenticación exitosa
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -112,6 +128,7 @@ class _DashboardViewState extends State<DashboardView> {
             ),
             const SizedBox(height: 20),
 
+            // Tarjeta de Información de Usuario
             if (user != null) ...[
               Card(
                 color: const Color(0xFF1E293B),
@@ -152,6 +169,83 @@ class _DashboardViewState extends State<DashboardView> {
                 ),
               ),
             ],
+
+            const SizedBox(height: 20),
+
+            // Sección de Casos de Uso / Módulos
+            const Text(
+              'Módulos y Auditoría',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+            const SizedBox(height: 12),
+
+            // Botón/Tarjeta destacada para CU-005 Bitácora de Auditoría
+            Card(
+              color: const Color(0xFF1E293B),
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF38BDF8), width: 1.2),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => BitacoraView(bitacoraController: _bitacoraController),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF38BDF8).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.receipt_long_rounded,
+                          size: 30,
+                          color: Color(0xFF38BDF8),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Bitácora de Auditoría (CU-005)',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Consultar métodos GET/POST/PUT, usuarios, IPs y fechas',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 18,
+                        color: Color(0xFF38BDF8),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
