@@ -14,8 +14,39 @@ templates_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templa
 jinja_env = Environment(loader=FileSystemLoader(templates_dir))
 
 
+import httpx
+
 async def send_email(to_email: str, subject: str, html_content: str) -> bool:
-    """Send an HTML email via SMTP asynchronously with multi-port fallback."""
+    """Send an HTML email via Resend HTTPS API (port 443) or fallback to SMTP."""
+    # 1. Primary: Resend API over HTTPS (never blocked by Railway or cloud firewalls)
+    if settings.RESEND_API_KEY:
+        try:
+            logger.info(f"Sending email to {to_email} via Resend HTTP API...")
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resend_sender = settings.RESEND_FROM or "Sistema Trazabilidad <onboarding@resend.dev>"
+                payload = {
+                    "from": resend_sender,
+                    "to": [to_email],
+                    "subject": subject,
+                    "html": html_content
+                }
+                resp = await client.post(
+                    "https://api.resend.com/emails",
+                    headers={
+                        "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+                        "Content-Type": "application/json"
+                    },
+                    json=payload
+                )
+                if resp.status_code in (200, 201):
+                    logger.info(f"Email successfully sent to {to_email} via Resend API")
+                    return True
+                else:
+                    logger.warning(f"Resend API returned status {resp.status_code}: {resp.text}")
+        except Exception as e:
+            logger.warning(f"Error sending via Resend API: {e}. Falling back to SMTP...")
+
+    # 2. Fallback: SMTP via aiosmtplib
     if not settings.SMTP_HOST or not settings.SMTP_USER:
         logger.warning(
             f"[SMTP MOCK] SMTP host/user not configured. Email to {to_email} skipped."
@@ -23,7 +54,7 @@ async def send_email(to_email: str, subject: str, html_content: str) -> bool:
         return True
 
     message = MIMEMultipart("alternative")
-    message["From"] = settings.SMTP_FROM
+    message["From"] = settings.SMTP_FROM or settings.SMTP_USER
     message["To"] = to_email
     message["Subject"] = subject
     message.attach(MIMEText(html_content, "html", "utf-8"))
@@ -44,7 +75,7 @@ async def send_email(to_email: str, subject: str, html_content: str) -> bool:
                 port=port,
                 use_tls=use_tls,
                 start_tls=start_tls,
-                timeout=10,
+                timeout=5,
             )
             await smtp.connect()
             if settings.SMTP_USER and settings.SMTP_PASSWORD:

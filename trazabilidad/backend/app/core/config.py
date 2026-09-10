@@ -1,5 +1,5 @@
 import os
-from typing import List, Union
+from typing import List, Union, Optional
 from pydantic import AnyHttpUrl, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -22,10 +22,14 @@ class Settings(BaseSettings):
 
     SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 587
-    SMTP_USER: str
-    SMTP_PASSWORD: str
-    SMTP_FROM: str
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    SMTP_FROM: Optional[str] = None
     SMTP_STARTTLS: bool = True
+
+    # Cloud Email API (Resend over HTTPS / port 443 - never blocked by Railway)
+    RESEND_API_KEY: Optional[str] = None
+    RESEND_FROM: Optional[str] = None
 
     model_config = SettingsConfigDict(
         env_file=".env",
