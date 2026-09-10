@@ -15,8 +15,8 @@ from app.models.cu003_roles_permisos.role import Role
 from app.models.cu003_roles_permisos.permission import Permiso
 from app.models.cu003_roles_permisos.role_permission import RolPermiso
 from app.models.cu003_roles_permisos.usuario_tenant_rol import UsuarioTenantRol
-from app.models.bitacora import Bitacora
-from app.models.notification import Notificacion
+from app.models.cu005_bitacora.bitacora import Bitacora
+from app.models.cu005_bitacora.notification import Notificacion
 
 __all__ = [
     "Tenant",

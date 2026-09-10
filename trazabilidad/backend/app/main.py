@@ -6,7 +6,7 @@ from app.controllers.cu004_autenticacion.auth_controller import router as auth_r
 from app.controllers.cu001_tenants.tenant_controller import router as tenant_router
 from app.controllers.cu002_usuarios.user_controller import router as user_router
 from app.controllers.cu003_roles_permisos.role_controller import router as role_router
-from app.controllers.audit_controller import router as audit_router
+from app.controllers.cu005_bitacora.bitacora_controller import router as audit_router
 from app.controllers.cu009_categorias.category_controller import router as category_router
 from app.controllers.cu006_productos_variantes.product_controller import router as product_router
 from app.controllers.cu007_certificaciones.certification_controller import router as certification_router
@@ -52,7 +52,7 @@ app.include_router(unit_router, prefix="/api/v1")
 import jwt
 from datetime import datetime, timezone, timedelta
 from sqlalchemy import select
-from app.models.bitacora import Bitacora
+from app.models.cu005_bitacora.bitacora import Bitacora
 from app.models.cu002_usuarios.usuario_tenant import UsuarioTenant
 from app.db.session import SessionLocal
 

@@ -1,4 +1,3 @@
-"""Backward-compatibility re-export module for CU-005 Bitacora Views."""
 from app.views.cu005_bitacora.bitacora_views import (
     BitacoraResponse,
     BitacoraListResponse,

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import '../controllers/auth_controller.dart';
-import '../controllers/notification_controller.dart';
-import '../controllers/bitacora_controller.dart';
+import '../cu005_bitacora/cu005_bitacora.dart';
 import 'login_view.dart';
-import 'notifications_view.dart';
-import 'bitacora_view.dart';
 
 class DashboardView extends StatefulWidget {
   final AuthController authController;

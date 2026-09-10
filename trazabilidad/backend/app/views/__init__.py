@@ -9,6 +9,7 @@ from app.views.cu004_autenticacion.auth_views import (
 )
 from app.views import (
     cu003_roles_permisos,
+    cu005_bitacora,
     audit_views,
     cu009_categorias,
     cu006_productos_variantes,

@@ -2,7 +2,12 @@ from app.controllers.cu004_autenticacion.auth_controller import AuthController, 
 from app.controllers.cu001_tenants.tenant_controller import TenantController, router as tenant_router
 from app.controllers.cu002_usuarios.user_controller import UserController, router as user_router
 from app.controllers.cu003_roles_permisos.role_controller import RoleController, router as role_router
-from app.controllers.audit_controller import AuditController, router as audit_router
+from app.controllers.cu005_bitacora.bitacora_controller import (
+    BitacoraController,
+    router as bitacora_router,
+    AuditController,
+    router as audit_router
+)
 from app.controllers.cu009_categorias.category_controller import CategoryController, router as category_router
 from app.controllers.cu006_productos_variantes.product_controller import ProductController, router as product_router
 from app.controllers.cu007_certificaciones.certification_controller import CertificationController, router as certification_router

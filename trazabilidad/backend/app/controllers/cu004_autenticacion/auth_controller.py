@@ -427,7 +427,7 @@ def login(
 
     # Registrar evento real en Bitácora con Hora de Bolivia (BOT, UTC-4)
     try:
-        from app.models.bitacora import Bitacora
+        from app.models.cu005_bitacora.bitacora import Bitacora
         ut_stmt = select(UsuarioTenant.idusuariotenant).where(
             UsuarioTenant.idusuario == user.idusuario,
             UsuarioTenant.idtenant == tenant.idtenant
