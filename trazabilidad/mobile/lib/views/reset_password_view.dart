@@ -33,7 +33,9 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
 
       if (success && mounted) {
         Future.delayed(const Duration(seconds: 2), () {
-          Navigator.of(context).pop();
+          if (mounted) {
+            Navigator.of(context).pop();
+          }
         });
       }
     }

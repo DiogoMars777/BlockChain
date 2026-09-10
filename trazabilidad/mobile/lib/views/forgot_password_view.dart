@@ -12,7 +12,7 @@ class ForgotPasswordView extends StatefulWidget {
 
 class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final _formKey = GlobalKey<FormState>();
-  final _tenantController = TextEditingController(text: 'empresa-demo');
+  final _tenantController = TextEditingController(text: '1');
   final _emailController = TextEditingController();
 
   @override

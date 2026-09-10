@@ -59,11 +59,11 @@ class _LoginViewState extends State<LoginView> {
               decoration: BoxDecoration(
                 color: const Color(0xFF1E293B),
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
-                    color: const Color(0x4D000000),
+                    color: Color(0x4D000000),
                     blurRadius: 12,
-                    offset: const Offset(0, 6),
+                    offset: Offset(0, 6),
                   ),
                 ],
               ),
