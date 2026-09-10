@@ -20,7 +20,16 @@ class BitacoraItem {
   factory BitacoraItem.fromJson(Map<String, dynamic> json) {
     DateTime parsedFecha;
     try {
-      parsedFecha = DateTime.parse(json['fechahora'] ?? '').toLocal();
+      final raw = (json['fechahora'] ?? '').toString().trim();
+      DateTime utcDate;
+      if (raw.endsWith('Z') || raw.contains('+') || (raw.lastIndexOf('-') > 10)) {
+        utcDate = DateTime.parse(raw).toUtc();
+      } else {
+        // En la base de datos se guarda en UTC sin la 'Z'
+        utcDate = DateTime.parse('${raw}Z');
+      }
+      // Zona horaria oficial de Bolivia (BOT = UTC-4):
+      parsedFecha = utcDate.subtract(const Duration(hours: 4));
     } catch (_) {
       parsedFecha = DateTime.now();
     }
