@@ -27,10 +27,6 @@ class Settings(BaseSettings):
     SMTP_FROM: Optional[str] = None
     SMTP_STARTTLS: bool = True
 
-    # Cloud Email API (Resend over HTTPS / port 443 - never blocked by Railway)
-    RESEND_API_KEY: Optional[str] = None
-    RESEND_FROM: Optional[str] = None
-
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
