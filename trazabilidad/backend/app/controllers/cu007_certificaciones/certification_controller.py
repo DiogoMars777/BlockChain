@@ -20,12 +20,14 @@ router = APIRouter(tags=["Gestionar Certificaciones Técnicas (CU-007)"])
 
 
 class CertificationController:
+    # 1. Listar todas las certificaciones registradas
     @staticmethod
     def list_certifications(db: Session) -> List[CertificationResponse]:
         stmt = select(Certificacion).order_by(Certificacion.idcertificacion.asc())
         certs = db.execute(stmt).scalars().all()
         return [CertificationResponse.model_validate(c) for c in certs]
 
+    # 2. Crear una nueva certificación
     @staticmethod
     def create_certification(db: Session, data: CertificationCreate) -> CertificationResponse:
         cert = Certificacion(
@@ -39,6 +41,7 @@ class CertificationController:
         db.refresh(cert)
         return CertificationResponse.model_validate(cert)
 
+    # 3. Editar una certificación existente
     @staticmethod
     def update_certification(db: Session, idcertificacion: int, data: CertificationUpdate) -> CertificationResponse:
         stmt = select(Certificacion).where(Certificacion.idcertificacion == idcertificacion)
@@ -62,6 +65,7 @@ class CertificationController:
         db.refresh(cert)
         return CertificationResponse.model_validate(cert)
 
+    # 4. Eliminar una certificación por ID
     @staticmethod
     def delete_certification(db: Session, idcertificacion: int):
         stmt = select(Certificacion).where(Certificacion.idcertificacion == idcertificacion)
@@ -76,26 +80,27 @@ class CertificationController:
         db.commit()
         return {"detail": f"Certificación {idcertificacion} eliminada exitosamente."}
 
-    # Product Certification Assignments
+    # 5. Listar certificaciones asignadas a un producto
     @staticmethod
     def list_product_certifications(db: Session, idproducto: int) -> List[ProductCertificationResponse]:
         stmt = select(ProductoCertificacion).where(ProductoCertificacion.idproducto == idproducto)
         links = db.execute(stmt).scalars().all()
         return [ProductCertificationResponse.model_validate(l) for l in links]
 
+    # 6. Asignar certificación a producto (valida existencia y previene duplicados)
     @staticmethod
     def assign_product_certification(db: Session, idproducto: int, data: ProductCertificationAssign) -> ProductCertificationResponse:
-        # Check product
+        # Verifica que el producto exista
         stmt_p = select(Producto).where(Producto.idproducto == idproducto)
         if not db.execute(stmt_p).scalar_one_or_none():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Producto no encontrado.")
 
-        # Check certification
+        # Verifica que la certificación exista
         stmt_c = select(Certificacion).where(Certificacion.idcertificacion == data.idcertificacion)
         if not db.execute(stmt_c).scalar_one_or_none():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Certificación no encontrada.")
 
-        # Check existing
+        # Evita asignar dos veces la misma certificación
         stmt_e = select(ProductoCertificacion).where(
             ProductoCertificacion.idproducto == idproducto,
             ProductoCertificacion.idcertificacion == data.idcertificacion
@@ -113,6 +118,7 @@ class CertificationController:
         db.refresh(link)
         return ProductCertificationResponse.model_validate(link)
 
+    # 7. Quitar certificación de un producto
     @staticmethod
     def remove_product_certification(db: Session, idproducto: int, idcertificacion: int):
         stmt = select(ProductoCertificacion).where(
@@ -128,13 +134,14 @@ class CertificationController:
         return {"detail": "Certificación removida del producto."}
 
 
-# Endpoints
+# Endpoints API REST
+
 @router.get("/certifications", response_model=List[CertificationResponse])
 def get_certifications(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Listar certificaciones técnicas (CU-007)."""
+    """Listar certificaciones disponibles."""
     return CertificationController.list_certifications(db)
 
 
@@ -144,7 +151,7 @@ def create_certification(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Crear una nueva certificación técnica (CU-007)."""
+    """Registrar nueva certificación."""
     return CertificationController.create_certification(db, data)
 
 
@@ -155,7 +162,7 @@ def update_certification(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Editar una certificación técnica (CU-007)."""
+    """Editar certificación."""
     return CertificationController.update_certification(db, idcertificacion, data)
 
 
@@ -165,18 +172,19 @@ def delete_certification(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Eliminar una certificación técnica (CU-007)."""
+    """Eliminar certificación."""
     return CertificationController.delete_certification(db, idcertificacion)
 
 
-# Product Certification Links
+# Asignación a productos
+
 @router.get("/products/{idproducto}/certifications", response_model=List[ProductCertificationResponse])
 def get_product_certifications(
     idproducto: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Listar certificaciones asignadas a un producto (CU-007)."""
+    """Ver certificaciones de un producto."""
     return CertificationController.list_product_certifications(db, idproducto)
 
 
@@ -187,7 +195,7 @@ def assign_product_certification(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Asignar certificación a un producto (CU-007)."""
+    """Asignar certificación a un producto."""
     return CertificationController.assign_product_certification(db, idproducto, data)
 
 
@@ -198,5 +206,5 @@ def remove_product_certification(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Remover certificación de un producto (CU-007)."""
+    """Desvincular certificación de un producto."""
     return CertificationController.remove_product_certification(db, idproducto, idcertificacion)

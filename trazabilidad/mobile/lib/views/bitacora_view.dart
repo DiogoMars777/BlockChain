@@ -27,24 +27,26 @@ class _BitacoraViewState extends State<BitacoraView> {
     super.dispose();
   }
 
+  // Color del badge según la acción (GET, POST, PUT, DELETE, LOGIN)
   Color _getMethodColor(String method) {
     switch (method.toUpperCase()) {
       case 'GET':
-        return const Color(0xFF0284C7); // Sky Blue
+        return const Color(0xFF0284C7); // Celeste
       case 'POST':
-        return const Color(0xFF059669); // Emerald
+        return const Color(0xFF059669); // Esmeralda
       case 'PUT':
       case 'PATCH':
-        return const Color(0xFFD97706); // Amber
+        return const Color(0xFFD97706); // Ámbar
       case 'DELETE':
-        return const Color(0xFFDC2626); // Red
+        return const Color(0xFFDC2626); // Rojo
       case 'LOGIN':
-        return const Color(0xFF7C3AED); // Purple
+        return const Color(0xFF7C3AED); // Morado
       default:
-        return const Color(0xFF64748B); // Slate
+        return const Color(0xFF64748B); // Pizarra
     }
   }
 
+  // Modal con detalles completos del registro seleccionado
   void _showDetailModal(BuildContext context, BitacoraItem item) {
     showModalBottomSheet(
       context: context,

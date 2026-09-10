@@ -23,7 +23,7 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# CORS configuration
+# Configuración de CORS
 origins = settings.CORS_ORIGINS if isinstance(settings.CORS_ORIGINS, list) else [i.strip() for i in settings.CORS_ORIGINS.split(",")]
 
 app.add_middleware(
@@ -34,7 +34,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include Controller routers
+# Inclusión de rutas de los controladores
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(tenant_router, prefix="/api/v1")
 app.include_router(user_router, prefix="/api/v1")
@@ -56,6 +56,7 @@ from app.models.cu005_bitacora.bitacora import Bitacora
 from app.models.cu002_usuarios.usuario_tenant import UsuarioTenant
 from app.db.session import SessionLocal
 
+# Middleware de auditoría automática: registra peticiones exitosas en la bitácora
 @app.middleware("http")
 async def audit_logger_middleware(request: Request, call_next):
     response = await call_next(request)
@@ -68,6 +69,7 @@ async def audit_logger_middleware(request: Request, call_next):
     ):
         return response
 
+    # Solo registrar operaciones exitosas (200-399) con token Bearer
     if 200 <= response.status_code < 400:
         auth_header = request.headers.get("authorization")
         if auth_header and auth_header.startswith("Bearer "):
@@ -83,6 +85,7 @@ async def audit_logger_middleware(request: Request, call_next):
                         request.headers.get("x-forwarded-for", "").split(",")[0].strip()
                         or (request.client.host if request.client else "127.0.0.1")
                     )
+                    # Deduce la entidad a partir del primer segmento de la URL
                     path_parts = [p for p in path.split("/") if p and p not in ("api", "v1")]
                     entidad = path_parts[0].capitalize() if path_parts else "General"
                     

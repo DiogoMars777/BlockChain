@@ -12,7 +12,7 @@
   </header>
 
   <main class="role-content">
-    <!-- Messages -->
+    <!-- Mensajes -->
     @if (successMessage()) {
       <div class="alert alert-success">
         ✓ {{ successMessage() }}
@@ -25,7 +25,7 @@
     }
 
     <div class="split-layout">
-      <!-- Left Column: Users Selection List -->
+      <!-- Columna izquierda: Lista de usuarios -->
       <section class="card users-list-card">
         <div class="card-header">
           <h3>1. Seleccionar Usuario</h3>
@@ -51,7 +51,7 @@
         </div>
       </section>
 
-      <!-- Right Column: Roles & Matrix Assignment -->
+      <!-- Columna derecha: Asignación de roles -->
       <section class="card roles-assignment-card">
         @if (selectedUser()) {
           <div class="card-header flex-header">

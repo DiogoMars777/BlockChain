@@ -24,9 +24,9 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {
     if (this.token()) {
-      // Deferred to the next macrotask: calling getMe() synchronously here would run
-      // authInterceptor's inject(AuthService) while this constructor is still on the
-      // call stack, which Angular's DI rejects as a circular dependency (NG0200).
+      // Pospuesto a la siguiente macrotarea: llamar a getMe() síncronamente aquí ejecutaría
+      // el inject(AuthService) del authInterceptor mientras este constructor sigue en la
+      // pila de llamadas, lo que Angular rechaza por dependencia circular (NG0200).
       setTimeout(() => {
         this.getMe().subscribe({
           error: () => this.clearSession()

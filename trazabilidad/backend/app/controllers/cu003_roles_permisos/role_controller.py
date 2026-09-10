@@ -59,7 +59,7 @@ class RoleController:
 
     @staticmethod
     def get_user_roles(db: Session, idusuario: int, current_user: User) -> UserRolesResponse:
-        # 1. Fetch user
+        # 1. Obtener usuario
         stmt_u = select(User).where(User.idusuario == idusuario)
         user = db.execute(stmt_u).scalar_one_or_none()
         if not user:
@@ -68,7 +68,7 @@ class RoleController:
                 detail=f"Usuario con ID {idusuario} no encontrado."
             )
 
-        # 2. Fetch usuariotenant record
+        # 2. Obtener registro de usuariotenant
         stmt_ut = select(UsuarioTenant).where(UsuarioTenant.idusuario == idusuario)
         ut = db.execute(stmt_ut).scalars().first()
         if not ut:
@@ -77,7 +77,7 @@ class RoleController:
                 detail=f"El usuario con ID {idusuario} no está asignado a ninguna empresa."
             )
 
-        # 3. Fetch user's assigned roles
+        # 3. Obtener roles asignados al usuario
         stmt_r = (
             select(Role)
             .join(UsuarioTenantRol, UsuarioTenantRol.idrol == Role.idrol)
@@ -99,7 +99,7 @@ class RoleController:
         data: AssignUserRolesRequest,
         current_user: User
     ) -> UserRolesResponse:
-        # 1. Fetch user
+        # 1. Obtener usuario
         stmt_u = select(User).where(User.idusuario == idusuario)
         user = db.execute(stmt_u).scalar_one_or_none()
         if not user:
@@ -108,7 +108,7 @@ class RoleController:
                 detail=f"Usuario con ID {idusuario} no encontrado."
             )
 
-        # 2. Fetch usuariotenant record
+        # 2. Obtener registro de usuariotenant
         stmt_ut = select(UsuarioTenant).where(UsuarioTenant.idusuario == idusuario)
         ut = db.execute(stmt_ut).scalars().first()
         if not ut:
@@ -117,7 +117,7 @@ class RoleController:
                 detail=f"El usuario con ID {idusuario} no está asignado a ninguna empresa."
             )
 
-        # 3. Validate role IDs
+        # 3. Validar IDs de rol
         if data.role_ids:
             stmt_valid = select(Role.idrol).where(Role.idrol.in_(data.role_ids))
             valid_ids = db.execute(stmt_valid).scalars().all()
@@ -128,23 +128,23 @@ class RoleController:
                     detail=f"Los siguientes IDs de rol no existen: {list(invalid_ids)}"
                 )
 
-        # 4. Remove existing roles for this user tenant link
+        # 4. Eliminar roles previos del usuario en esta empresa
         db.execute(
             delete(UsuarioTenantRol).where(UsuarioTenantRol.idusuariotenant == ut.idusuariotenant)
         )
 
-        # 5. Insert new roles
+        # 5. Insertar nuevos roles asignados
         for rid in set(data.role_ids):
             utr = UsuarioTenantRol(idusuariotenant=ut.idusuariotenant, idrol=rid)
             db.add(utr)
 
         db.commit()
 
-        # 6. Return updated user roles
+        # 6. Retornar roles actualizados del usuario
         return RoleController.get_user_roles(db, idusuario, current_user)
 
 
-# Endpoints
+# Endpoints (Rutas HTTP)
 @router.get("/roles", response_model=List[RoleResponse])
 def get_roles(
     db: Session = Depends(get_db),

@@ -43,37 +43,37 @@ class AuthController:
     def _find_tenant(db: Session, tenant_slug: str) -> Optional[Tenant]:
         clean_slug = tenant_slug.strip().lower()
         
-        # 1. Direct ID match if numeric
+        # 1. Coincidencia directa por ID si es numérico
         if clean_slug.isdigit():
             stmt = select(Tenant).where(Tenant.idtenant == int(clean_slug))
             tenant = db.execute(stmt).scalar_one_or_none()
             if tenant:
                 return tenant
 
-        # 2. NIT match
+        # 2. Coincidencia por NIT
         stmt = select(Tenant).where(func.lower(Tenant.nit) == clean_slug)
         tenant = db.execute(stmt).scalar_one_or_none()
         if tenant:
             return tenant
 
-        # 3. Exact or slugified name match
+        # 3. Coincidencia por nombre exacto o formato slug
         stmt_all = select(Tenant).where(Tenant.activo != False)
         all_tenants = db.execute(stmt_all).scalars().all()
         for t in all_tenants:
-            # normalized name slug: "Importadora Bolivia S.A." -> "importadora-bolivia-s.a." or "importadora-bolivia-s-a" or "empresa-demo"
+            # normalización a slug: "Importadora Bolivia S.A." -> "importadora-bolivia-s.a."
             t_name_slug = t.nombre.strip().lower().replace(" ", "-")
             t_name_simple = t.nombre.strip().lower()
             if clean_slug in (t_name_slug, t_name_simple, t.nombre.lower()):
                 return t
         
-        # Return None if no tenant matched
+        # Retornar None si ninguna empresa coincide
         return None
 
     @staticmethod
     def authenticate_user(
         db: Session, tenant_slug: str, email: str, password: str
     ) -> Tuple[str, str, User, Tenant]:
-        """Authenticate user by tenant identification, email, and password."""
+        """Autenticar usuario por empresa, correo y contraseña."""
         tenant = AuthController._find_tenant(db, tenant_slug)
         if not tenant or tenant.activo == False:
             raise HTTPException(
@@ -93,14 +93,14 @@ class AuthController:
                 detail="Empresa o credenciales inválidas."
             )
 
-        # Check tenant linkage via usuariotenant table if present
+        # Verificar vinculación con la empresa en la tabla usuariotenant
         stmt_link = select(UsuarioTenant).where(
             UsuarioTenant.idusuario == user.idusuario,
             UsuarioTenant.idtenant == tenant.idtenant
         )
         link = db.execute(stmt_link).scalar_one_or_none()
         if not link:
-            # If link does not exist, create it to ensure smooth multi-tenant access
+            # Si no existe el vínculo, crearlo para garantizar el acceso multiempresa
             link = UsuarioTenant(idusuario=user.idusuario, idtenant=tenant.idtenant)
             db.add(link)
             db.commit()
@@ -137,7 +137,7 @@ class AuthController:
 
     @staticmethod
     def refresh_access_token(db: Session, raw_refresh_token: str) -> Tuple[str, User]:
-        """Refresh JWT access token using a valid refresh token."""
+        """Refrescar token de acceso JWT usando un token de refresco válido."""
         token_hash_val = hash_token(raw_refresh_token)
         stmt = select(RefreshToken).where(
             RefreshToken.tokenhash == token_hash_val,
@@ -188,7 +188,7 @@ class AuthController:
 
     @staticmethod
     def logout(db: Session, raw_refresh_token: Optional[str]) -> None:
-        """Revoke refresh token on logout."""
+        """Revocar token de refresco al cerrar sesión."""
         if not raw_refresh_token:
             return
         token_hash_val = hash_token(raw_refresh_token)
@@ -206,7 +206,7 @@ class AuthController:
         background_tasks: Optional[BackgroundTasks] = None,
         frontend_origin: Optional[str] = None
     ) -> str:
-        """Generate reset token and send email asynchronously."""
+        """Generar token de recuperación y enviar correo de forma asíncrona."""
         generic_message = (
             "Si la cuenta existe, recibirás un correo con las instrucciones "
             "para restablecer tu contraseña."
@@ -265,7 +265,7 @@ class AuthController:
     def reset_password(
         db: Session, token: str, new_password: str, confirm_password: str
     ) -> str:
-        """Reset password using reset token."""
+        """Restablecer contraseña usando el token de recuperación."""
         if new_password != confirm_password:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -322,7 +322,7 @@ class AuthController:
 
     @staticmethod
     def get_current_user_from_token(db: Session, token: str) -> User:
-        """Validate JWT access token and return active authenticated user."""
+        """Validar token de acceso JWT y retornar el usuario autenticado activo."""
         payload = decode_access_token(token)
         if not payload:
             raise HTTPException(
@@ -371,7 +371,7 @@ class AuthController:
 
     @staticmethod
     def switch_tenant(db: Session, target_tenant_id: int, current_user: User) -> Tuple[str, Tenant]:
-        """Switch active tenant context for SuperAdmin/Multi-Tenant user."""
+        """Cambiar el contexto de empresa activa para el usuario."""
         stmt_t = select(Tenant).where(Tenant.idtenant == target_tenant_id, Tenant.activo != False)
         tenant = db.execute(stmt_t).scalar_one_or_none()
         if not tenant:
@@ -380,7 +380,7 @@ class AuthController:
                 detail=f"La empresa con ID {target_tenant_id} no existe o está inactiva."
             )
 
-        # Create new access token with the requested tenant_id
+        # Crear nuevo token de acceso con el idtenant solicitado
         access_token_payload = {
             "sub": str(current_user.idusuario),
             "tenant_id": str(tenant.idtenant),
@@ -388,7 +388,7 @@ class AuthController:
         }
         access_token = create_access_token(access_token_payload)
 
-        # Link user to tenant if not linked
+        # Vincular usuario a la empresa si no estuviera vinculado
         stmt_link = select(UsuarioTenant).where(
             UsuarioTenant.idusuario == current_user.idusuario,
             UsuarioTenant.idtenant == tenant.idtenant
@@ -403,16 +403,16 @@ class AuthController:
         return access_token, tenant
 
 
-# Dependencies
+# Dependencias
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security_scheme),
     db: Session = Depends(get_db)
 ) -> User:
-    """Dependency to inject currently authenticated user."""
+    """Dependencia para inyectar el usuario autenticado actual."""
     return AuthController.get_current_user_from_token(db, credentials.credentials)
 
 
-# Controller Endpoints (HTTP Routes)
+# Endpoints del Controlador (Rutas HTTP)
 @router.post("/login", response_model=TokenResponse)
 def login(
     credentials: LoginRequest,
@@ -420,7 +420,7 @@ def login(
     request: Request,
     db: Session = Depends(get_db)
 ):
-    """Authenticate user and return JWT Access Token + HttpOnly Refresh Token Cookie."""
+    """Autenticar usuario y retornar token de acceso JWT y cookie de refresco HttpOnly."""
     access_token, raw_refresh_token, user, tenant = AuthController.authenticate_user(
         db, credentials.tenant_slug, credentials.email, credentials.password
     )
@@ -485,7 +485,7 @@ def refresh_token(
     refresh_token: Optional[str] = Cookie(None),
     db: Session = Depends(get_db)
 ):
-    """Refresh JWT access token using HttpOnly Cookie."""
+    """Refrescar token de acceso JWT usando la cookie HttpOnly."""
     if not refresh_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -503,7 +503,7 @@ def logout(
     refresh_token: Optional[str] = Cookie(None),
     db: Session = Depends(get_db)
 ):
-    """Revoke refresh token and clear HttpOnly cookie."""
+    """Revocar token de refresco y limpiar cookie HttpOnly."""
     AuthController.logout(db, refresh_token)
     response.delete_cookie(key="refresh_token", httponly=True, samesite="lax")
     return MessageResponse(message="Sesión cerrada correctamente.")
@@ -511,7 +511,7 @@ def logout(
 
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
-    """Return currently authenticated user details."""
+    """Retornar datos del usuario autenticado actual."""
     return UserResponse.model_validate(current_user)
 
 
@@ -541,7 +541,7 @@ async def forgot_password(
     request: Request,
     db: Session = Depends(get_db)
 ):
-    """Request password reset link via email."""
+    """Solicitar enlace de recuperación de contraseña por correo."""
     origin = request.headers.get("origin") or request.headers.get("referer")
     msg = await AuthController.request_password_reset(
         db,
@@ -558,7 +558,7 @@ def reset_password(
     reset_data: ResetPasswordRequest,
     db: Session = Depends(get_db)
 ):
-    """Reset user password using valid token."""
+    """Restablecer contraseña de usuario usando un token válido."""
     msg = AuthController.reset_password(
         db, reset_data.token, reset_data.new_password, reset_data.confirm_password
     )

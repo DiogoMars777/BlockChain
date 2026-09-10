@@ -49,7 +49,7 @@ export class CertificationService {
     );
   }
 
-  // Product links
+  // Enlaces con productos
   getProductCertifications(idproducto: number): Observable<ProductCertification[]> {
     return this.http.get<ProductCertification[]>(`${this.productUrl}/${idproducto}/certifications`);
   }

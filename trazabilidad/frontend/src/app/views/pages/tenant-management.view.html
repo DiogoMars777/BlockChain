@@ -15,7 +15,7 @@
   </header>
 
   <main class="tenant-content">
-    <!-- Messages -->
+    <!-- Mensajes -->
     @if (successMessage()) {
       <div class="alert alert-success">
         ✓ {{ successMessage() }}
@@ -27,7 +27,7 @@
       </div>
     }
 
-    <!-- Search & Filter Bar -->
+    <!-- Barra de búsqueda y filtros -->
     <div class="filter-bar">
       <div class="search-box">
         <span class="search-icon">🔍</span>
@@ -43,7 +43,7 @@
       </div>
     </div>
 
-    <!-- Tenants Table -->
+    <!-- Tabla de empresas -->
     @if (isLoading()) {
       <div class="loading-state">
         <div class="spinner"></div>
@@ -58,7 +58,7 @@
               <th>Nombre Comercial</th>
               <th>Razón Social</th>
               <th>NIT</th>
-              <th>Correo Electrónico</th>
+              <th>Correo Contacto</th>
               <th>Teléfono</th>
               <th>Estado</th>
               <th>Acciones</th>
@@ -69,9 +69,9 @@
               <tr>
                 <td class="code-id">#{{ tenant.idtenant }}</td>
                 <td class="font-bold">{{ tenant.nombre }}</td>
-                <td>{{ tenant.razonsocial }}</td>
+                <td>{{ tenant.razonsocial || 'N/A' }}</td>
                 <td><span class="badge-nit">{{ tenant.nit }}</span></td>
-                <td>{{ tenant.email }}</td>
+                <td>{{ tenant.email || 'N/A' }}</td>
                 <td>{{ tenant.telefono || 'N/A' }}</td>
                 <td>
                   <span class="status-badge" [class.active]="tenant.activo" [class.inactive]="!tenant.activo">
@@ -100,7 +100,7 @@
     }
   </main>
 
-  <!-- Modal Form -->
+  <!-- Formulario modal -->
   @if (showModal()) {
     <div class="modal-backdrop" (click)="closeModal()">
       <div class="modal-card" (click)="$event.stopPropagation()">

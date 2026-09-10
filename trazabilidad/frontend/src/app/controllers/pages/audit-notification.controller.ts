@@ -16,12 +16,14 @@ export class AuditNotificationController implements OnInit {
   private auditService = inject(AuditNotificationService);
   private router = inject(Router);
 
+  // Signals reactivos
   bitacora = this.auditService.bitacoraSignal;
   totalBitacora = this.auditService.totalBitacoraSignal;
   notifications = this.auditService.notificationsSignal;
   unreadCount = this.auditService.unreadCountSignal;
   isLoading = this.auditService.isLoadingSignal;
 
+  // Filtros y pestaña activa
   activeTab = signal<'bitacora' | 'notifications'>('bitacora');
   accionFilter = signal<string>('');
   entidadFilter = signal<string>('');
@@ -34,6 +36,7 @@ export class AuditNotificationController implements OnInit {
     this.loadNotifications();
   }
 
+  // Cargar bitácora con filtros de acción y entidad
   loadBitacora(): void {
     this.auditService.getBitacora(this.accionFilter(), this.entidadFilter()).subscribe({
       error: (err) => {
@@ -42,6 +45,7 @@ export class AuditNotificationController implements OnInit {
     });
   }
 
+  // Cargar notificaciones del usuario
   loadNotifications(): void {
     this.auditService.getNotifications(this.onlyUnreadFilter()).subscribe({
       error: (err) => {
@@ -59,6 +63,7 @@ export class AuditNotificationController implements OnInit {
     this.loadNotifications();
   }
 
+  // Marcar notificación como leída
   onMarkAsRead(notif: NotificacionItem): void {
     this.auditService.markAsRead(notif.idnotificacion).subscribe();
   }

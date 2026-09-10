@@ -45,7 +45,7 @@ class ProductController:
         if idcategoria is not None:
             query = query.where(Producto.idcategoria == idcategoria)
 
-        # Count total
+        # Contar total
         count_stmt = select(func.count()).select_from(query.subquery())
         total = db.execute(count_stmt).scalar_one()
 
@@ -128,7 +128,7 @@ class ProductController:
         db.refresh(prod)
         return ProductResponse.model_validate(prod)
 
-    # Variant operations
+    # Operaciones de variantes
     @staticmethod
     def add_variant(db: Session, idproducto: int, data: VariantCreate) -> VariantResponse:
         stmt_p = select(Producto).where(Producto.idproducto == idproducto)
@@ -139,7 +139,7 @@ class ProductController:
                 detail=f"Producto con ID {idproducto} no encontrado."
             )
 
-        # Check unique SKU
+        # Validar SKU único
         stmt_sku = select(VarianteProducto).where(VarianteProducto.sku == data.sku)
         if db.execute(stmt_sku).scalar_one_or_none():
             raise HTTPException(
@@ -204,7 +204,7 @@ class ProductController:
         return {"detail": f"Variante {idvariante} eliminada exitosamente."}
 
 
-# Endpoints
+# Endpoints (Rutas HTTP)
 @router.get("/products", response_model=ProductListResponse)
 def get_products(
     search: Optional[str] = Query(None),
@@ -259,7 +259,7 @@ def delete_product(
     return ProductController.delete_product(db, idproducto)
 
 
-# Variants
+# Endpoints de Variantes
 @router.post("/products/{idproducto}/variants", response_model=VariantResponse, status_code=status.HTTP_201_CREATED)
 def add_variant(
     idproducto: int,

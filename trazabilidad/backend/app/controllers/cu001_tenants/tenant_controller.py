@@ -42,11 +42,11 @@ class TenantController:
                 )
             )
 
-        # Count total
+        # Contar total
         count_stmt = select(func.count()).select_from(query.subquery())
         total = db.execute(count_stmt).scalar_one()
 
-        # Execute paginated query
+        # Ejecutar consulta paginada
         query = query.order_by(Tenant.idtenant.asc()).offset(skip).limit(limit)
         items = db.execute(query).scalars().all()
 
@@ -57,7 +57,7 @@ class TenantController:
 
     @staticmethod
     def create_tenant(db: Session, data: TenantCreate) -> TenantResponse:
-        # Check NIT uniqueness
+        # Validar unicidad del NIT
         stmt_nit = select(Tenant).where(Tenant.nit == data.nit.strip())
         existing = db.execute(stmt_nit).scalar_one_or_none()
         if existing:
@@ -143,7 +143,7 @@ class TenantController:
         return TenantResponse.model_validate(tenant)
 
 
-# Endpoints
+# Endpoints (Rutas HTTP)
 @router.get("", response_model=TenantListResponse)
 def get_tenants(
     search: Optional[str] = Query(None, description="Buscador por nombre, razón social o NIT"),

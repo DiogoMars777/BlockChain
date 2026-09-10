@@ -45,7 +45,7 @@ class TenantCatalogController:
                 )
             )
 
-        # Count total
+        # Contar total
         count_stmt = select(func.count()).select_from(query.subquery())
         total = db.execute(count_stmt).scalar_one()
 
@@ -61,13 +61,13 @@ class TenantCatalogController:
     def add_to_catalog(db: Session, user: User, data: TenantCatalogCreate) -> TenantCatalogResponse:
         target_tenant_id = data.idtenant or get_user_tenant_id(db, user)
 
-        # Check variant exists
+        # Verificar que la variante exista
         stmt_v = select(VarianteProducto).where(VarianteProducto.idvariante == data.idvariante)
         var = db.execute(stmt_v).scalar_one_or_none()
         if not var:
             raise HTTPException(status_code=404, detail=f"Variante {data.idvariante} no encontrada.")
 
-        # Check if already in tenant catalog
+        # Verificar si ya existe en el catálogo de la empresa
         stmt_e = select(CatalogoTenant).where(
             CatalogoTenant.idtenant == target_tenant_id,
             CatalogoTenant.idvariante == data.idvariante
@@ -120,7 +120,7 @@ class TenantCatalogController:
         return {"detail": f"Item {idcatalogotenant} removido del catálogo."}
 
 
-# Endpoints
+# Endpoints (Rutas HTTP)
 @router.get("/tenant-catalog", response_model=TenantCatalogListResponse)
 def get_tenant_catalog(
     search: Optional[str] = Query(None),

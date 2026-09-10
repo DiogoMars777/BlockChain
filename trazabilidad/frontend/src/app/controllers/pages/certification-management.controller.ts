@@ -18,20 +18,22 @@ export class CertificationManagementController implements OnInit {
   private productService = inject(ProductService);
   private router = inject(Router);
 
+  // Signals reactivos del estado
   certifications = this.certService.certificationsSignal;
   isLoading = this.certService.isLoadingSignal;
   products = this.productService.productsSignal;
 
+  // Estado del modal de Crear / Editar
   isModalOpen = signal<boolean>(false);
   editingCert = signal<Certification | null>(null);
 
-  // Form fields
+  // Campos del formulario
   cNombre = signal<string>('');
   cEntidad = signal<string>('');
   cDescripcion = signal<string>('');
   cLogoUrl = signal<string>('');
 
-  // Assign Modal
+  // Modal para vincular a producto
   isAssignModalOpen = signal<boolean>(false);
   selectedCertForAssign = signal<Certification | null>(null);
   selectedProductId = signal<number | undefined>(undefined);
@@ -49,12 +51,14 @@ export class CertificationManagementController implements OnInit {
     this.productService.getProducts('', undefined, 0, 100).subscribe();
   }
 
+  // Cargar lista de certificaciones
   loadCertifications() {
     this.certService.getCertifications().subscribe({
       error: () => this.errorMessage.set('Error al cargar certificaciones.')
     });
   }
 
+  // Abrir modal para crear
   openCreateModal() {
     this.editingCert.set(null);
     this.cNombre.set('');
@@ -65,6 +69,7 @@ export class CertificationManagementController implements OnInit {
     this.isModalOpen.set(true);
   }
 
+  // Abrir modal para editar
   openEditModal(cert: Certification) {
     this.editingCert.set(cert);
     this.cNombre.set(cert.nombre);
@@ -79,6 +84,7 @@ export class CertificationManagementController implements OnInit {
     this.isModalOpen.set(false);
   }
 
+  // Guardar certificación (decide entre POST o PUT)
   saveCertification() {
     if (!this.cNombre().trim()) {
       this.errorMessage.set('El nombre de la certificación es obligatorio.');
@@ -87,6 +93,7 @@ export class CertificationManagementController implements OnInit {
 
     const current = this.editingCert();
     if (current) {
+      // Actualizar (PUT)
       const updateData: CertificationUpdate = {
         nombre: this.cNombre().trim(),
         entidademisora: this.cEntidad().trim() || undefined,
@@ -102,6 +109,7 @@ export class CertificationManagementController implements OnInit {
         error: (err) => this.errorMessage.set(err.error?.detail || 'Error al actualizar certificación.')
       });
     } else {
+      // Crear (POST)
       const createData: CertificationCreate = {
         nombre: this.cNombre().trim(),
         entidademisora: this.cEntidad().trim() || undefined,
@@ -119,6 +127,7 @@ export class CertificationManagementController implements OnInit {
     }
   }
 
+  // Eliminar certificación
   deleteCertification(cert: Certification) {
     if (confirm(`¿Eliminar la certificación "${cert.nombre}"?`)) {
       this.certService.deleteCertification(cert.idcertificacion).subscribe({
@@ -131,7 +140,7 @@ export class CertificationManagementController implements OnInit {
     }
   }
 
-  // Assign to Product
+  // Abrir modal de asignación
   openAssignModal(cert: Certification) {
     this.selectedCertForAssign.set(cert);
     this.selectedProductId.set(undefined);
@@ -144,6 +153,7 @@ export class CertificationManagementController implements OnInit {
     this.isAssignModalOpen.set(false);
   }
 
+  // Asignar certificación a un producto
   assignToProduct() {
     const cert = this.selectedCertForAssign();
     const prodId = this.selectedProductId();

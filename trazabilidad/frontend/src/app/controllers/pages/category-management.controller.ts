@@ -22,7 +22,7 @@ export class CategoryManagementController implements OnInit {
   isModalOpen = signal<boolean>(false);
   editingCategory = signal<Category | null>(null);
 
-  // Form fields
+  // Campos del formulario
   nombrecategoria = signal<string>('');
   descripcion = signal<string>('');
 

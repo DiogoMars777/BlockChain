@@ -101,7 +101,7 @@ export class UserManagementController implements OnInit {
       idtenant: user.tenant?.idtenant || null,
       activo: user.activo ?? true
     });
-    // Password optional during edit
+    // Contraseña opcional durante la edición
     this.userForm.get('contrasena')?.clearValidators();
     this.userForm.get('contrasena')?.updateValueAndValidity();
     this.errorMessage.set(null);

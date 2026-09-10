@@ -4,6 +4,7 @@ import '../core/api_config.dart';
 import '../core/secure_storage.dart';
 import '../models/bitacora_model.dart';
 
+// Servicio móvil para consultar la bitácora desde la API REST
 class BitacoraService {
   static Future<BitacoraListResponse> fetchBitacora({
     String? accion,

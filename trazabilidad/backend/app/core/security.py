@@ -8,17 +8,17 @@ from pwdlib import PasswordHash
 
 from app.core.config import settings
 
-# Initialize Argon2 password hasher
+# Inicializar el hasheador de contraseñas Argon2
 password_hash_context = PasswordHash.recommended()
 
 
 def hash_password(password: str) -> str:
-    """Hash password using Argon2id."""
+    """Hashear contraseña usando Argon2id."""
     return password_hash_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify plain password against hashed password."""
+    """Verificar contraseña en texto plano contra el hash."""
     try:
         return password_hash_context.verify(plain_password, hashed_password)
     except Exception:
@@ -27,12 +27,12 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def validate_password_strength(password: str) -> Tuple[bool, str]:
     """
-    Validate password strength according to requirements:
-    - Min 8 chars
-    - At least 1 uppercase
-    - At least 1 lowercase
-    - At least 1 number
-    - At least 1 special char (!@#$%^&*()_-+=.,)
+    Validar robustez de la contraseña según requisitos:
+    - Mínimo 8 caracteres
+    - Al menos 1 mayúscula
+    - Al menos 1 minúscula
+    - Al menos 1 número
+    - Al menos 1 carácter especial (!@#$%^&*()_-+=.,)
     """
     if len(password) < 8:
         return False, "La contraseña debe tener al menos 8 caracteres."
@@ -48,7 +48,7 @@ def validate_password_strength(password: str) -> Tuple[bool, str]:
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """Create JWT Access Token."""
+    """Crear token de acceso JWT."""
     to_encode = data.copy()
     now = datetime.now(timezone.utc)
     if expires_delta:
@@ -62,7 +62,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 
 
 def decode_access_token(token: str) -> Optional[dict]:
-    """Decode and validate JWT Access Token."""
+    """Decodificar y validar token de acceso JWT."""
     try:
         payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
         return payload
@@ -71,10 +71,10 @@ def decode_access_token(token: str) -> Optional[dict]:
 
 
 def generate_secure_raw_token() -> str:
-    """Generate a cryptographically secure random token string."""
+    """Generar una cadena de token criptográficamente segura."""
     return secrets.token_urlsafe(32)
 
 
 def hash_token(token: str) -> str:
-    """Generate SHA-256 hash of a raw token for safe database storage."""
+    """Generar hash SHA-256 de un token para guardado seguro en base de datos."""
     return hashlib.sha256(token.encode("utf-8")).hexdigest()

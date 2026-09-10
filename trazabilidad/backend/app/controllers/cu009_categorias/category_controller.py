@@ -68,7 +68,7 @@ class CategoryController:
         return {"detail": f"Categoría {idcategoria} eliminada exitosamente."}
 
 
-# Endpoints
+# Endpoints (Rutas HTTP)
 @router.get("/categories", response_model=List[CategoryResponse])
 def get_categories(
     db: Session = Depends(get_db),

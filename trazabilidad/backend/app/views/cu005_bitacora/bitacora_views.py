@@ -3,6 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
 
+# Esquemas de respuesta JSON para bitácora y notificaciones
 class BitacoraResponse(BaseModel):
     idbitacora: int
     idusuariotenant: int

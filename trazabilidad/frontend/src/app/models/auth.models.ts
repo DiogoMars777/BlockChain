@@ -8,7 +8,7 @@ export interface Tenant {
   activo?: boolean;
   fechacreacion?: string;
 
-  // Fallback / legacy UI getters
+  // Getters para compatibilidad con la interfaz
   id?: string | number;
   name?: string;
   slug?: string;
@@ -45,7 +45,7 @@ export interface User {
   fecharegistro?: string;
   tenant?: Tenant;
 
-  // Fallback / legacy UI getters
+  // Getters para compatibilidad con la interfaz
   id?: string | number;
   tenant_id?: string | number;
   first_name?: string;
@@ -129,7 +129,7 @@ export interface NotificacionListResponse {
   items: NotificacionItem[];
 }
 
-// Category models (CU-009)
+// Modelos de categorías (CU-009)
 export interface Category {
   idcategoria: number;
   nombrecategoria: string;
@@ -146,7 +146,7 @@ export interface CategoryUpdate {
   descripcion?: string;
 }
 
-// Variant models (CU-006)
+// Modelos de variantes (CU-006)
 export interface Variant {
   idvariante: number;
   idproducto: number;
@@ -170,7 +170,7 @@ export interface VariantUpdate {
   preciousd?: number;
 }
 
-// Product models (CU-006)
+// Modelos de productos (CU-006)
 export interface Product {
   idproducto: number;
   idcategoria?: number;
@@ -210,7 +210,7 @@ export interface ProductListResponse {
   items: Product[];
 }
 
-// Certification models (CU-007)
+// Modelos de certificaciones (CU-007)
 export interface Certification {
   idcertificacion: number;
   nombre: string;
@@ -246,7 +246,7 @@ export interface ProductCertification {
   certificacion?: Certification;
 }
 
-// Tenant Catalog models (CU-008)
+// Modelos del catálogo de empresa (CU-008)
 export interface TenantCatalogItem {
   idcatalogotenant: number;
   idtenant: number;
@@ -306,7 +306,7 @@ export interface MessageResponse {
   message: string;
 }
 
-// Actor models (CU-013)
+// Modelos de actores (CU-013)
 export interface Actor {
   idactor: number;
   idtenant: number;
@@ -332,7 +332,7 @@ export interface ActorListResponse {
   items: Actor[];
 }
 
-// Location models (CU-014)
+// Modelos de ubicaciones (CU-014)
 export interface LocationItem {
   idubicacion: number;
   idtenant: number;
@@ -363,7 +363,7 @@ export interface LocationListResponse {
   items: LocationItem[];
 }
 
-// Unit models (CU-015)
+// Modelos de unidades físicas (CU-015)
 export interface UnitItem {
   idunidad: number;
   idtenant: number;

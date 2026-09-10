@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
 
+# Certificaciones técnicas y homologaciones 
 class Certificacion(Base):
     __tablename__ = "certificacion"
 
@@ -18,6 +19,7 @@ class Certificacion(Base):
     productos_certificados = relationship("ProductoCertificacion", back_populates="certificacion", cascade="all, delete-orphan")
 
 
+# Tabla intermedia: vincula productos con certificaciones (relación N:M)
 class ProductoCertificacion(Base):
     __tablename__ = "productocertificacion"
 

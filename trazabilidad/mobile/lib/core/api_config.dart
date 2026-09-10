@@ -1,5 +1,5 @@
 class ApiConfig {
-  // Production backend on Railway
+  // Backend de producción en Railway
   static const String baseUrl = 'https://blockchain-production-8de2.up.railway.app/api/v1';
 
   static const String login = '$baseUrl/auth/login';

@@ -21,6 +21,7 @@ router = APIRouter(tags=["Bitácora de Auditoría y Notificaciones (CU-005)"])
 
 
 class BitacoraController:
+    # 1. Consultar registros de bitácora con filtros (acción, entidad) y paginación
     @staticmethod
     def list_bitacora(
         db: Session,
@@ -36,10 +37,11 @@ class BitacoraController:
         if entidad and entidad.strip():
             query = query.where(func.lower(Bitacora.entidad) == entidad.strip().lower())
 
-        # Count total
+        # Total para paginación
         count_stmt = select(func.count()).select_from(query.subquery())
         total = db.execute(count_stmt).scalar_one()
 
+        # Orden cronológico inverso (lo más reciente primero)
         query = query.order_by(Bitacora.fechahora.desc()).offset(skip).limit(limit)
         items = db.execute(query).scalars().all()
 
@@ -48,6 +50,7 @@ class BitacoraController:
             items=[BitacoraResponse.model_validate(b) for b in items]
         )
 
+    # 2. Listar notificaciones del usuario actual
     @staticmethod
     def list_notifications(
         db: Session,
@@ -56,7 +59,6 @@ class BitacoraController:
         skip: int = 0,
         limit: int = 50
     ) -> NotificacionListResponse:
-        # Get usuariotenant link for current user
         stmt_ut = select(UsuarioTenant.idusuariotenant).where(
             UsuarioTenant.idusuario == current_user.idusuario
         )
@@ -69,14 +71,11 @@ class BitacoraController:
         if only_unread:
             query = query.where(Notificacion.leida == False)
 
-        # Count total
         count_stmt = select(func.count()).select_from(query.subquery())
         total = db.execute(count_stmt).scalar_one()
 
-        # Count unread
-        unread_stmt = select(func.count()).where(
-            Notificacion.leida == False
-        )
+        # Cantidad de notificaciones pendientes
+        unread_stmt = select(func.count()).where(Notificacion.leida == False)
         if idut:
             unread_stmt = unread_stmt.where(Notificacion.idusuariotenant == idut)
         unread_count = db.execute(unread_stmt).scalar_one()
@@ -90,6 +89,7 @@ class BitacoraController:
             items=[NotificacionResponse.model_validate(n) for n in items]
         )
 
+    # 3. Marcar notificación como leída
     @staticmethod
     def mark_notification_read(
         db: Session,
@@ -113,11 +113,11 @@ class BitacoraController:
         return NotificacionResponse.model_validate(notif)
 
 
-# Compatibilidad de alias
 AuditController = BitacoraController
 
 
-# Endpoints
+# Endpoints API REST
+
 @router.get("/bitacora", response_model=BitacoraListResponse)
 def get_bitacora(
     accion: Optional[str] = Query(None, description="Filtrar por tipo de acción (ej. INSERT, UPDATE, DELETE, LOGIN)"),
@@ -127,7 +127,7 @@ def get_bitacora(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Consultar registros de la bitácora de auditoría (CU-005)."""
+    """Consultar bitácora de auditoría."""
     return BitacoraController.list_bitacora(db, accion, entidad, skip, limit)
 
 
@@ -139,7 +139,7 @@ def get_notifications(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Consultar las notificaciones del usuario (CU-005)."""
+    """Consultar notificaciones del usuario."""
     return BitacoraController.list_notifications(db, current_user, only_unread, skip, limit)
 
 
@@ -149,5 +149,5 @@ def mark_notification_read(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Marcar una notificación como leída (CU-005)."""
+    """Marcar notificación como leída."""
     return BitacoraController.mark_notification_read(db, idnotificacion, current_user)

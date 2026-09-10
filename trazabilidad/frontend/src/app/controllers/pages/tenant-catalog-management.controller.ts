@@ -30,7 +30,7 @@ export class TenantCatalogManagementController implements OnInit {
   searchFilter = signal<string>('');
   selectedTenantFilter = signal<number | undefined>(undefined);
 
-  // Add Item Modal
+  // Modal para agregar ítem
   isAddModalOpen = signal<boolean>(false);
   selectedProduct = signal<Product | null>(null);
   selectedVariantId = signal<number | undefined>(undefined);
@@ -39,7 +39,7 @@ export class TenantCatalogManagementController implements OnInit {
   precioVenta = signal<number>(0);
   costoPromedio = signal<number>(0);
 
-  // Edit Item Modal
+  // Modal para editar ítem
   isEditModalOpen = signal<boolean>(false);
   editingItem = signal<TenantCatalogItem | null>(null);
   eSkuInterno = signal<string>('');
@@ -70,7 +70,7 @@ export class TenantCatalogManagementController implements OnInit {
     this.loadCatalog();
   }
 
-  // ADD ITEM
+  // AGREGAR ÍTEM
   openAddModal() {
     this.selectedProduct.set(null);
     this.selectedVariantId.set(undefined);
@@ -127,7 +127,7 @@ export class TenantCatalogManagementController implements OnInit {
     });
   }
 
-  // EDIT ITEM
+  // EDITAR ÍTEM
   openEditModal(item: TenantCatalogItem) {
     this.editingItem.set(item);
     this.eSkuInterno.set(item.skuinterno || '');

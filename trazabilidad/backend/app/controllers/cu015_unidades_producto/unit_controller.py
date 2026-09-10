@@ -70,12 +70,12 @@ class UnitController:
     def create_unit(db: Session, user: User, data: UnitCreate) -> UnitResponse:
         tenant_id = get_user_tenant_id(db, user)
 
-        # Validate variant
+        # Validar que la variante exista
         stmt_v = select(VarianteProducto).where(VarianteProducto.idvariante == data.idvariante)
         if not db.execute(stmt_v).scalar_one_or_none():
             raise HTTPException(status_code=404, detail=f"Variante {data.idvariante} no encontrada.")
 
-        # Check duplicate serial number
+        # Validar número de serie duplicado
         stmt_s = select(UnidadProducto).where(
             UnidadProducto.idtenant == tenant_id,
             UnidadProducto.numeroserie == data.numeroserie
@@ -147,7 +147,7 @@ class UnitController:
         return {"detail": f"Unidad {idunidad} eliminada."}
 
 
-# Endpoints
+# Endpoints (Rutas HTTP)
 @router.get("/units", response_model=UnitListResponse)
 def get_units(
     search: Optional[str] = Query(None),

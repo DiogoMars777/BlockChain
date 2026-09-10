@@ -93,7 +93,7 @@
     }
   </main>
 
-  <!-- Product Modal -->
+  <!-- Modal de producto -->
   @if (isProductModalOpen()) {
     <div class="modal-backdrop">
       <div class="modal-card">
@@ -168,7 +168,7 @@
     </div>
   }
 
-  <!-- Variants Modal -->
+  <!-- Modal de variantes -->
   @if (isVariantModalOpen() && selectedProductForVariants()) {
     <div class="modal-backdrop">
       <div class="modal-card wide">
@@ -182,7 +182,7 @@
         }
 
         <div class="modal-body">
-          <!-- Variants List -->
+          <!-- Lista de variantes -->
           <div class="variant-list">
             <h4>Variantes Registradas</h4>
             <table class="sub-table">
@@ -216,7 +216,7 @@
             </table>
           </div>
 
-          <!-- Add / Edit Variant Form -->
+          <!-- Formulario agregar / editar variante -->
           <div class="variant-form-box">
             <h4>{{ editingVariant() ? 'Editar Variante' : 'Añadir Nueva Variante' }}</h4>
             <div class="form-row">

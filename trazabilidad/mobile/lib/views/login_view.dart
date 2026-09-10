@@ -109,7 +109,7 @@ class _LoginViewState extends State<LoginView> {
                           const SizedBox(height: 16),
                         ],
 
-                        // Tenant Input
+                        // Campo de empresa (tenant)
                         TextFormField(
                           controller: _tenantController,
                           style: const TextStyle(color: Colors.white),
@@ -118,7 +118,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Email Input
+                        // Campo de correo electrónico
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -128,7 +128,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Password Input
+                        // Campo de contraseña
                         TextFormField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
@@ -150,7 +150,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         const SizedBox(height: 24),
 
-                        // Submit Button
+                        // Botón de inicio de sesión
                         ElevatedButton(
                           onPressed: widget.authController.isLoading ? null : _onLogin,
                           style: ElevatedButton.styleFrom(
@@ -173,7 +173,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Forgot Password Link
+                        // Enlace para recuperar contraseña
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).push(

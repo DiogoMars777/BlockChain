@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict
 from app.views.cu009_categorias.category_views import CategoryResponse
 
 
-# Variant Schemas
+# Esquemas de Variantes
 class VariantCreate(BaseModel):
     capacidad: Optional[str] = None
     color: Optional[str] = None
@@ -32,7 +32,7 @@ class VariantResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# Product Schemas
+# Esquemas de Productos
 class ProductCreate(BaseModel):
     nombre: str
     idcategoria: Optional[int] = None

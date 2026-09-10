@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.db.base import Base
 
 
+# Notificaciones del sistema para usuarios de cada empresa (CU-005)
 class Notificacion(Base):
     __tablename__ = "notificacion"
 

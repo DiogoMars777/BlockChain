@@ -46,7 +46,7 @@ class UserController:
         skip: int = 0,
         limit: int = 50
     ) -> UserListResponse:
-        # Determine target tenant context
+        # Determinar contexto de empresa objetivo
         target_tenant_id = tenant_id
         if target_tenant_id is None:
             if hasattr(current_user, 'tenant') and current_user.tenant:
@@ -59,7 +59,7 @@ class UserController:
 
         query = select(User).distinct()
 
-        # Filter by tenant unless target_tenant_id is -1 (Show All for SuperAdmin)
+        # Filtrar por empresa salvo que target_tenant_id sea -1 (mostrar todo)
         if target_tenant_id and target_tenant_id != -1:
             query = query.join(UsuarioTenant, UsuarioTenant.idusuario == User.idusuario).where(UsuarioTenant.idtenant == target_tenant_id)
 
@@ -72,11 +72,11 @@ class UserController:
                 )
             )
 
-        # Count total
+        # Contar total
         count_stmt = select(func.count()).select_from(query.subquery())
         total = db.execute(count_stmt).scalar_one()
 
-        # Execute paginated query
+        # Ejecutar consulta paginada
         query = query.order_by(User.idusuario.asc()).offset(skip).limit(limit)
         users = db.execute(query).scalars().all()
 
@@ -92,7 +92,7 @@ class UserController:
     ) -> UserResponse:
         email_clean = data.email.strip().lower()
 
-        # 1. Check email uniqueness
+        # 1. Validar correo único
         stmt_existing = select(User).where(func.lower(User.email) == email_clean)
         if db.execute(stmt_existing).scalar_one_or_none():
             raise HTTPException(
@@ -100,7 +100,7 @@ class UserController:
                 detail=f"Ya existe un usuario registrado con el correo '{data.email}'."
             )
 
-        # 2. Validate password strength
+        # 2. Validar robustez de la contraseña
         is_valid, msg = validate_password_strength(data.contrasena)
         if not is_valid:
             raise HTTPException(
@@ -108,7 +108,7 @@ class UserController:
                 detail=msg
             )
 
-        # 3. Target tenant ID
+        # 3. ID de empresa objetivo
         target_tenant_id = data.idtenant
         if not target_tenant_id:
             stmt_link = select(UsuarioTenant.idtenant).where(
@@ -117,7 +117,7 @@ class UserController:
             target_tenant_id = db.execute(stmt_link).scalar()
 
         if not target_tenant_id:
-            target_tenant_id = 1  # Fallback to default tenant 1
+            target_tenant_id = 1  # Respaldo a empresa por defecto 1
 
         user = User(
             nombrecompleto=data.nombrecompleto.strip(),
@@ -128,7 +128,7 @@ class UserController:
         db.add(user)
         db.flush()
 
-        # 4. Link user to tenant
+        # 4. Vincular usuario a la empresa
         link = UsuarioTenant(idusuario=user.idusuario, idtenant=target_tenant_id)
         db.add(link)
 
@@ -209,7 +209,7 @@ class UserController:
         return UserController._build_user_response(db, user)
 
 
-# HTTP Routes
+# Rutas HTTP
 @router.get("", response_model=UserListResponse)
 def get_users(
     search: Optional[str] = Query(None, description="Buscador por nombre o correo"),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/bitacora_model.dart';
 import 'bitacora_service.dart';
 
+// Controlador reactivo de la pantalla de bitácora
 class BitacoraController extends ChangeNotifier {
   List<BitacoraItem> _items = [];
   int _total = 0;
@@ -10,6 +11,7 @@ class BitacoraController extends ChangeNotifier {
   String _selectedFiltro = 'TODOS';
   String _searchQuery = '';
 
+  // Filtro en memoria para búsqueda instantánea
   List<BitacoraItem> get items {
     if (_searchQuery.trim().isEmpty) {
       return _items;
@@ -30,6 +32,7 @@ class BitacoraController extends ChangeNotifier {
   String get selectedFiltro => _selectedFiltro;
   String get searchQuery => _searchQuery;
 
+  // Consultar eventos desde la API
   Future<void> fetchBitacora({String? accion, bool showLoading = true}) async {
     if (showLoading) {
       _isLoading = true;
@@ -54,6 +57,7 @@ class BitacoraController extends ChangeNotifier {
     }
   }
 
+  // Filtrar por método (GET, POST, etc.)
   void setFiltro(String filtro) {
     if (_selectedFiltro == filtro) return;
     _selectedFiltro = filtro;
@@ -61,6 +65,7 @@ class BitacoraController extends ChangeNotifier {
     fetchBitacora(accion: filtro);
   }
 
+  // Búsqueda en tiempo real
   void setSearchQuery(String query) {
     _searchQuery = query;
     notifyListeners();

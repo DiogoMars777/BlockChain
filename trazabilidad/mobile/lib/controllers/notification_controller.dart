@@ -70,7 +70,7 @@ class NotificationController {
         return true;
       }
     } catch (e) {
-      // Ignore exception
+      // Ignorar excepción
     }
     return false;
   }

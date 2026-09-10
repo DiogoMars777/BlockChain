@@ -18,7 +18,7 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      // If 401 Unauthorized on protected routes, attempt refresh token once
+      // Si responde 401 (no autorizado) en rutas protegidas, intenta refrescar el token una vez
       if (error.status === 401 && !req.url.includes('/auth/login') && !req.url.includes('/auth/refresh')) {
         return authService.refreshToken().pipe(
           switchMap(newTokenResp => {

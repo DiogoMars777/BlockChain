@@ -26,7 +26,7 @@ export class ProductManagementController implements OnInit {
   searchFilter = signal<string>('');
   categoryFilter = signal<number | undefined>(undefined);
 
-  // Product Modal
+  // Modal de producto
   isProductModalOpen = signal<boolean>(false);
   editingProduct = signal<Product | null>(null);
   pNombre = signal<string>('');
@@ -35,7 +35,7 @@ export class ProductManagementController implements OnInit {
   pDescripcion = signal<string>('');
   pIdCategoria = signal<number | undefined>(undefined);
 
-  // Variants Modal
+  // Modal de variantes
   isVariantModalOpen = signal<boolean>(false);
   selectedProductForVariants = signal<Product | null>(null);
   editingVariant = signal<Variant | null>(null);
@@ -66,7 +66,7 @@ export class ProductManagementController implements OnInit {
     this.loadProducts();
   }
 
-  // PRODUCT ACTIONS
+  // Acciones de producto
   openCreateProductModal() {
     this.editingProduct.set(null);
     this.pNombre.set('');
@@ -150,7 +150,7 @@ export class ProductManagementController implements OnInit {
     }
   }
 
-  // VARIANTS ACTIONS
+  // Acciones de variantes
   openVariantsModal(prod: Product) {
     this.productService.getProductById(prod.idproducto).subscribe({
       next: (fullProd) => {

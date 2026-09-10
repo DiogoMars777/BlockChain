@@ -61,7 +61,7 @@ export class ProductService {
     return this.http.delete<Product>(`${this.apiUrl}/${idproducto}`);
   }
 
-  // Variants
+  // Variantes
   addVariant(idproducto: number, data: VariantCreate): Observable<Variant> {
     return this.http.post<Variant>(`${this.apiUrl}/${idproducto}/variants`, data);
   }

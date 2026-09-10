@@ -134,7 +134,7 @@ class LocationController:
         return {"detail": f"Ubicación {idubicacion} eliminada."}
 
 
-# Endpoints
+# Endpoints (Rutas HTTP)
 @router.get("/locations", response_model=LocationListResponse)
 def get_locations(
     search: Optional[str] = Query(None),

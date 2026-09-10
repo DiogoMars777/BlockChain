@@ -117,7 +117,7 @@ class ActorController:
         return {"detail": f"Actor {idactor} eliminado."}
 
 
-# Endpoints
+# Endpoints (Rutas HTTP)
 @router.get("/actors", response_model=ActorListResponse)
 def get_actors(
     search: Optional[str] = Query(None),

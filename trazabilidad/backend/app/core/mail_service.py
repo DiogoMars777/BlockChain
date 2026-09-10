@@ -16,7 +16,7 @@ class MailService:
         raw_token: str,
         frontend_origin: Optional[str] = None
     ) -> bool:
-        """Render password reset template and send email or log development URL."""
+        """Renderizar plantilla de restablecimiento de contraseña y enviar correo."""
         base_url = (frontend_origin.rstrip("/") if frontend_origin else None) or settings.FRONTEND_URL.rstrip("/")
         reset_url = f"{base_url}/reset-password?token={raw_token}"
         

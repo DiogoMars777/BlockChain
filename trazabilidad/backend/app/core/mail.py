@@ -9,13 +9,13 @@ from app.core.config import settings
 
 logger = logging.getLogger("uvicorn.error")
 
-# Setup Jinja2 template loader
+# Configuración del cargador de plantillas Jinja2
 templates_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates")
 jinja_env = Environment(loader=FileSystemLoader(templates_dir))
 
 
 async def send_email(to_email: str, subject: str, html_content: str) -> bool:
-    """Send an HTML email via Google SMTP (aiosmtplib)."""
+    """Enviar un correo HTML mediante SMTP (aiosmtplib)."""
     if not settings.SMTP_HOST or not settings.SMTP_USER:
         logger.warning(
             f"[SMTP MOCK] SMTP host/user not configured. Email to {to_email} skipped."
@@ -28,7 +28,7 @@ async def send_email(to_email: str, subject: str, html_content: str) -> bool:
     message["Subject"] = subject
     message.attach(MIMEText(html_content, "html", "utf-8"))
 
-    # Try configured port first, then try the other SSL/TLS port as fallback
+    # Probar el puerto configurado primero y luego el alternativo como respaldo
     ports_to_try = []
     if settings.SMTP_PORT == 465 or not settings.SMTP_STARTTLS:
         ports_to_try = [(465, True, False), (587, False, True)]

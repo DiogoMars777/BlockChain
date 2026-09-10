@@ -48,7 +48,7 @@ export class AuditNotificationService {
   markAsRead(idnotificacion: number): Observable<NotificacionItem> {
     return this.http.patch<NotificacionItem>(`${this.apiUrl}/notifications/${idnotificacion}/read`, {}).pipe(
       tap(() => {
-        // Refresh notifications
+        // Refrescar notificaciones
         this.getNotifications().subscribe();
       })
     );
