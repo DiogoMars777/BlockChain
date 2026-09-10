@@ -218,7 +218,7 @@ class _DashboardViewState extends State<DashboardView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Bitácora de Auditoría (CU-005)',
+                              'Bitácora de Auditoría',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

@@ -49,6 +49,77 @@ app.include_router(location_router, prefix="/api/v1")
 app.include_router(unit_router, prefix="/api/v1")
 
 
+import jwt
+from datetime import datetime, timezone, timedelta
+from sqlalchemy import select
+from app.models.bitacora import Bitacora
+from app.models.cu002_usuarios.usuario_tenant import UsuarioTenant
+from app.db.session import SessionLocal
+
+@app.middleware("http")
+async def audit_logger_middleware(request: Request, call_next):
+    response = await call_next(request)
+    
+    path = request.url.path.rstrip("/")
+    if (
+        not path.startswith("/api/v1")
+        or path in ("/api/v1/bitacora", "/api/v1/auth/login", "/api/v1/auth/refresh")
+        or request.method == "OPTIONS"
+    ):
+        return response
+
+    if 200 <= response.status_code < 400:
+        auth_header = request.headers.get("authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+            try:
+                payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+                sub = payload.get("sub") or payload.get("idusuario")
+                tenant_id = payload.get("tenant_id") or payload.get("idtenant")
+                if sub and tenant_id:
+                    idusuario = int(sub)
+                    idtenant = int(tenant_id)
+                    client_ip = (
+                        request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+                        or (request.client.host if request.client else "127.0.0.1")
+                    )
+                    path_parts = [p for p in path.split("/") if p and p not in ("api", "v1")]
+                    entidad = path_parts[0].capitalize() if path_parts else "General"
+                    
+                    db_audit = SessionLocal()
+                    try:
+                        ut_stmt = select(UsuarioTenant.idusuariotenant).where(
+                            UsuarioTenant.idusuario == idusuario,
+                            UsuarioTenant.idtenant == idtenant
+                        )
+                        idut = db_audit.execute(ut_stmt).scalar()
+                        if not idut:
+                            ut_stmt2 = select(UsuarioTenant.idusuariotenant).where(
+                                UsuarioTenant.idusuario == idusuario
+                            )
+                            idut = db_audit.execute(ut_stmt2).scalar()
+                        if idut:
+                            # Hora oficial de Bolivia (BOT = UTC-4)
+                            hora_bolivia = datetime.now(timezone(timedelta(hours=-4))).replace(tzinfo=None)
+                            db_audit.add(Bitacora(
+                                idusuariotenant=idut,
+                                accion=request.method.upper(),
+                                entidad=entidad,
+                                ip=client_ip,
+                                fechahora=hora_bolivia
+                            ))
+                            db_audit.commit()
+                    except Exception as db_err:
+                        print(f"[Audit DB Error]: {db_err}")
+                        db_audit.rollback()
+                    finally:
+                        db_audit.close()
+            except Exception as mid_err:
+                print(f"[Audit Middleware Error]: {mid_err}")
+                pass
+
+    return response
+
 from fastapi import Request, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy import text

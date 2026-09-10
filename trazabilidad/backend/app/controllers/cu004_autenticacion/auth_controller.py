@@ -417,12 +417,46 @@ def get_current_user(
 def login(
     credentials: LoginRequest,
     response: Response,
+    request: Request,
     db: Session = Depends(get_db)
 ):
     """Authenticate user and return JWT Access Token + HttpOnly Refresh Token Cookie."""
     access_token, raw_refresh_token, user, tenant = AuthController.authenticate_user(
         db, credentials.tenant_slug, credentials.email, credentials.password
     )
+
+    # Registrar evento real en Bitácora con Hora de Bolivia (BOT, UTC-4)
+    try:
+        from app.models.bitacora import Bitacora
+        ut_stmt = select(UsuarioTenant.idusuariotenant).where(
+            UsuarioTenant.idusuario == user.idusuario,
+            UsuarioTenant.idtenant == tenant.idtenant
+        )
+        idut = db.execute(ut_stmt).scalar()
+        if not idut:
+            ut_stmt2 = select(UsuarioTenant.idusuariotenant).where(
+                UsuarioTenant.idusuario == user.idusuario
+            )
+            idut = db.execute(ut_stmt2).scalar()
+
+        if idut:
+            client_ip = (
+                request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+                or (request.client.host if request.client else "127.0.0.1")
+            )
+            hora_bolivia = datetime.now(timezone(timedelta(hours=-4))).replace(tzinfo=None)
+            db.add(Bitacora(
+                idusuariotenant=idut,
+                accion="LOGIN",
+                entidad="Autenticacion",
+                identidad=user.idusuario,
+                ip=client_ip,
+                fechahora=hora_bolivia
+            ))
+            db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"[Bitacora Login Audit Error]: {e}")
 
     response.set_cookie(
         key="refresh_token",

@@ -29,7 +29,7 @@ class _NotificationsViewState extends State<NotificationsView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notificaciones (CU-005)'),
+        title: const Text('Notificaciones'),
         backgroundColor: const Color(0xFF1E293B),
       ),
       body: controller.isLoading

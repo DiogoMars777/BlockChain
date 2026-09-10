@@ -21,15 +21,15 @@ class BitacoraItem {
     DateTime parsedFecha;
     try {
       final raw = (json['fechahora'] ?? '').toString().trim();
-      DateTime utcDate;
       if (raw.endsWith('Z') || raw.contains('+') || (raw.lastIndexOf('-') > 10)) {
-        utcDate = DateTime.parse(raw).toUtc();
+        // Si el string incluye zona horaria explícita (como UTC o ISO con offset)
+        final utcDate = DateTime.parse(raw).toUtc();
+        // Convertir a hora oficial de Bolivia (BOT = UTC-4)
+        parsedFecha = utcDate.subtract(const Duration(hours: 4));
       } else {
-        // En la base de datos se guarda en UTC sin la 'Z'
-        utcDate = DateTime.parse('${raw}Z');
+        // El backend ya lo registra y devuelve directamente en hora oficial de Bolivia
+        parsedFecha = DateTime.parse(raw);
       }
-      // Zona horaria oficial de Bolivia (BOT = UTC-4):
-      parsedFecha = utcDate.subtract(const Duration(hours: 4));
     } catch (_) {
       parsedFecha = DateTime.now();
     }
