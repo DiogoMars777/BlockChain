@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import Tuple, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Response, Cookie, status
+from fastapi import APIRouter, Depends, HTTPException, Response, Cookie, status, BackgroundTasks, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from sqlalchemy import select, func
@@ -200,7 +200,11 @@ class AuthController:
 
     @staticmethod
     async def request_password_reset(
-        db: Session, tenant_slug: str, email: str
+        db: Session,
+        tenant_slug: str,
+        email: str,
+        background_tasks: Optional[BackgroundTasks] = None,
+        frontend_origin: Optional[str] = None
     ) -> str:
         """Generate reset token and send email asynchronously."""
         generic_message = (
@@ -237,12 +241,23 @@ class AuthController:
         db.add(db_token)
         db.commit()
 
-        await MailService.send_reset_password_email(
-            email=user.email,
-            first_name=user.nombrecompleto,
-            tenant_name=tenant.nombre,
-            raw_token=raw_token
-        )
+        if background_tasks:
+            background_tasks.add_task(
+                MailService.send_reset_password_email,
+                email=user.email,
+                first_name=user.nombrecompleto,
+                tenant_name=tenant.nombre,
+                raw_token=raw_token,
+                frontend_origin=frontend_origin
+            )
+        else:
+            await MailService.send_reset_password_email(
+                email=user.email,
+                first_name=user.nombrecompleto,
+                tenant_name=tenant.nombre,
+                raw_token=raw_token,
+                frontend_origin=frontend_origin
+            )
 
         return generic_message
 
@@ -488,11 +503,18 @@ def switch_tenant(
 @router.post("/forgot-password", response_model=MessageResponse)
 async def forgot_password(
     forgot_data: ForgotPasswordRequest,
+    background_tasks: BackgroundTasks,
+    request: Request,
     db: Session = Depends(get_db)
 ):
     """Request password reset link via email."""
+    origin = request.headers.get("origin") or request.headers.get("referer")
     msg = await AuthController.request_password_reset(
-        db, forgot_data.tenant_slug, forgot_data.email
+        db,
+        forgot_data.tenant_slug,
+        forgot_data.email,
+        background_tasks=background_tasks,
+        frontend_origin=origin
     )
     return MessageResponse(message=msg)
 

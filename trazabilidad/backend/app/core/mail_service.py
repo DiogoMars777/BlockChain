@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from typing import Optional
 from app.core.config import settings
 from app.core.mail import send_email, jinja_env
 
@@ -12,10 +13,12 @@ class MailService:
         email: str,
         first_name: str,
         tenant_name: str,
-        raw_token: str
+        raw_token: str,
+        frontend_origin: Optional[str] = None
     ) -> bool:
         """Render password reset template and send email or log development URL."""
-        reset_url = f"{settings.FRONTEND_URL}/reset-password?token={raw_token}"
+        base_url = (frontend_origin.rstrip("/") if frontend_origin else None) or settings.FRONTEND_URL.rstrip("/")
+        reset_url = f"{base_url}/reset-password?token={raw_token}"
         
         template = jinja_env.get_template("emails/reset_password.html")
         html_content = template.render(
