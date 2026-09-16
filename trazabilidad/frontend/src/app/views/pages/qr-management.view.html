@@ -1,0 +1,147 @@
+<div class="qr-wrapper">
+  <header class="qr-nav">
+    <div class="brand">
+      <span class="logo-icon">🔲</span>
+      <span class="brand-name">Generar y Descargar Código QR (CU-016)</span>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a routerLink="/dashboard" class="btn-secondary">Volver al Panel</a>
+      @if (selectedUnitIds().length > 0) {
+        <button class="btn-primary" (click)="generateBulk()">
+          ⚡ Generar QR en Lote ({{ selectedUnitIds().length }})
+        </button>
+      }
+    </div>
+  </header>
+
+  <main class="qr-content">
+    @if (successMessage()) {
+      <div class="alert-success">{{ successMessage() }}</div>
+    }
+    @if (errorMessage()) {
+      <div class="alert-error">{{ errorMessage() }}</div>
+    }
+
+    <div class="filter-bar">
+      <div class="filter-inputs">
+        <input 
+          type="text" 
+          placeholder="Buscar por Nº Serie, IMEI, Modelo..." 
+          [ngModel]="searchQuery()" 
+          (ngModelChange)="searchQuery.set($event)"
+          (keyup.enter)="onSearch()"
+        />
+        <select [ngModel]="selectedQrFilter()" (ngModelChange)="selectedQrFilter.set($event); onSearch()">
+          <option value="">-- Todas las unidades --</option>
+          <option value="true">Solo con Código QR</option>
+          <option value="false">Pendientes de QR</option>
+        </select>
+        <button class="btn-secondary" (click)="onSearch()">Buscar</button>
+      </div>
+      <div class="total-count">
+        Total: <strong>{{ units().length }}</strong> unidades encontradas
+      </div>
+    </div>
+
+    <div class="grid-card">
+      @if (isLoading()) {
+        <div style="padding: 2rem; text-align: center; color: #94a3b8;">Cargando unidades...</div>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;">
+                <input type="checkbox" (change)="toggleSelectAll($event)" />
+              </th>
+              <th>Dispositivo / SKU</th>
+              <th>Nº Serie</th>
+              <th>IMEI Principal</th>
+              <th>Estado Físico</th>
+              <th>Estado QR</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (unit of units(); track unit.idunidad) {
+              <tr>
+                <td>
+                  <input 
+                    type="checkbox" 
+                    [checked]="isUnitSelected(unit.idunidad)" 
+                    (change)="toggleSelectUnit(unit.idunidad)" 
+                  />
+                </td>
+                <td>
+                  <strong>{{ unit.producto_nombre }}</strong>
+                  <div style="font-size: 0.75rem; color: #94a3b8;">{{ unit.variante_sku }} ({{ unit.color }} {{ unit.almacenamiento }})</div>
+                </td>
+                <td><code style="color: #38bdf8;">{{ unit.numeroserie }}</code></td>
+                <td>{{ unit.imei1 || '—' }}</td>
+                <td>
+                  <span class="badge badge-secondary">{{ unit.estado }}</span>
+                </td>
+                <td>
+                  @if (unit.tiene_qr) {
+                    <span class="badge badge-success">✓ QR Activo</span>
+                  } @else {
+                    <span class="badge badge-warning">Sin Código QR</span>
+                  }
+                </td>
+                <td class="action-buttons">
+                  @if (unit.tiene_qr) {
+                    <button class="btn-sm btn-info" (click)="openPreview(unit)">👁️ Previsualizar</button>
+                    <button class="btn-sm btn-secondary" (click)="downloadQr(unit)">📥 Descargar PNG</button>
+                  } @else {
+                    <button class="btn-sm btn-primary" (click)="generateQr(unit)">+ Generar QR</button>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" style="text-align: center; color: #94a3b8; padding: 2rem;">
+                  No se encontraron unidades de producto registradas.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </main>
+
+  <!-- Modal Previsualizador de QR y Etiqueta -->
+  @if (isPreviewModalOpen() && selectedUnit()) {
+    <div class="modal-backdrop">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3>Etiqueta de Trazabilidad QR</h3>
+          <button class="close-btn" (click)="closePreview()">✕</button>
+        </div>
+        <div class="modal-body printable-area">
+          <div class="qr-preview-container">
+            <div class="qr-frame">
+              <img [src]="getQrImageUrl(selectedUnit()!.idunidad)" alt="Código QR de Trazabilidad" class="qr-img" />
+            </div>
+            <div class="qr-specs">
+              <h4 style="margin: 0 0 0.5rem 0; color: #38bdf8;">{{ selectedUnit()!.producto_nombre }}</h4>
+              <p style="margin: 0.2rem 0;"><strong>SKU:</strong> {{ selectedUnit()!.variante_sku }}</p>
+              <p style="margin: 0.2rem 0;"><strong>Color / Capacidad:</strong> {{ selectedUnit()!.color }} {{ selectedUnit()!.almacenamiento }}</p>
+              <p style="margin: 0.2rem 0;"><strong>Nº Serie:</strong> <code>{{ selectedUnit()!.numeroserie }}</code></p>
+              @if (selectedUnit()!.imei1) {
+                <p style="margin: 0.2rem 0;"><strong>IMEI 1:</strong> {{ selectedUnit()!.imei1 }}</p>
+              }
+              <p style="margin: 0.2rem 0; font-size: 0.75rem; color: #94a3b8; word-break: break-all;">
+                <strong>URL Pública:</strong> {{ selectedUnit()!.url }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer no-print">
+          <button class="btn-secondary" (click)="closePreview()">Cerrar</button>
+          <button class="btn-secondary" (click)="printLabel()">🖨️ Imprimir Etiqueta</button>
+          <button class="btn-primary" (click)="downloadQr(selectedUnit()!)">📥 Descargar Archivo PNG</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

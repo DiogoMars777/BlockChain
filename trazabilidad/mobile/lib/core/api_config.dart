@@ -10,4 +10,8 @@ class ApiConfig {
   static const String resetPassword = '$baseUrl/auth/reset-password';
   static const String notifications = '$baseUrl/notifications';
   static const String bitacora = '$baseUrl/bitacora';
+  static const String qrUnits = '$baseUrl/qr/units';
+  static const String qrGenerate = '$baseUrl/qr/generate';
+  static const String qrBase = '$baseUrl/qr';
+  static const String shipments = '$baseUrl/shipments';
 }

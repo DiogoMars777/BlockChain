@@ -1,0 +1,232 @@
+<div class="transport-wrapper">
+  <header class="transport-nav">
+    <div class="brand">
+      <span class="logo-icon">🚚</span>
+      <span class="brand-name">Eventos y Condiciones de Transporte (CU-021)</span>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a routerLink="/dashboard" class="btn-secondary">Volver al Panel</a>
+    </div>
+  </header>
+
+  <main class="transport-content">
+    @if (successMessage()) {
+      <div class="alert-success">{{ successMessage() }}</div>
+    }
+    @if (errorMessage()) {
+      <div class="alert-error">{{ errorMessage() }}</div>
+    }
+
+    <div class="filter-bar">
+      <div class="filter-inputs">
+        <select [ngModel]="selectedEstado()" (ngModelChange)="selectedEstado.set($event); loadShipments()">
+          @for (est of estadosEnvio; track est.value) {
+            <option [value]="est.value">{{ est.label }}</option>
+          }
+        </select>
+        <button class="btn-secondary" (click)="loadShipments()">Actualizar</button>
+      </div>
+      <div class="total-count">
+        Total: <strong>{{ shipments().length }}</strong> envíos registrados
+      </div>
+    </div>
+
+    <div class="grid-card">
+      @if (isLoading()) {
+        <div style="padding: 2rem; text-align: center; color: #94a3b8;">Cargando envíos en tránsito...</div>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Código Envío</th>
+              <th>Origen</th>
+              <th>Destino</th>
+              <th>Transportista</th>
+              <th>Unidades</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of shipments(); track s.idenvio) {
+              <tr>
+                <td>
+                  <strong>{{ s.codigoenvio }}</strong>
+                  @if (s.trackingexterno) {
+                    <div style="font-size: 0.75rem; color: #38bdf8;">Track: {{ s.trackingexterno }}</div>
+                  }
+                </td>
+                <td>{{ s.actor_origen_nombre }}</td>
+                <td>{{ s.actor_destino_nombre }}</td>
+                <td>{{ s.transportista_nombre || 'Interno / No asignado' }}</td>
+                <td>
+                  <span class="badge badge-info">{{ s.total_unidades }} unidades</span>
+                </td>
+                <td>
+                  <span [class]="'badge ' + getEstadoClass(s.estado)">{{ s.estado }}</span>
+                </td>
+                <td class="action-buttons">
+                  <button class="btn-sm btn-info" (click)="openTimeline(s)">📍 Línea de Tiempo</button>
+                  <button class="btn-sm btn-primary" (click)="openRecordModal(s)">+ Registrar Hito / Sensor</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" style="text-align: center; color: #94a3b8; padding: 2rem;">
+                  No hay envíos logísticos registrados.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </main>
+
+  <!-- Modal Línea de Tiempo / Timeline -->
+  @if (isTimelineModalOpen() && selectedShipment()) {
+    <div class="modal-backdrop">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-header">
+          <div>
+            <h3 style="margin: 0;">Línea de Tiempo: {{ selectedShipment()!.codigoenvio }}</h3>
+            <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.2rem;">
+              {{ selectedShipment()!.actor_origen_nombre }} ➔ {{ selectedShipment()!.actor_destino_nombre }}
+            </div>
+          </div>
+          <button class="close-btn" (click)="closeTimeline()">✕</button>
+        </div>
+        <div class="modal-body">
+          @if (!timelineData()) {
+            <div style="padding: 2rem; text-align: center; color: #94a3b8;">Cargando eventos del envío...</div>
+          } @else {
+            <div class="timeline-container">
+              @for (ev of timelineData()!.eventos; track ev.idevento) {
+                <div class="timeline-item">
+                  <div class="timeline-marker"></div>
+                  <div class="timeline-card">
+                    <div class="timeline-header">
+                      <div>
+                        <strong style="color: #38bdf8; font-size: 1rem;">{{ ev.tipoevento | uppercase }}</strong>
+                        <span style="margin-left: 0.5rem; color: #94a3b8; font-size: 0.85rem;">📍 {{ ev.ubicacion_nombre }}</span>
+                      </div>
+                      <span class="timeline-date">{{ ev.fechahora | date:'medium' }}</span>
+                    </div>
+
+                    @if (ev.descripcion) {
+                      <p style="margin: 0.5rem 0; font-size: 0.9rem; color: #cbd5e1;">{{ ev.descripcion }}</p>
+                    }
+
+                    @if (ev.condiciones) {
+                      <div class="telemetry-bar">
+                        <span class="telemetry-pill">
+                          🌡️ Temp: <strong [class]="getTempStatus(ev.condiciones.temperatura).class">
+                            {{ getTempStatus(ev.condiciones.temperatura).label }}
+                          </strong>
+                        </span>
+                        <span class="telemetry-pill">
+                          💧 Humedad: <strong>{{ ev.condiciones.humedad || 'N/A' }}%</strong>
+                        </span>
+                        <span class="telemetry-pill">
+                          🌪️ Vibración: <strong [class]="getVibeStatus(ev.condiciones.nivelvibracion).class">
+                            {{ getVibeStatus(ev.condiciones.nivelvibracion).label }}
+                          </strong>
+                        </span>
+                        <span class="telemetry-pill text-muted">
+                          📡 Fuente: {{ ev.condiciones.fuentedatos }}
+                        </span>
+                      </div>
+                    }
+
+                    <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #64748b; word-break: break-all;">
+                      🔒 Hash SHA-256: <code>{{ ev.payloadhash }}</code>
+                    </div>
+                  </div>
+                </div>
+              } @empty {
+                <div style="text-align: center; padding: 2rem; color: #94a3b8;">
+                  No se han registrado hitos en tránsito para este envío aún.
+                </div>
+              }
+            </div>
+
+            @if (timelineData()!.unidades_numeros.length > 0) {
+              <div style="margin-top: 1.5rem; background: #0f172a; padding: 1rem; border-radius: 8px; border: 1px solid #334155;">
+                <strong style="font-size: 0.85rem; color: #94a3b8;">Unidades Físicas en este Envío:</strong>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                  @for (sn of timelineData()!.unidades_numeros; track sn) {
+                    <span class="badge badge-secondary" style="font-family: monospace;">{{ sn }}</span>
+                  }
+                </div>
+              </div>
+            }
+          }
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeTimeline()">Cerrar</button>
+          <button class="btn-primary" (click)="openRecordModal(selectedShipment()!)">+ Nuevo Hito</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Registrar Nuevo Hito / Telemetría -->
+  @if (isRecordModalOpen() && selectedShipment()) {
+    <div class="modal-backdrop">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3>Registrar Hito de Transporte: {{ selectedShipment()!.codigoenvio }}</h3>
+          <button class="close-btn" (click)="closeRecordModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Tipo de Hito Logístico:</label>
+            <select [(ngModel)]="newEventForm.tipoevento" class="form-input">
+              @for (tipo of tiposEvento; track tipo.value) {
+                <option [value]="tipo.value">{{ tipo.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Punto de Control / Ubicación:</label>
+            <select [(ngModel)]="newEventForm.idubicacion" class="form-input">
+              @for (loc of locations(); track loc.idubicacion) {
+                <option [value]="loc.idubicacion">{{ loc.nombre }} ({{ loc.tipo }} - {{ loc.ciudad }})</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Notas de Campo / Observaciones:</label>
+            <textarea [(ngModel)]="newEventForm.descripcion" rows="2" class="form-input" placeholder="Ej: Control aduanero verificado sin novedades..."></textarea>
+          </div>
+
+          <h4 style="margin: 1.25rem 0 0.5rem 0; color: #38bdf8; font-size: 0.95rem;">📡 Telemetría Ambiental (Sensores IoT / Móvil)</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label>Temperatura (°C):</label>
+              <input type="number" step="0.1" [(ngModel)]="newEventForm.condiciones!.temperatura" class="form-input" placeholder="Ej: 20.5" />
+            </div>
+            <div class="form-group">
+              <label>Humedad (%):</label>
+              <input type="number" step="0.1" [(ngModel)]="newEventForm.condiciones!.humedad" class="form-input" placeholder="Ej: 45" />
+            </div>
+            <div class="form-group">
+              <label>Presión (hPa):</label>
+              <input type="number" step="0.1" [(ngModel)]="newEventForm.condiciones!.presion" class="form-input" placeholder="1013.2" />
+            </div>
+            <div class="form-group">
+              <label>Nivel Impacto / Vibración (G):</label>
+              <input type="number" step="0.05" [(ngModel)]="newEventForm.condiciones!.nivelvibracion" class="form-input" placeholder="Ej: 0.15" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeRecordModal()">Cancelar</button>
+          <button class="btn-primary" (click)="saveEvent()">Guardar Evento</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

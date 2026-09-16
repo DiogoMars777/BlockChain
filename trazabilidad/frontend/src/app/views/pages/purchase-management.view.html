@@ -1,0 +1,188 @@
+<div class="purchase-wrapper">
+  <header class="purchase-nav">
+    <div class="brand">
+      <span class="logo-icon">📋</span>
+      <span class="brand-name">Aprobar / Rechazar Compras (CU-011)</span>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a routerLink="/dashboard" class="btn-secondary">Volver al Panel</a>
+    </div>
+  </header>
+
+  <main class="purchase-content">
+    @if (successMessage()) {
+      <div class="alert-success">{{ successMessage() }}</div>
+    }
+    @if (errorMessage()) {
+      <div class="alert-error">{{ errorMessage() }}</div>
+    }
+
+    <div class="filter-bar">
+      <div class="filter-inputs">
+        <select [ngModel]="selectedEstado()" (ngModelChange)="selectedEstado.set($event); onFilterChange()">
+          @for (est of estadosFiltro; track est.value) {
+            <option [value]="est.value">{{ est.label }}</option>
+          }
+        </select>
+        <button class="btn-secondary" (click)="loadPurchases()">Actualizar</button>
+      </div>
+      <div class="total-count">
+        Total: <strong>{{ total() }}</strong> órdenes de compra
+      </div>
+    </div>
+
+    <div class="grid-card">
+      @if (isLoading()) {
+        <div style="padding: 2rem; text-align: center; color: #94a3b8;">Cargando órdenes de compra...</div>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nº Orden</th>
+              <th>Proveedor</th>
+              <th>Fecha de Emisión</th>
+              <th>Total (USD)</th>
+              <th>Ítems</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (compra of purchases(); track compra.idcompra) {
+              <tr>
+                <td><strong>#{{ compra.numeroorden }}</strong></td>
+                <td>{{ compra.proveedor_nombre }}</td>
+                <td>{{ compra.fechacompra }}</td>
+                <td style="color: #38bdf8; font-weight: 700;">${{ compra.totalusd | number:'1.2-2' }} USD</td>
+                <td>{{ compra.total_items }} unidades</td>
+                <td>
+                  <span [class]="'badge ' + getEstadoClass(compra.estado)">
+                    {{ getEstadoLabel(compra.estado) }}
+                  </span>
+                </td>
+                <td class="action-buttons">
+                  <button class="btn-sm btn-info" (click)="openDetail(compra)">Ver Detalle</button>
+                  @if (compra.estado.toLowerCase() === 'pendiente') {
+                    <button class="btn-sm btn-success" (click)="openApprove(compra)">Aprobar</button>
+                    <button class="btn-sm btn-danger" (click)="openReject(compra)">Rechazar</button>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" style="text-align: center; color: #94a3b8; padding: 2rem;">
+                  No se encontraron órdenes de compra registradas.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </main>
+
+  <!-- Modal Detalle de Compra -->
+  @if (isDetailModalOpen() && selectedPurchase()) {
+    <div class="modal-backdrop">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-header">
+          <h3>Orden de Compra #{{ selectedPurchase()!.numeroorden }}</h3>
+          <button class="close-btn" (click)="closeDetail()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="info-grid">
+            <div><span class="text-muted">Proveedor:</span> <strong>{{ selectedPurchase()!.proveedor_nombre }}</strong></div>
+            <div><span class="text-muted">Fecha:</span> <strong>{{ selectedPurchase()!.fechacompra }}</strong></div>
+            <div><span class="text-muted">Estado Actual:</span> 
+              <span [class]="'badge ' + getEstadoClass(selectedPurchase()!.estado)">
+                {{ getEstadoLabel(selectedPurchase()!.estado) }}
+              </span>
+            </div>
+            <div><span class="text-muted">Total General:</span> <strong style="color: #38bdf8;">${{ selectedPurchase()!.totalusd | number:'1.2-2' }} USD</strong></div>
+          </div>
+
+          <h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: #f8fafc;">Desglose de Productos y Variantes</h4>
+          <table class="detail-table">
+            <thead>
+              <tr>
+                <th>Producto / SKU</th>
+                <th>Especificaciones</th>
+                <th>Cantidad</th>
+                <th>Costo Unit. (USD)</th>
+                <th>Subtotal (USD)</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (det of selectedPurchase()!.detalles; track det.idcompradetalle) {
+                <tr>
+                  <td>
+                    <strong>{{ det.producto_nombre }}</strong>
+                    <div style="font-size: 0.75rem; color: #94a3b8;">SKU: {{ det.sku }}</div>
+                  </td>
+                  <td>{{ det.color }} - {{ det.almacenamiento }}</td>
+                  <td>{{ det.cantidad }}</td>
+                  <td>${{ det.costounitariousd | number:'1.2-2' }}</td>
+                  <td style="font-weight: 600; color: #38bdf8;">${{ det.subtotalusd | number:'1.2-2' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeDetail()">Cerrar</button>
+          @if (selectedPurchase()!.estado.toLowerCase() === 'pendiente') {
+            <button class="btn-danger" (click)="openReject(selectedPurchase()!)">Rechazar Compra</button>
+            <button class="btn-success" (click)="openApprove(selectedPurchase()!)">Aprobar Compra</button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Confirmar Aprobación -->
+  @if (isApproveModalOpen() && selectedPurchase()) {
+    <div class="modal-backdrop">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3>Confirmar Aprobación</h3>
+          <button class="close-btn" (click)="closeApprove()">✕</button>
+        </div>
+        <div class="modal-body">
+          <p>¿Está seguro de <strong>aprobar</strong> la orden de compra <strong>#{{ selectedPurchase()!.numeroorden }}</strong> por un total de <strong>${{ selectedPurchase()!.totalusd | number:'1.2-2' }} USD</strong>?</p>
+          <p style="font-size: 0.85rem; color: #94a3b8;">Al aprobarse, el estado pasará a <em>'Aprobada / Enviada'</em>, se emitirá la notificación correspondiente y quedará registrado de forma inmutable en la bitácora de auditoría.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeApprove()">Cancelar</button>
+          <button class="btn-success" (click)="confirmApprove()">Sí, Aprobar Compra</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Rechazar Compra -->
+  @if (isRejectModalOpen() && selectedPurchase()) {
+    <div class="modal-backdrop">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3>Rechazar Orden de Compra</h3>
+          <button class="close-btn" (click)="closeReject()">✕</button>
+        </div>
+        <div class="modal-body">
+          <p>Por favor indique el motivo justificado del rechazo para la orden <strong>#{{ selectedPurchase()!.numeroorden }}</strong>:</p>
+          <textarea 
+            rows="4" 
+            placeholder="Ej: Precios unitarios discrepantes con la cotización formal de fábrica..." 
+            [ngModel]="rejectReason()" 
+            (ngModelChange)="rejectReason.set($event)"
+            class="form-control"
+            style="width: 100%; padding: 0.75rem; border-radius: 8px; background: #0f172a; border: 1px solid #334155; color: white;"
+          ></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeReject()">Cancelar</button>
+          <button class="btn-danger" (click)="confirmReject()">Confirmar Rechazo</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -14,6 +14,9 @@ import { TenantCatalogManagementController } from './controllers/pages/tenant-ca
 import { ActorManagementController } from './controllers/pages/actor-management.controller';
 import { LocationManagementController } from './controllers/pages/location-management.controller';
 import { UnitManagementController } from './controllers/pages/unit-management.controller';
+import { PurchaseManagementController } from './controllers/pages/purchase-management.controller';
+import { QrManagementController } from './controllers/pages/qr-management.controller';
+import { TransportManagementController } from './controllers/pages/transport-management.controller';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -33,5 +36,8 @@ export const routes: Routes = [
   { path: 'actors', component: ActorManagementController, canActivate: [authGuard] },
   { path: 'locations', component: LocationManagementController, canActivate: [authGuard] },
   { path: 'units', component: UnitManagementController, canActivate: [authGuard] },
+  { path: 'purchases', component: PurchaseManagementController, canActivate: [authGuard] },
+  { path: 'qr-codes', component: QrManagementController, canActivate: [authGuard] },
+  { path: 'shipments', component: TransportManagementController, canActivate: [authGuard] },
   { path: '**', redirectTo: 'login' }
 ];

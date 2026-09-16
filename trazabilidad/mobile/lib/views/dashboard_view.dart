@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/notification_controller.dart';
 import '../controllers/bitacora_controller.dart';
+import '../controllers/qr_controller.dart';
+import '../controllers/transport_controller.dart';
 import 'login_view.dart';
 import 'notifications_view.dart';
 import 'bitacora_view.dart';
+import 'qr_generator_view.dart';
+import 'shipment_list_view.dart';
 
 class DashboardView extends StatefulWidget {
   final AuthController authController;
@@ -18,12 +22,16 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   late final NotificationController _notificationController;
   late final BitacoraController _bitacoraController;
+  late final QrController _qrController;
+  late final TransportController _transportController;
 
   @override
   void initState() {
     super.initState();
     _notificationController = NotificationController(authController: widget.authController);
     _bitacoraController = BitacoraController();
+    _qrController = QrController();
+    _transportController = TransportController();
     _notificationController.fetchNotifications().then((_) {
       if (mounted) setState(() {});
     });
@@ -240,6 +248,144 @@ class _DashboardViewState extends State<DashboardView> {
                         Icons.arrow_forward_ios_rounded,
                         size: 18,
                         color: Color(0xFF38BDF8),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Tarjeta CU-016: Códigos QR de Unidades
+            Card(
+              color: const Color(0xFF1E293B),
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF10B981), width: 1.2),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => QrGeneratorView(qrController: _qrController),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.qr_code_2_rounded,
+                          size: 30,
+                          color: Color(0xFF10B981),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Códigos QR (CU-016)',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Generar y visualizar códigos QR de unidades individuales y en lote',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 18,
+                        color: Color(0xFF10B981),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Tarjeta CU-021: Envíos y Telemetría de Transporte
+            Card(
+              color: const Color(0xFF1E293B),
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFFF59E0B), width: 1.2),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ShipmentListView(transportController: _transportController),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.local_shipping_rounded,
+                          size: 30,
+                          color: Color(0xFFF59E0B),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Transporte y Telemetría (CU-021)',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Monitoreo de envíos, línea de tiempo y registro de condiciones IoT',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 18,
+                        color: Color(0xFFF59E0B),
                       ),
                     ],
                   ),

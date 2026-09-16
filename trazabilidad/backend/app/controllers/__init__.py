@@ -15,6 +15,9 @@ from app.controllers.cu008_catalogo_empresa.tenant_catalog_controller import Ten
 from app.controllers.cu013_actores_cadena.actor_controller import ActorController, router as actor_router
 from app.controllers.cu014_ubicaciones.location_controller import LocationController, router as location_router
 from app.controllers.cu015_unidades_producto.unit_controller import UnitController, router as unit_router
+from app.controllers.cu011_compras.purchase_controller import PurchaseController, router as purchase_router
+from app.controllers.cu016_codigos_qr.qr_controller import QRController, router as qr_router
+from app.controllers.cu021_eventos_transporte.transport_controller import TransportController, router as transport_router
 
 __all__ = [
     "AuthController",
@@ -42,4 +45,10 @@ __all__ = [
     "location_router",
     "UnitController",
     "unit_router",
+    "PurchaseController",
+    "purchase_router",
+    "QRController",
+    "qr_router",
+    "TransportController",
+    "transport_router",
 ]

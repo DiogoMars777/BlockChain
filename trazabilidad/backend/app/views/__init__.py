@@ -18,6 +18,9 @@ from app.views import (
     cu013_actores_cadena,
     cu014_ubicaciones,
     cu015_unidades_producto,
+    cu011_compras,
+    cu016_codigos_qr,
+    cu021_eventos_transporte,
 )
 
 __all__ = [
@@ -41,4 +44,7 @@ __all__ = [
     "cu013_actores_cadena",
     "cu014_ubicaciones",
     "cu015_unidades_producto",
+    "cu011_compras",
+    "cu016_codigos_qr",
+    "cu021_eventos_transporte",
 ]

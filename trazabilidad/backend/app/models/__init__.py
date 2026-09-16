@@ -17,6 +17,16 @@ from app.models.cu003_roles_permisos.role_permission import RolPermiso
 from app.models.cu003_roles_permisos.usuario_tenant_rol import UsuarioTenantRol
 from app.models.cu005_bitacora.bitacora import Bitacora
 from app.models.cu005_bitacora.notification import Notificacion
+from app.models.cu011_compras.purchase import Compra, CompraDetalle
+from app.models.cu016_codigos_qr.qr_code import CodigoQR
+from app.models.cu021_eventos_transporte.shipment import (
+    Envio,
+    EnvioUnidad,
+    EventoTrazabilidad,
+    EventoUnidad,
+    CondicionTransporte,
+    Alerta
+)
 
 __all__ = [
     "Tenant",
@@ -39,4 +49,13 @@ __all__ = [
     "UsuarioTenantRol",
     "Bitacora",
     "Notificacion",
+    "Compra",
+    "CompraDetalle",
+    "CodigoQR",
+    "Envio",
+    "EnvioUnidad",
+    "EventoTrazabilidad",
+    "EventoUnidad",
+    "CondicionTransporte",
+    "Alerta",
 ]

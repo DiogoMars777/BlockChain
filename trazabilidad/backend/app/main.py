@@ -14,6 +14,9 @@ from app.controllers.cu008_catalogo_empresa.tenant_catalog_controller import rou
 from app.controllers.cu013_actores_cadena.actor_controller import router as actor_router
 from app.controllers.cu014_ubicaciones.location_controller import router as location_router
 from app.controllers.cu015_unidades_producto.unit_controller import router as unit_router
+from app.controllers.cu011_compras.purchase_controller import router as purchase_router
+from app.controllers.cu016_codigos_qr.qr_controller import router as qr_router
+from app.controllers.cu021_eventos_transporte.transport_controller import router as transport_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -47,6 +50,9 @@ app.include_router(tenant_catalog_router, prefix="/api/v1")
 app.include_router(actor_router, prefix="/api/v1")
 app.include_router(location_router, prefix="/api/v1")
 app.include_router(unit_router, prefix="/api/v1")
+app.include_router(purchase_router, prefix="/api/v1")
+app.include_router(qr_router, prefix="/api/v1")
+app.include_router(transport_router, prefix="/api/v1")
 
 
 import jwt
