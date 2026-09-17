@@ -28,8 +28,8 @@ python seed.py
 # 7. Poblar datos de Sprint 2 (CU-011 compras, CU-016 codigos QR, CU-021 envios y transportes)
 python seed_sprint2.py
 
-# 8. Iniciar el servidor local
-python -m uvicorn app.main:app --reload
+# 8. Iniciar el servidor local (0.0.0.0 permite conexiones del emulador Android y web)
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 * **API Local:** http://127.0.0.1:8000
