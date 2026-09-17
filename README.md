@@ -1,63 +1,77 @@
 # Sistema de Trazabilidad Multi-Tenant
 
-Backend (FastAPI), frontend (Angular) y app móvil (Flutter) para el sistema de trazabilidad.
+Backend (FastAPI), frontend (Angular) y app móvil (Flutter).
 
-## Backend
+---
+
+## 1. Backend (FastAPI + PostgreSQL)
 
 ```powershell
+# 1. Entrar a la carpeta backend
 cd trazabilidad/backend
-python -m venv .venv
+
+# 2. Activar el entorno virtual (ya creado en .venv)
 .\.venv\Scripts\Activate.ps1
+
+# 3. Instalar librerias (si es primera vez)
 pip install -r requirements.txt
-copy .env.example .env      # completar DATABASE_URL, JWT_SECRET, SMTP_USER/PASSWORD
+
+# 4. Configurar variables de entorno en .env (DATABASE_URL con tu clave de Postgres)
+# DATABASE_URL=postgresql+psycopg://postgres:TU_CLAVE@localhost:5432/BLACKCHAIN
+
+# 5. Ejecutar migraciones de base de datos
 python -m alembic upgrade head
+
+# 6. Poblar datos base del sistema (5 empresas y usuarios admin)
 python seed.py
+
+# 7. Poblar datos de Sprint 2 (CU-011 compras, CU-016 codigos QR, CU-021 envios y transportes)
+python seed_sprint2.py
+
+# 8. Iniciar el servidor local
 uvicorn app.main:app --reload
 ```
 
-API: http://127.0.0.1:8000 — Docs: http://127.0.0.1:8000/docs
+* **API Local:** http://127.0.0.1:8000
+* **Documentación interactiva (Swagger):** http://127.0.0.1:8000/docs
 
-`alembic upgrade head` crea las 41 tablas completas del esquema (las 20 que ya
-usa el código de Sprint 0/1, más las 21 de sprints futuros que todavía no
-tienen modelos/controllers pero ya existen en el diseño de base de datos).
-Cada compañero migra su propia base local — no comparten la misma DB.
+---
 
-Si ya habías corrido `alembic upgrade head` antes y te quedaron solo 4 tablas
-(o cualquier número menor a 41), hacé `git pull` para traer las migraciones
-nuevas y volvé a correr `python -m alembic upgrade head` — no hace falta
-borrar la base, sigue desde donde quedó.
-
-### Datos de prueba
-
-`python seed.py` carga automáticamente 5 empresas de demostración con datos
-mínimos (usuario admin, roles, catálogo de productos, actores, ubicaciones y
-unidades). Es seguro correrlo varias veces, no duplica nada. Para iniciar
-sesión, usá el número de empresa como "Empresa (Slug)":
-
-| # | Empresa | Correo admin | Contraseña |
-|---|---|---|---|
-| 1 | iStore Bolivia S.A. | admin@trazabilidad.com | Admin123! |
-| 2 | TechImport Santa Cruz S.R.L. | admin@techimport.com | Admin123! |
-| 3 | Andina Digital Ltda. | admin@andinadigital.com | Admin123! |
-| 4 | ElectroSur Trading S.A. | admin@electrosur.com | Admin123! |
-| 5 | Cochabamba Wireless S.A. | admin@cochawireless.com | Admin123! |
-
-## Frontend
+## 2. Frontend Web (Angular)
 
 ```powershell
+# 1. Entrar a la carpeta frontend
 cd trazabilidad/frontend
+
+# 2. Instalar dependencias npm (si es primera vez)
 npm install
-ng serve
+
+# 3. Levantar la aplicacion web
+npm start
 ```
 
-http://localhost:4200
+* **Aplicación Web:** http://localhost:4200
 
-## Mobile
+### Credenciales de acceso de prueba:
+* **Contraseña general:** `Admin123!`
+* **Empresa 1 (Slug: 1):** `admin@trazabilidad.com`
+* **Empresa 2 (Slug: 2):** `admin@techimport.com`
+* **Empresa 3 (Slug: 3):** `admin@andinadigital.com`
 
-```bash
+---
+
+## 3. App Móvil (Flutter)
+
+```powershell
+# 1. Entrar a la carpeta mobile
 cd trazabilidad/mobile
+
+# 2. Obtener paquetes de Flutter
 flutter pub get
+
+# 3. Ejecutar en navegador web Chrome (sin emulador)
+flutter run -d chrome
+
+# 4. O ejecutar en dispositivo/emulador conectado
 flutter run
 ```
-
-Requiere Flutter SDK y un emulador/dispositivo Android o iOS conectado.
