@@ -3,7 +3,7 @@ from typing import Optional, List
 from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func
+from sqlalchemy import select, func, cast, String
 
 from app.db.session import get_db
 from app.models.cu021_eventos_transporte.shipment import (
@@ -62,7 +62,7 @@ class TransportController:
 
         query = select(Envio).where(Envio.idtenant == tenant_id)
         if estado and estado.strip():
-            query = query.where(func.lower(Envio.estado) == estado.strip().lower())
+            query = query.where(cast(Envio.estado, String) == estado.strip().lower())
 
         query = query.order_by(Envio.idenvio.desc()).offset(skip).limit(limit)
         shipments = db.execute(query).scalars().all()

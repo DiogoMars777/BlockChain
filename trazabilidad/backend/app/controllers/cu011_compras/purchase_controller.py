@@ -2,7 +2,7 @@ from typing import Optional, List
 from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func
+from sqlalchemy import select, func, cast, String
 
 from app.db.session import get_db
 from app.models.cu011_compras.purchase import Compra, CompraDetalle
@@ -105,7 +105,7 @@ class PurchaseController:
 
         query = select(Compra).where(Compra.idtenant == tenant_id)
         if estado and estado.strip():
-            query = query.where(func.lower(Compra.estado) == estado.strip().lower())
+            query = query.where(cast(Compra.estado, String) == estado.strip().lower())
 
         # Total
         count_stmt = select(func.count()).select_from(query.subquery())
