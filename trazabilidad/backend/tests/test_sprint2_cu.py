@@ -1,6 +1,7 @@
 import pytest
 from datetime import date, datetime
 from decimal import Decimal
+from sqlalchemy import select
 
 from app.models.cu011_compras.purchase import Compra, CompraDetalle
 from app.models.cu013_actores_cadena.actor import ActorCadena
@@ -61,27 +62,33 @@ def seed_sprint2_data(db_session, setup_test_data):
     db_session.flush()
 
     # 3. Categoría, Producto, Variante
-    cat = Categoria(nombrecategoria="Smartphones", descripcion="Teléfonos móviles")
-    db_session.add(cat)
-    db_session.flush()
+    cat = db_session.execute(select(Categoria).where(Categoria.nombrecategoria == "Smartphones")).scalars().first()
+    if not cat:
+        cat = Categoria(nombrecategoria="Smartphones", descripcion="Teléfonos móviles")
+        db_session.add(cat)
+        db_session.flush()
 
-    prod = Producto(
-        idcategoria=cat.idcategoria,
-        nombre="iPhone 16 Pro Max",
-        modelo="A3297",
-        activo=True
-    )
-    db_session.add(prod)
-    db_session.flush()
+    prod = db_session.execute(select(Producto).where(Producto.nombre == "iPhone 16 Pro Max")).scalars().first()
+    if not prod:
+        prod = Producto(
+            idcategoria=cat.idcategoria,
+            nombre="iPhone 16 Pro Max",
+            modelo="A3297",
+            activo=True
+        )
+        db_session.add(prod)
+        db_session.flush()
 
-    var = VarianteProducto(
-        idproducto=prod.idproducto,
-        sku="IPH16PM-256-BLK",
-        color="Titanio Negro",
-        capacidad="256GB"
-    )
-    db_session.add(var)
-    db_session.flush()
+    var = db_session.execute(select(VarianteProducto).where(VarianteProducto.sku == "IPH16PM-256-BLK")).scalars().first()
+    if not var:
+        var = VarianteProducto(
+            idproducto=prod.idproducto,
+            sku="IPH16PM-256-BLK",
+            color="Titanio Negro",
+            capacidad="256GB"
+        )
+        db_session.add(var)
+        db_session.flush()
 
     # 4. Compra (CU-011)
     compra = Compra(
