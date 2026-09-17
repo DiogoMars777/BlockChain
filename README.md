@@ -29,7 +29,7 @@ python seed.py
 python seed_sprint2.py
 
 # 8. Iniciar el servidor local
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 * **API Local:** http://127.0.0.1:8000
