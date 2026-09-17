@@ -23,6 +23,8 @@ export class QrManagementController implements OnInit {
 
   selectedUnit = signal<UnitQrItem | null>(null);
   isPreviewModalOpen = signal<boolean>(false);
+  previewQrImageUrl = signal<string | null>(null);
+  isLoadingPreview = signal<boolean>(false);
 
   selectedUnitIds = signal<number[]>([]);
 
@@ -51,9 +53,31 @@ export class QrManagementController implements OnInit {
   openPreview(unit: UnitQrItem): void {
     this.selectedUnit.set(unit);
     this.isPreviewModalOpen.set(true);
+    this.isLoadingPreview.set(true);
+
+    if (this.previewQrImageUrl() && this.previewQrImageUrl()?.startsWith('blob:')) {
+      URL.revokeObjectURL(this.previewQrImageUrl()!);
+      this.previewQrImageUrl.set(null);
+    }
+
+    this.qrService.downloadQrBlob(unit.idunidad).subscribe({
+      next: (blob) => {
+        const objectUrl = URL.createObjectURL(blob);
+        this.previewQrImageUrl.set(objectUrl);
+        this.isLoadingPreview.set(false);
+      },
+      error: () => {
+        this.previewQrImageUrl.set(this.getQrImageUrl(unit.idunidad));
+        this.isLoadingPreview.set(false);
+      }
+    });
   }
 
   closePreview(): void {
+    if (this.previewQrImageUrl() && this.previewQrImageUrl()?.startsWith('blob:')) {
+      URL.revokeObjectURL(this.previewQrImageUrl()!);
+    }
+    this.previewQrImageUrl.set(null);
     this.isPreviewModalOpen.set(false);
   }
 

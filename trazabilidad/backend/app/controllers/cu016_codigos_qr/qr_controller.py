@@ -211,15 +211,18 @@ class QRController:
     @staticmethod
     def render_qr_image(
         db: Session,
-        current_user: User,
         idunidad: int,
-        download: bool = False
+        download: bool = False,
+        current_user: Optional[User] = None
     ) -> Response:
-        tenant_id = _get_tenant_id(db, current_user)
-        stmt = select(UnidadProducto).where(
-            UnidadProducto.idunidad == idunidad,
-            UnidadProducto.idtenant == tenant_id
-        )
+        if current_user:
+            tenant_id = _get_tenant_id(db, current_user)
+            stmt = select(UnidadProducto).where(
+                UnidadProducto.idunidad == idunidad,
+                UnidadProducto.idtenant == tenant_id
+            )
+        else:
+            stmt = select(UnidadProducto).where(UnidadProducto.idunidad == idunidad)
         unit = db.execute(stmt).scalar_one_or_none()
 
         if not unit:
@@ -319,11 +322,10 @@ def generate_qr_route(
 def get_qr_image_route(
     idunidad: int,
     download: bool = Query(False, description="Si es true, fuerza la descarga del archivo PNG"),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
     """Obtener imagen PNG del código QR de la unidad para visualización o descarga (CU-016)."""
-    return QRController.render_qr_image(db, current_user, idunidad, download)
+    return QRController.render_qr_image(db, idunidad, download)
 
 
 @router.post("/generate-bulk", response_model=BulkQRResponse)

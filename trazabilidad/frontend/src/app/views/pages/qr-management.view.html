@@ -120,7 +120,11 @@
         <div class="modal-body printable-area">
           <div class="qr-preview-container">
             <div class="qr-frame">
-              <img [src]="getQrImageUrl(selectedUnit()!.idunidad)" alt="Código QR de Trazabilidad" class="qr-img" />
+              @if (isLoadingPreview()) {
+                <div style="padding: 2rem; color: #94a3b8; font-size: 0.85rem;">Cargando QR...</div>
+              } @else {
+                <img [src]="previewQrImageUrl() || getQrImageUrl(selectedUnit()!.idunidad)" alt="Código QR de Trazabilidad" class="qr-img" />
+              }
             </div>
             <div class="qr-specs">
               <h4 style="margin: 0 0 0.5rem 0; color: #38bdf8;">{{ selectedUnit()!.producto_nombre }}</h4>
