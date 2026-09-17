@@ -1,6 +1,6 @@
 class ApiConfig {
-  // Backend de producción en Railway
-  static const String baseUrl = 'https://blockchain-production-8de2.up.railway.app/api/v1';
+  // Backend local: http://127.0.0.1:8000/api/v1 (en emulador Android usar http://10.0.2.2:8000/api/v1)
+  static const String baseUrl = 'http://127.0.0.1:8000/api/v1';
 
   static const String login = '$baseUrl/auth/login';
   static const String refresh = '$baseUrl/auth/refresh';
