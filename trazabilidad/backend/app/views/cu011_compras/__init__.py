@@ -1,15 +1,9 @@
-from app.views.cu011_compras.purchase_views import (
-    CompraDetalleResponse,
-    CompraResponse,
-    CompraListResponse,
+from app.views.cu011_compras.purchase_approval_views import (
     RejectPurchaseRequest,
     ActionPurchaseResponse
 )
 
 __all__ = [
-    "CompraDetalleResponse",
-    "CompraResponse",
-    "CompraListResponse",
     "RejectPurchaseRequest",
     "ActionPurchaseResponse"
 ]

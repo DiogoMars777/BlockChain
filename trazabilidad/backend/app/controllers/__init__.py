@@ -15,9 +15,13 @@ from app.controllers.cu008_catalogo_empresa.tenant_catalog_controller import Ten
 from app.controllers.cu013_actores_cadena.actor_controller import ActorController, router as actor_router
 from app.controllers.cu014_ubicaciones.location_controller import LocationController, router as location_router
 from app.controllers.cu015_unidades_producto.unit_controller import UnitController, router as unit_router
-from app.controllers.cu011_compras.purchase_controller import PurchaseController, router as purchase_router
+from app.controllers.cu010_ordenes_compra.purchase_controller import PurchaseController, router as purchase_router
+from app.controllers.cu011_compras.purchase_approval_controller import PurchaseApprovalController, router as purchase_approval_router
+from app.controllers.cu012_recepciones.reception_controller import ReceptionController, router as reception_router
 from app.controllers.cu016_codigos_qr.qr_controller import QRController, router as qr_router
-from app.controllers.cu021_eventos_transporte.transport_controller import TransportController, router as transport_router
+from app.controllers.cu019_envios_logisticos.shipment_controller import ShipmentController, router as shipment_router
+from app.controllers.cu020_asignacion_unidades_envio.shipment_unit_controller import ShipmentUnitController, router as shipment_unit_router
+from app.controllers.cu021_eventos_transporte.transport_event_controller import TransportEventController, router as transport_event_router
 
 __all__ = [
     "AuthController",
@@ -47,8 +51,16 @@ __all__ = [
     "unit_router",
     "PurchaseController",
     "purchase_router",
+    "PurchaseApprovalController",
+    "purchase_approval_router",
+    "ReceptionController",
+    "reception_router",
     "QRController",
     "qr_router",
-    "TransportController",
-    "transport_router",
+    "ShipmentController",
+    "shipment_router",
+    "ShipmentUnitController",
+    "shipment_unit_router",
+    "TransportEventController",
+    "transport_event_router",
 ]

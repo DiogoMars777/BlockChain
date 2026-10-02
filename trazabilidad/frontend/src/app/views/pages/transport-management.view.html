@@ -25,6 +25,7 @@
           }
         </select>
         <button class="btn-secondary" (click)="loadShipments()">Actualizar</button>
+        <button class="btn-primary" (click)="openCreateModal()">+ Nuevo Envío</button>
       </div>
       <div class="total-count">
         Total: <strong>{{ shipments().length }}</strong> envíos registrados
@@ -67,6 +68,20 @@
                 </td>
                 <td class="action-buttons">
                   <button class="btn-sm btn-info" (click)="openTimeline(s)">📍 Línea de Tiempo</button>
+                  <button class="btn-sm btn-info" (click)="openUnitsModal(s)">📦 Unidades</button>
+                  @if (s.estado.toLowerCase() === 'preparacion') {
+                    <button class="btn-sm btn-secondary" (click)="openEditModal(s)">Editar</button>
+                  }
+                  @if (transicionesDisponibles(s.estado).length > 0) {
+                    <select class="btn-sm estado-select"
+                            [ngModel]="''"
+                            (ngModelChange)="cambiarEstado(s, $event)">
+                      <option value="" disabled>Moverse a...</option>
+                      @for (t of transicionesDisponibles(s.estado); track t) {
+                        <option [value]="t">{{ etiquetaEstado(t) }}</option>
+                      }
+                    </select>
+                  }
                   <button class="btn-sm btn-primary" (click)="openRecordModal(s)">+ Registrar Hito / Sensor</button>
                 </td>
               </tr>
@@ -82,6 +97,82 @@
       }
     </div>
   </main>
+
+  <!-- Modal Alta / Edicion de Envio (CU-019) -->
+  @if (isFormModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-header">
+          <h3>{{ isEditMode() ? 'Editar Envío ' + envioForm.codigoenvio : 'Nuevo Envío Logístico' }}</h3>
+          <button class="close-btn" (click)="closeForm()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-grid">
+            @if (!isEditMode()) {
+              <div class="form-group">
+                <label for="eOrigen">Actor de Origen *</label>
+                <select id="eOrigen" [(ngModel)]="envioForm.idactororigen">
+                  <option [ngValue]="0">-- Seleccione --</option>
+                  @for (a of origenes(); track a.idactor) {
+                    <option [ngValue]="a.idactor">{{ actorLabel(a) }} ({{ a.tipoactor }})</option>
+                  }
+                </select>
+              </div>
+            }
+            <div class="form-group">
+              <label for="eDestino">Actor de Destino *</label>
+              <select id="eDestino" [(ngModel)]="envioForm.idactordestino">
+                <option [ngValue]="0">-- Seleccione --</option>
+                @for (a of destinos(); track a.idactor) {
+                  <option [ngValue]="a.idactor">{{ actorLabel(a) }} ({{ a.tipoactor }})</option>
+                }
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="eCodigo">Código de Envío *</label>
+              <input id="eCodigo" type="text" [(ngModel)]="envioForm.codigoenvio"
+                     [readonly]="isEditMode()" placeholder="SHIP-2026-001" />
+              @if (isEditMode()) {
+                <small>El código no se puede modificar.</small>
+              }
+            </div>
+            <div class="form-group">
+              <label for="eTransportista">Transportista</label>
+              <select id="eTransportista"
+                      [ngModel]="envioForm.idtransportista || null"
+                      (ngModelChange)="onTransportistaChange($event)">
+                <option [ngValue]="null">-- Sin transportista (interno) --</option>
+                @for (a of transportistas(); track a.idactor) {
+                  <option [ngValue]="a.idactor">{{ actorLabel(a) }}</option>
+                }
+              </select>
+              @if (transportistas().length === 0) {
+                <small>No hay transportistas registrados en la cadena de actores.</small>
+              }
+            </div>
+            <div class="form-group">
+              <label for="eEstimada">Fecha Estimada de Entrega</label>
+              <input id="eEstimada" type="datetime-local" [(ngModel)]="envioForm.fechaestimada" />
+            </div>
+            <div class="form-group">
+              <label for="eTracking">Tracking Externo</label>
+              <input id="eTracking" type="text" [(ngModel)]="envioForm.trackingexterno" placeholder="Opcional" />
+            </div>
+          </div>
+
+          @if (errorMessage()) {
+            <div class="alert-danger">{{ errorMessage() }}</div>
+          }
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeForm()">Cancelar</button>
+          <button class="btn-primary" [disabled]="isSaving()" (click)="saveEnvio()">
+            {{ isSaving() ? 'Guardando...' : (isEditMode() ? 'Guardar Cambios' : 'Registrar Envío') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- Modal Línea de Tiempo / Timeline -->
   @if (isTimelineModalOpen() && selectedShipment()) {
@@ -225,6 +316,143 @@
         <div class="modal-footer">
           <button class="btn-secondary" (click)="closeRecordModal()">Cancelar</button>
           <button class="btn-primary" (click)="saveEvent()">Guardar Evento</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Asignar / Desasignar Unidades al Envio (CU-020) -->
+  @if (isUnitsModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card" style="max-width: 780px;">
+        <div class="modal-header">
+          <h3>📦 Unidades Físicas del Envío
+            @if (selectedShipment(); as s) {
+              <span class="badge badge-info">{{ s.codigoenvio }}</span>
+            }
+          </h3>
+          <button class="btn-close" (click)="closeUnitsModal()">×</button>
+        </div>
+        <div class="modal-body">
+          @if (isLoadingUnits()) {
+            <div style="padding: 2rem; text-align: center; color: #94a3b8;">Cargando unidades del envío...</div>
+          } @else if (unitsData(); as data) {
+            @if (!puedeEditarUnidades(selectedShipment()!)) {
+              <div class="alert-error" style="margin-bottom: 1rem;">
+                Este envío está en estado '{{ data.estado }}'. Las unidades solo se pueden asignar
+                o desasignar mientras el envío esté en preparación.
+              </div>
+            }
+
+            <h4 style="margin: 0 0 0.5rem 0; color: #38bdf8; font-size: 0.95rem;">
+              ✅ Asignadas ({{ data.asignadas.length }})
+            </h4>
+            @if (data.asignadas.length === 0) {
+              <p style="color: #94a3b8; font-size: 0.9rem;">Este envío todavía no tiene unidades físicas asignadas.</p>
+            } @else {
+              <table class="data-table" style="margin-bottom: 1.25rem;">
+                <thead>
+                  <tr>
+                    <th>Nº Serie</th>
+                    <th>Producto</th>
+                    <th>Estado</th>
+                    <th style="width: 130px;">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (u of data.asignadas; track u.idenviounidad) {
+                    <tr>
+                      <td style="font-family: monospace; color: #38bdf8;">{{ u.numeroserie }}</td>
+                      <td>
+                        <div style="color: #f8fafc;">{{ u.sku }}</div>
+                        <div style="font-size: 0.8rem; color: #94a3b8;">{{ u.producto_nombre }}</div>
+                      </td>
+                      <td><span class="badge badge-info">{{ u.estado }}</span></td>
+                      <td>
+                        @if (puedeEditarUnidades(selectedShipment()!)) {
+                          <button
+                            class="btn-sm btn-danger"
+                            [disabled]="isMutatingUnits()"
+                            (click)="unassignUnit(u.idunidad, u.numeroserie)"
+                          >Desasignar</button>
+                        } @else {
+                          <span style="color: #64748b; font-size: 0.8rem;">Bloqueado</span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+
+            <h4 style="margin: 0 0 0.5rem 0; color: #38bdf8; font-size: 0.95rem;">
+              📥 Unidades disponibles ({{ data.disponibles.length }})
+            </h4>
+            @if (puedeEditarUnidades(selectedShipment()!)) {
+              <input
+                type="text"
+                placeholder="Filtrar por Nº Serie, SKU o producto..."
+                [ngModel]="unitSearch()"
+                (ngModelChange)="unitSearch.set($event)"
+                class="form-input"
+                style="width: 100%; margin-bottom: 0.75rem;"
+              />
+
+              @if (candidatasFiltradas().length === 0) {
+                <p style="color: #94a3b8; font-size: 0.9rem;">
+                  No hay unidades disponibles que coincidan con el filtro.
+                </p>
+              } @else {
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 60px;"></th>
+                      <th>Nº Serie</th>
+                      <th>Producto</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (c of candidatasFiltradas(); track c.idunidad) {
+                      <tr
+                        (click)="selectCandidate(c)"
+                        style="cursor: pointer;"
+                        [style.background]="selectedCandidateId() === c.idunidad ? 'rgba(2,132,199,0.18)' : 'transparent'"
+                      >
+                        <td>
+                          <input type="radio" [checked]="selectedCandidateId() === c.idunidad" />
+                        </td>
+                        <td style="font-family: monospace; color: #38bdf8;">{{ c.numeroserie }}</td>
+                        <td>
+                          <div style="color: #f8fafc;">{{ c.sku }}</div>
+                          <div style="font-size: 0.8rem; color: #94a3b8;">{{ c.producto_nombre }}</div>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            } @else {
+              <p style="color: #94a3b8; font-size: 0.9rem;">
+                El contenido de este envío ya fue despachado y no admite más unidades.
+              </p>
+            }
+          }
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeUnitsModal()">Cerrar</button>
+          <button class="btn-secondary" (click)="loadShipmentUnits(selectedShipment()!.idenvio)">
+            Actualizar
+          </button>
+          @if (puedeEditarUnidades(selectedShipment()!)) {
+            <button class="btn-secondary" [disabled]="isMutatingUnits() || candidatasFiltradas().length === 0"
+                    (click)="assignAllFiltered()">
+              Asignar las {{ candidatasFiltradas().length }} filtrada(s)
+            </button>
+            <button class="btn-primary" [disabled]="isMutatingUnits() || selectedCandidateId() === null"
+                    (click)="assignSelectedUnit()">
+              Asignar Seleccionada
+            </button>
+          }
         </div>
       </div>
     </div>

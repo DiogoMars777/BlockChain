@@ -25,6 +25,7 @@
           }
         </select>
         <button class="btn-secondary" (click)="loadPurchases()">Actualizar</button>
+        <button class="btn-primary" (click)="openCreateModal()">+ Nueva Orden</button>
       </div>
       <div class="total-count">
         Total: <strong>{{ total() }}</strong> órdenes de compra
@@ -63,6 +64,7 @@
                 <td class="action-buttons">
                   <button class="btn-sm btn-info" (click)="openDetail(compra)">Ver Detalle</button>
                   @if (compra.estado.toLowerCase() === 'pendiente') {
+                    <button class="btn-sm btn-warning" (click)="openEditModal(compra)">Editar</button>
                     <button class="btn-sm btn-success" (click)="openApprove(compra)">Aprobar</button>
                     <button class="btn-sm btn-danger" (click)="openReject(compra)">Rechazar</button>
                   }
@@ -80,6 +82,96 @@
       }
     </div>
   </main>
+
+  <!-- Modal Alta / Edicion de Compra (CU-010) -->
+  @if (isFormModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-header">
+          <h3>{{ isEditMode() ? 'Editar Orden de Compra' : 'Nueva Orden de Compra' }}</h3>
+          <button class="modal-close" (click)="closeForm()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fProveedor">Proveedor *</label>
+              <select id="fProveedor" [(ngModel)]="compraForm.idproveedor">
+                <option [ngValue]="0">-- Seleccione un proveedor --</option>
+                @for (p of proveedores(); track p.idactor) {
+                  <option [ngValue]="p.idactor">{{ p.razonsocial || p.nombre }}</option>
+                }
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="fNumero">Nº Orden *</label>
+              <input id="fNumero" type="text" [(ngModel)]="compraForm.numeroorden" placeholder="PO-2026-001" />
+            </div>
+            <div class="form-group">
+              <label for="fFecha">Fecha de Compra *</label>
+              <input id="fFecha" type="date" [(ngModel)]="compraForm.fechacompra" />
+            </div>
+          </div>
+
+          <div class="detalle-header">
+            <h4>Líneas de Detalle *</h4>
+            <button type="button" class="btn-sm btn-secondary" (click)="addDetalle()">+ Agregar Línea</button>
+          </div>
+
+          @if (compraForm.detalles.length === 0) {
+            <p class="empty-hint">Aún no hay líneas. Agregue al menos una.</p>
+          } @else {
+            <table class="detail-table">
+              <thead>
+                <tr>
+                  <th>Variante</th>
+                  <th>Cantidad</th>
+                  <th>Costo Unit. (USD)</th>
+                  <th>Subtotal</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (d of compraForm.detalles; track $index) {
+                  <tr>
+                    <td>
+                      <select [(ngModel)]="d.idvariante">
+                        <option [ngValue]="0">-- Variante --</option>
+                        @for (c of catalogo(); track c.idcatalogotenant) {
+                          <option [ngValue]="c.idvariante">
+                            {{ varianteLabel(c) }}
+                          </option>
+                        }
+                      </select>
+                    </td>
+                    <td><input type="number" min="1" [(ngModel)]="d.cantidad" /></td>
+                    <td><input type="number" min="0" step="0.01" [(ngModel)]="d.costounitariousd" /></td>
+                    <td>{{ subtotal(d) | number:'1.2-2' }}</td>
+                    <td>
+                      <button type="button" class="btn-sm btn-danger" (click)="removeDetalle($index)">Quitar</button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+            <div class="form-total">
+              <span>Total estimado:</span>
+              <strong>${{ formTotal() | number:'1.2-2' }} USD</strong>
+            </div>
+          }
+
+          @if (errorMessage()) {
+            <div class="alert alert-danger" style="margin-top: 1rem;">{{ errorMessage() }}</div>
+          }
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeForm()">Cancelar</button>
+          <button class="btn-primary" [disabled]="isSaving()" (click)="saveCompra()">
+            {{ isSaving() ? 'Guardando...' : (isEditMode() ? 'Guardar Cambios' : 'Crear Orden') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- Modal Detalle de Compra -->
   @if (isDetailModalOpen() && selectedPurchase()) {

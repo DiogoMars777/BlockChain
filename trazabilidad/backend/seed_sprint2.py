@@ -17,11 +17,12 @@ from app.models.cu013_actores_cadena.actor import ActorCadena
 from app.models.cu014_ubicaciones.location import Ubicacion
 from app.models.cu006_productos_variantes.variant import VarianteProducto
 from app.models.cu015_unidades_producto.unit import UnidadProducto
-from app.models.cu011_compras.purchase import Compra, CompraDetalle
+from app.models.cu010_ordenes_compra.purchase import Compra, CompraDetalle
+from app.models.cu012_recepciones.reception import RecepcionCompra, RecepcionDetalle
 from app.models.cu016_codigos_qr.qr_code import CodigoQR
-from app.models.cu021_eventos_transporte.shipment import (
-    Envio,
-    EnvioUnidad,
+from app.models.cu019_envios_logisticos.shipment import Envio
+from app.models.cu020_asignacion_unidades_envio.shipment_unit import EnvioUnidad
+from app.models.cu021_eventos_transporte.transport_event import (
     EventoTrazabilidad,
     EventoUnidad,
     CondicionTransporte,
@@ -107,6 +108,78 @@ def seed_tenant_sprint2(db: Session, tenant: Tenant, variantes: list):
                 qrs_count += 1
         if qrs_count > 0:
             print(f"  [CU-016] {qrs_count} codigos QR generados para tenant {tenant.idtenant}.")
+
+    # 2.5 CU-012: RECEPCIONES DE MERCANCIA
+    if ubicacion and variantes:
+        recepciones_existentes = db.execute(
+            select(RecepcionCompra).where(
+                RecepcionCompra.idcompra.in_(
+                    select(Compra.idcompra).where(Compra.idtenant == tenant.idtenant)
+                )
+            )
+        ).scalars().all()
+
+        if not recepciones_existentes:
+            ordenes_enviadas = db.execute(
+                select(Compra).where(
+                    Compra.idtenant == tenant.idtenant,
+                    Compra.estado.in_(["enviada", "recibida_parcial"])
+                ).order_by(Compra.idcompra)
+            ).scalars().all()
+
+            if not ordenes_enviadas:
+                ordenes_enviadas = db.execute(
+                    select(Compra).where(
+                        Compra.idtenant == tenant.idtenant,
+                        Compra.estado == "pendiente"
+                    ).order_by(Compra.idcompra)
+                ).scalars().all()
+                for orden in ordenes_enviadas:
+                    orden.estado = "enviada"
+
+            for orden in ordenes_enviadas[:1]:
+                detalles_orden = db.execute(
+                    select(CompraDetalle).where(CompraDetalle.idcompra == orden.idcompra)
+                ).scalars().all()
+                if not detalles_orden:
+                    continue
+
+                ahora = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=1)
+                recepcion = RecepcionCompra(
+                    idcompra=orden.idcompra,
+                    idubicacion=ubicacion.idubicacion,
+                    fecharecepcion=ahora,
+                    numerodocumento=f"GR-{tenant.idtenant}-001",
+                    estado="parcial"
+                )
+                db.add(recepcion)
+                db.flush()
+
+                for det in detalles_orden:
+                    # Se recibe la mitad de lo pedido: la orden queda en 'recibida_parcial'.
+                    recibido = max(1, det.cantidad // 2)
+                    detalle_recepcion = RecepcionDetalle(
+                        idrecepcion=recepcion.idrecepcion,
+                        idvariante=det.idvariante,
+                        cantidadesperada=det.cantidad,
+                        cantidadrecibida=recibido
+                    )
+                    db.add(detalle_recepcion)
+                    db.flush()
+
+                    for i in range(1, recibido + 1):
+                        db.add(UnidadProducto(
+                            idtenant=tenant.idtenant,
+                            idvariante=det.idvariante,
+                            idrecepciondetalle=detalle_recepcion.idrecepciondetalle,
+                            numeroserie=f"REC-GR-{tenant.idtenant}-001-{detalle_recepcion.idrecepciondetalle}-{i:04d}",
+                            idubicacionactual=ubicacion.idubicacion,
+                            estado="disponible"
+                        ))
+
+                # El estado de la orden se recalcula igual que en el controlador.
+                orden.estado = "recibida_parcial"
+                print(f"  [CU-012] Recepcion GR-{tenant.idtenant}-001 creada para la orden {orden.numeroorden}.")
 
     # 3. CU-021: ENVIOS Y TRAZABILIDAD
     envios = db.execute(select(Envio).where(Envio.idtenant == tenant.idtenant)).scalars().all()
@@ -197,7 +270,7 @@ def seed_sprint2():
         for tenant in tenants:
             seed_tenant_sprint2(db, tenant, variantes)
 
-        print("\n--- Todos los tenants quedaron poblados para CU-011, CU-016 y CU-021 ---")
+        print("\n--- Todos los tenants quedaron poblados para CU-011, CU-012, CU-016 y CU-021 ---")
     except Exception as e:
         db.rollback()
         print(f"Error: {e}")

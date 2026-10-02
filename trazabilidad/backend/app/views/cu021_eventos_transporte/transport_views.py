@@ -3,6 +3,8 @@ from decimal import Decimal
 from typing import Optional, List
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.views.cu019_envios_logisticos.shipment_views import EnvioResponse
+
 
 class CondicionTransporteInput(BaseModel):
     temperatura: Optional[Decimal] = Field(None, description="Temperatura en grados Celsius (°C)")
@@ -45,23 +47,6 @@ class EventoTrazabilidadResponse(BaseModel):
     payloadhash: Optional[str] = None
     estadoverificacion: Optional[str] = None
     condiciones: Optional[CondicionTransporteResponse] = None
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class EnvioResponse(BaseModel):
-    idenvio: int
-    idtenant: int
-    codigoenvio: str
-    actor_origen_nombre: Optional[str] = None
-    actor_destino_nombre: Optional[str] = None
-    transportista_nombre: Optional[str] = None
-    fechasalida: Optional[datetime] = None
-    fechaestimada: Optional[datetime] = None
-    fechaentrega: Optional[datetime] = None
-    estado: str
-    trackingexterno: Optional[str] = None
-    total_unidades: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 

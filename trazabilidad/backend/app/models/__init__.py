@@ -17,11 +17,12 @@ from app.models.cu003_roles_permisos.role_permission import RolPermiso
 from app.models.cu003_roles_permisos.usuario_tenant_rol import UsuarioTenantRol
 from app.models.cu005_bitacora.bitacora import Bitacora
 from app.models.cu005_bitacora.notification import Notificacion
-from app.models.cu011_compras.purchase import Compra, CompraDetalle
+from app.models.cu010_ordenes_compra.purchase import Compra, CompraDetalle
+from app.models.cu012_recepciones.reception import RecepcionCompra, RecepcionDetalle
 from app.models.cu016_codigos_qr.qr_code import CodigoQR
-from app.models.cu021_eventos_transporte.shipment import (
-    Envio,
-    EnvioUnidad,
+from app.models.cu019_envios_logisticos.shipment import Envio
+from app.models.cu020_asignacion_unidades_envio.shipment_unit import EnvioUnidad
+from app.models.cu021_eventos_transporte.transport_event import (
     EventoTrazabilidad,
     EventoUnidad,
     CondicionTransporte,
@@ -51,6 +52,8 @@ __all__ = [
     "Notificacion",
     "Compra",
     "CompraDetalle",
+    "RecepcionCompra",
+    "RecepcionDetalle",
     "CodigoQR",
     "Envio",
     "EnvioUnidad",
