@@ -31,6 +31,7 @@ class Compra(Base):
     tenant = relationship("Tenant")
     proveedor = relationship("ActorCadena")
     detalles = relationship("CompraDetalle", back_populates="compra", cascade="all, delete-orphan")
+    recepciones = relationship("RecepcionCompra", back_populates="compra")
 
 
 class CompraDetalle(Base):

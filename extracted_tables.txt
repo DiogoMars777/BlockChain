@@ -1,0 +1,679 @@
+
+--- TABLE 0 (rows: 1) Header: INTEGRANTESJahuira Poma JimenaMontaño Roca RafaelRios Benavides BeimarRocha Jaimez Diogo                                                                                      Rodríguez Laguna Raysa SofíaVilches Rodriguez Shecid | REGISTRO223042952220154511217042414223051268222009683221114882 ---
+
+--- TABLE 1 (rows: 4) Header: Caso de Estudio | Empresa / Plataforma | Descripción | Enfoque / Impacto Principal ---
+
+--- TABLE 2 (rows: 17) Header: Componente | Tecnología Propuesta | Justificación ---
+
+--- TABLE 3 (rows: 15) Header: Componente | Tecnología Propuesta | Justificación ---
+
+--- TABLE 4 (rows: 7) Header: Ítem | Descripción | Costo Estimado (USD) ---
+
+--- TABLE 5 (rows: 9) Header: Ítem | Descripción | Costo Estimado (USD/mes) ---
+
+--- TABLE 6 (rows: 3) Header: Ítem | Descripción | Costo Estimado (USD/mes) ---
+
+--- TABLE 7 (rows: 7) Header: Ítem | Descripción | Costo Estimado (USD/mes) ---
+
+--- TABLE 8 (rows: 5) Header: Ítem | Descripción | Costo Estimado (USD/mes) ---
+
+--- TABLE 9 (rows: 5) Header: Beneficio | Descripción | Impacto Cuantificado ---
+
+--- TABLE 10 (rows: 6) Header: Beneficio | Descripción | Impacto Cuantificado ---
+
+--- TABLE 11 (rows: 6) Header: Beneficio | Descripción | Impacto Cuantificado ---
+
+--- TABLE 12 (rows: 8) Header: Área | Descripción ---
+
+--- TABLE 13 (rows: 6) Header: Área | Descripción ---
+
+--- TABLE 14 (rows: 9) Header: Rol | Tipo de acceso | Descripción general ---
+
+--- TABLE 15 (rows: 7) Header: Rol | Integrante | Responsabilidad ---
+
+--- TABLE 16 (rows: 48) Header: Concepto | Definición ---
+
+--- TABLE 17 (rows: 5) Header: Función | Descripción | Actor ---
+
+--- TABLE 18 (rows: 8) Header: Función | Descripción | Actor ---
+
+--- TABLE 19 (rows: 7) Header: Función | Descripción | Actor ---
+
+--- TABLE 20 (rows: 5) Header: Función | Descripción | Actor ---
+
+--- TABLE 21 (rows: 15) Header: Función | Descripción | Actor ---
+
+--- TABLE 22 (rows: 9) Header: Función | Descripción | Actor ---
+
+--- TABLE 23 (rows: 7) Header: Función | Descripción | Actor ---
+
+--- TABLE 24 (rows: 8) Header: Función | Descripción | Actor ---
+
+--- TABLE 25 (rows: 4) Header: PRODUCT BACKLOG ---
+
+--- TABLE 26 (rows: 15) Header: SPRINT 0 ---
+
+--- TABLE 27 (rows: 14) Header: SPRINT 1 ---
+
+--- TABLE 28 (rows: 14) Header: SPRINT 2 ---
+[MATCH TABLE 28]
+SPRINT 2
+ID | ROL | Características / Funcionalidad | Prioridad | Tiempo estimado | Plataforma
+T026 | Development Team (Backend) | Implementación de gestión de órdenes de compra (API REST) | Alta | 5h | Backend
+T027 | Development Team (Frontend) | Interfaz de creación y consulta de órdenes de compra (UI Angular) | Alta | 4h | Web
+T028 | Development Team (Backend) | Implementación de aprobación y rechazo de órdenes de compra | Alta | 4h | Backend
+T029 | Development Team (Backend) | Implementación de recepción de mercancía y actualización de existencias | Alta | 5h | Backend
+T030 | Development Team (Frontend) | Interfaz de recepción y consulta de mercancía (UI Angular) | Alta | 4h | Web
+T031 | Development Team (Backend) | Implementación de registro y gestión de unidades individuales | Alta | 5h | Backend
+T032 | Development Team (Backend) | Asignación de identificadores únicos a unidades (Serial/IMEI/EID) | Alta | 4h | Backend
+T033 | Development Team (Frontend) | Interfaz de administración de unidades individuales (UI Angular) | Alta | 4h | Web
+T034 | Development Team (Backend) | Generación de códigos QR únicos por unidad | Alta | 4h | Backend
+T035 | Development Team (Frontend) | Interfaz de generación y descarga de códigos QR (UI Angular) | Alta | 4h | Web
+T036 | Development Team (Backend) | Implementación de envíos, movimientos y asignación de unidades | Alta | 5h | Backend
+T037 | Development Team (Mobile) | Registro de recepción, transporte y condiciones mediante aplicación móvil | Alta | 5h | Móvil
+
+--- TABLE 29 (rows: 14) Header: SPRINT 3 ---
+
+--- TABLE 30 (rows: 14) Header: SPRINT 4 ---
+
+--- TABLE 31 (rows: 32) Header: REQUISITOS FUNCIONALES ---
+
+--- TABLE 32 (rows: 21) Header: REQUISITOS NO FUNCIONALES ---
+
+--- TABLE 33 (rows: 36) Header: ID | Caso de uso | Sprint | Web | Móvil ---
+[MATCH TABLE 33]
+ID | Caso de uso | Sprint | Web | Móvil | Prioridad
+CU-001 | Gestionar Empresas (Tenants) | 0 | ✓ | — | Alta
+CU-002 | Gestionar Usuarios del Sistema | 0 | ✓ | — | Alta
+CU-003 | Asignar Roles y Permisos a Usuario | 0 | ✓ | — | Alta
+CU-004 | Autenticar y Recuperar Contraseña | 1 | ✓ | ✓ | Alta
+CU-005 | Consultar Bitácora y Gestionar Notificaciones | 3 | ✓ | ✓ | Media
+CU-006 | Gestionar Productos y Variantes | 1 | ✓ | — | Alta
+CU-007 | Gestionar Certificaciones Técnicas | 1 | ✓ | — | Media
+CU-008 | Gestionar Catálogo por Empresa | 1 | ✓ | — | Alta
+CU-009 | Gestionar Categorías de Productos | 1 | ✓ | — | Media
+CU-010 | Gestionar Órdenes de Compra | 2 | ✓ | — | Alta
+CU-011 | Aprobar / Rechazar Compra | 2 | ✓ | — | Alta
+CU-012 | Gestionar Recepciones de Mercancía | 2 | ✓ | — | Alta
+CU-013 | Gestionar Actores de la Cadena | 1 | ✓ | — | Media
+CU-014 | Gestionar Ubicaciones Físicas | 1 | ✓ | — | Media
+CU-015 | Gestionar Unidades de Producto (Serial/IMEI) | 1 | ✓ | — | Alta
+CU-016 | Generar y Descargar Código QR | 2 | ✓ | — | Alta
+CU-017 | Escanear Código QR | 3 | — | ✓ | Alta
+CU-018 | Registrar Consulta de Trazabilidad | 3 | ✓ (Backend) | ✓ (Backend) | Alta
+CU-019 | Gestionar Envíos Logísticos | 2 | ✓ | — | Alta
+CU-020 | Asignar / Desasignar Unidades a Envío | 2 | ✓ | — | Alta
+CU-021 | Registrar Eventos y Condiciones de Transporte | 2 | ✓ | ✓ | Alta
+CU-022 | Consultar Historial y Verificar Autenticidad | 3 | ✓ | ✓ | Alta
+CU-023 | Reportar Sospecha de Falsificación | 3 | — | ✓ | Media
+CU-024 | Gestionar Alertas e Incidencias | 3 | ✓ | ✓ | Alta
+CU-025 | Gestionar Ventas | 4 | ✓ | — | Alta
+CU-026 | Asignar Unidades Físicas a Venta | 4 | ✓ | — | Alta
+CU-027 | Gestionar Pagos | 4 | ✓ | — | Media
+CU-028 | Consultar Historial de Compras del Consumidor | 4 | ✓ | ✓ | Media
+CU-029 | Gestionar Devoluciones | 4 | ✓ | — | Alta
+CU-030 | Asignar Unidades a Devolución | 4 | ✓ | — | Alta
+CU-031 | Gestionar Garantías por Unidad | 4 | ✓ | — | Alta
+CU-032 | Adjuntar Documentos a Unidades | 2 | ✓ | — | Media
+CU-033 | Registrar Evento en Blockchain | 3 | ✓ (Backend) | — | Alta
+CU-034 | Consultar Registros Blockchain y Certificados | 3 | ✓ | ✓ (lectura) | Alta
+CU-035 | Gestionar Reportes y Dashboards | 4 | ✓ | — | Alta
+
+--- TABLE 34 (rows: 17) Header: SPRINT 0 Diagrama de Gantt (20 al 25 de agosto de 2026) ---
+
+--- TABLE 35 (rows: 5) Header: Definición de la arquitectura general del sistema ---
+
+--- TABLE 36 (rows: 5) Header: Configuración inicial del proyecto Backend con FastAPI ---
+
+--- TABLE 37 (rows: 5) Header: Configuración inicial de la plataforma Web con Angular ---
+
+--- TABLE 38 (rows: 5) Header: Configuración inicial de la aplicación Móvil con Flutter ---
+
+--- TABLE 39 (rows: 5) Header: Configuración de la conexión con PostgreSQL ---
+
+--- TABLE 40 (rows: 5) Header: Diseño del modelo de datos para empresas, usuarios, roles y productos ---
+
+--- TABLE 41 (rows: 5) Header: Definición de entidades y relaciones principales del sistema ---
+
+--- TABLE 42 (rows: 5) Header: Implementación de gestión de empresas y configuración multiempresa (API REST) ---
+[MATCH TABLE 42]
+Implementación de gestión de empresas y configuración multiempresa (API REST)
+T008 (CU-001) | Esta tarea consiste en implementar los endpoints REST necesarios para registrar, editar y administrar empresas, garantizando el aislamiento de datos mediante un esquema multiempresa.
+Alta | 5 Story Points
+Criterios de Aceptación:a) Se implementarán los endpoints para crear, editar, desactivar y listar empresas.b) El sistema validará que los datos obligatorios de cada empresa estén completos antes de guardarlos.c) Se garantizará el aislamiento de datos entre empresas mediante el esquema multiempresa.d) Los endpoints serán probados mediante pruebas unitarias o de integración.
+Autor: | Jahuira Poma Jimena
+
+--- TABLE 43 (rows: 5) Header: Interfaz de gestión de empresas (UI Angular) ---
+[MATCH TABLE 43]
+Interfaz de gestión de empresas (UI Angular)
+T009 (CU-001) | Esta tarea consiste en implementar la interfaz web en Angular que permita registrar, editar y visualizar las empresas registradas en el sistema, consumiendo los endpoints correspondientes del backend.
+Alta | 3 Story Points
+Criterios de Aceptación:a) Se implementará un formulario para el registro y edición de empresas.b) Se implementará un listado de empresas con opciones de edición y desactivación.c) La interfaz consumirá correctamente los endpoints de gestión de empresas del backend.d) La interfaz será validada en distintos tamaños de pantalla (responsive).
+Autor: | Rocha Jaimez Diogo
+
+--- TABLE 44 (rows: 5) Header: Implementación de gestión de usuarios del sistema (API REST) ---
+[MATCH TABLE 44]
+Implementación de gestión de usuarios del sistema (API REST)
+T010 (CU-002) | Esta tarea consiste en implementar los endpoints REST necesarios para registrar, editar y administrar las cuentas de los usuarios del sistema, asociando a cada usuario con su empresa correspondiente.
+Alta | 5 Story Points
+Criterios de Aceptación:a) Se implementarán los endpoints para crear, editar, desactivar y listar usuarios.b) El sistema validará que el correo electrónico de cada usuario no esté duplicado.c) Cada usuario quedará correctamente asociado a su empresa correspondiente.d) Los endpoints serán probados mediante pruebas unitarias o de integración.
+Autor: | Vilches Rodriguez Shecid
+
+--- TABLE 45 (rows: 5) Header: Interfaz de administración de usuarios (UI Angular) ---
+[MATCH TABLE 45]
+Interfaz de administración de usuarios (UI Angular)
+T011 (CU-002) | Esta tarea consiste en implementar la interfaz web en Angular que permita registrar, editar y administrar los usuarios del sistema, consumiendo los endpoints correspondientes del backend.
+Alta | 3 Story Points
+Criterios de Aceptación:a) Se implementará un formulario para el registro y edición de usuarios.b) Se implementará un listado filtrable de usuarios por empresa y estado.c) La interfaz consumirá correctamente los endpoints de gestión de usuarios del backend.d) La interfaz será validada en distintos tamaños de pantalla (responsive).
+Autor: | Montaño Roca Rafael
+
+--- TABLE 46 (rows: 5) Header: Implementación de roles y permisos de usuarios (RBAC) ---
+[MATCH TABLE 46]
+Implementación de roles y permisos de usuarios (RBAC)
+T012 (CU-003) | Esta tarea consiste en implementar el sistema de roles y permisos (RBAC) que permita asignar y validar los accesos de cada usuario según su rol dentro de su empresa.
+Alta | 5 Story Points
+Criterios de Aceptación:a) Se implementarán los endpoints para crear, editar y asignar roles a los usuarios.b) Se implementará la validación de permisos según el rol asignado a cada usuario.c) Un usuario solo podrá acceder a las funcionalidades permitidas según su rol.d) Los endpoints serán probados mediante pruebas unitarias o de integración.
+Autor: | Rodríguez Laguna Raysa Sofía
+
+--- TABLE 47 (rows: 5) Header: Interfaz de asignación de roles y permisos (UI Angular) ---
+[MATCH TABLE 47]
+Interfaz de asignación de roles y permisos (UI Angular)
+T013 (CU-003) | Esta tarea consiste en implementar la interfaz web en Angular que permita asignar y administrar los roles y permisos de los usuarios, consumiendo los endpoints correspondientes del backend.
+Alta | 3 Story Points
+Criterios de Aceptación:a) Se implementará una interfaz para asignar uno o más roles a un usuario.b) Se implementará la visualización de los permisos asociados a cada rol.c) La interfaz consumirá correctamente los endpoints de asignación de roles del backend.d) La interfaz será validada en distintos tamaños de pantalla (responsive).
+Autor: | Rios Benavides Beimar
+
+--- TABLE 48 (rows: 18) Header: Sprint Backlog ---
+
+--- TABLE 49 (rows: 5) Header: SPRINT 0 ---
+
+--- TABLE 50 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+
+--- TABLE 51 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+
+--- TABLE 52 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+
+--- TABLE 53 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+
+--- TABLE 54 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+
+--- TABLE 55 (rows: 28) Header: SPRINT 0 REVIEW ---
+
+--- TABLE 56 (rows: 10) Header: RETROSPECTIVA DE SPRINT ---
+
+--- TABLE 57 (rows: 8) Header: SPRINT 0 ---
+
+--- TABLE 58 (rows: 8) Header: SPRINT 0 ---
+
+--- TABLE 59 (rows: 5) Header: Implementación de autenticación y recuperación de contraseña ---
+[MATCH TABLE 59]
+Implementación de autenticación y recuperación de contraseña
+T014 (CU-004) | Esta tarea consiste en implementar la lógica de autenticación de usuarios mediante tokens JWT, así como el flujo de recuperación de contraseña mediante verificación por correo electrónico.
+Alta | 5 Story Points
+Criterios de Aceptación:a) Se implementará el endpoint de inicio de sesión que valide credenciales y genere un token JWT.b) Se implementará el endpoint de recuperación de contraseña con envío de enlace de verificación por correo.c) El token JWT generado tendrá un tiempo de expiración configurado.d) Los endpoints serán probados mediante pruebas unitarias o de integración.
+Autor: | Jahuira Poma Jimena
+
+--- TABLE 60 (rows: 6) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 61 (rows: 5) Header: Interfaz de inicio de sesión y recuperación de contraseña ---
+[MATCH TABLE 61]
+Interfaz de inicio de sesión y recuperación de contraseña
+T015 (CU-004) | Esta tarea consiste en implementar la interfaz web en Angular para el inicio de sesión y la recuperación de contraseña, consumiendo los endpoints de autenticación del backend.
+Alta | 3 Story Points
+Criterios de Aceptación:a) Se implementará el formulario de inicio de sesión con validación de campos.b) Se implementará el formulario de solicitud de recuperación de contraseña.c) La interfaz consumirá correctamente los endpoints de autenticación del backend.d) La interfaz será validada en distintos tamaños de pantalla (responsive).
+Autor: | Rocha Jaimez Diogo
+
+--- TABLE 62 (rows: 5) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 63 (rows: 5) Header: Interfaz de autenticación de usuarios ---
+[MATCH TABLE 63]
+Interfaz de autenticación de usuarios
+T016 (CU-004) | Esta tarea consiste en implementar la interfaz móvil en Flutter para la autenticación de usuarios, permitiendo el inicio de sesión desde la aplicación móvil.
+Alta | 3 Story Points
+Criterios de Aceptación:a) Se implementará la pantalla de inicio de sesión en la aplicación móvil.b) La aplicación móvil almacenará el token JWT de forma segura tras el inicio de sesión.c) La interfaz consumirá correctamente los endpoints de autenticación del backend.d) La interfaz será validada en distintos tamaños de pantalla de dispositivos móviles.
+Autor: | Vilches Rodriguez Shecid
+
+--- TABLE 64 (rows: 5) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 65 (rows: 5) Header: Implementación de gestión de productos y variantes ---
+[MATCH TABLE 65]
+Implementación de gestión de productos y variantes
+T017 (CU-006) | Esta tarea consiste en implementar los endpoints REST necesarios para registrar, editar y administrar los productos de una empresa, incluyendo sus variantes.
+Alta | 5 Story Points
+Criterios de Aceptación:a) Se implementarán los endpoints para crear, editar, desactivar y listar productos.b) Se implementarán los endpoints para registrar una o más variantes asociadas a un producto.c) Los productos y variantes quedarán correctamente asociados a la empresa correspondiente.d) Los endpoints serán probados mediante pruebas unitarias o de integración.
+Autor: | Montaño Roca Rafael
+
+--- TABLE 66 (rows: 6) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 67 (rows: 5) Header: Interfaz de registro y edición de productos y variantes ---
+[MATCH TABLE 67]
+Interfaz de registro y edición de productos y variantes
+T018 (CU-006) | Esta tarea consiste en implementar la interfaz web en Angular para el registro y edición de productos y variantes, consumiendo los endpoints correspondientes del backend.
+Alta | 5 Story Points
+Criterios de Aceptación:a) Se implementará un formulario para el registro y edición de productos.b) Se implementará un formulario para el registro de variantes asociadas a un producto.c) La interfaz consumirá correctamente los endpoints de gestión de productos del backend.d) La interfaz será validada en distintos tamaños de pantalla (responsive).
+Autor: | Rodríguez Laguna Raysa Sofía
+
+--- TABLE 68 (rows: 6) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 69 (rows: 5) Header: Implementación de categorías y atributos de productos ---
+[MATCH TABLE 69]
+Implementación de categorías y atributos de productos
+T019 (CU-009) | Esta tarea consiste en implementar los endpoints REST necesarios para crear y administrar las categorías utilizadas para clasificar los productos del catálogo.
+Media | 3 Story Points
+Criterios de Aceptación:a) Se implementarán los endpoints para crear, editar y eliminar categorías.b) Se implementará la asociación de uno o más productos a una categoría existente.c) El sistema impedirá eliminar una categoría que tenga productos asociados.d) Los endpoints serán probados mediante pruebas unitarias o de integración.
+Autor: | Rios Benavides Beimar
+
+--- TABLE 70 (rows: 6) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 71 (rows: 5) Header: Interfaz de gestión de categorías y catálogo por empresa ---
+[MATCH TABLE 71]
+Interfaz de gestión de categorías y catálogo por empresa
+T020 (CU-008, CU-009) | Esta tarea consiste en implementar la interfaz web en Angular para la gestión de categorías y la visualización del catálogo de productos por empresa.
+Media | 3 Story Points
+Criterios de Aceptación:a) Se implementará un formulario para el registro y edición de categorías.b) Se implementará la visualización del catálogo de productos filtrado por empresa.c) La interfaz permitirá filtrar el catálogo por categoría, estado o certificación.d) La interfaz será validada en distintos tamaños de pantalla (responsive).
+Autor: | Jahuira Poma Jimena
+
+--- TABLE 72 (rows: 6) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 73 (rows: 5) Header: Implementación de certificaciones y especificaciones técnicas ---
+[MATCH TABLE 73]
+Implementación de certificaciones y especificaciones técnicas
+T021 (CU-007) | Esta tarea consiste en implementar los endpoints REST necesarios para registrar y administrar las certificaciones técnicas y especificaciones asociadas a cada producto.
+Media | 3 Story Points
+Criterios de Aceptación:a) Se implementarán los endpoints para crear, editar y eliminar certificaciones técnicas.b) Se implementará la carga de documentos o especificaciones técnicas como respaldo de la certificación.c) Cada certificación quedará correctamente asociada a su producto correspondiente.d) Los endpoints serán probados mediante pruebas unitarias o de integración.
+Autor: | Rocha Jaimez Diogo
+
+--- TABLE 74 (rows: 6) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 75 (rows: 5) Header: Interfaz de gestión de certificaciones técnicas ---
+[MATCH TABLE 75]
+Interfaz de gestión de certificaciones técnicas
+T022 (CU-007) | Esta tarea consiste en implementar la interfaz web en Angular para el registro y administración de las certificaciones técnicas de los productos, consumiendo los endpoints correspondientes del backend.
+Media | 3 Story Points
+Criterios de Aceptación:a) Se implementará un formulario para el registro de certificaciones técnicas.b) Se implementará la carga de documentos de respaldo en formato PDF o imagen.c) La interfaz mostrará las certificaciones vigentes y vencidas de cada producto.d) La interfaz será validada en distintos tamaños de pantalla (responsive).
+Autor: | Vilches Rodriguez Shecid
+
+--- TABLE 76 (rows: 6) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 77 (rows: 5) Header: Implementación de gestión de actores de la cadena de suministro ---
+[MATCH TABLE 77]
+Implementación de gestión de actores de la cadena de suministro
+T023 (CU-013) | Esta tarea consiste en implementar los endpoints REST necesarios para registrar y administrar los actores de la cadena de suministro (productores, distribuidores, comercios).
+Alta | 5 Story Points
+Criterios de Aceptación:a) Se implementarán los endpoints para crear, editar y desactivar actores de la cadena.b) Se implementará la clasificación de cada actor según su rol dentro de la cadena.c) Cada actor quedará correctamente asociado a su empresa correspondiente.d) Los endpoints serán probados mediante pruebas unitarias o de integración.
+Autor: | Montaño Roca Rafael
+
+--- TABLE 78 (rows: 6) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 79 (rows: 5) Header: Implementación de gestión de ubicaciones físicas ---
+[MATCH TABLE 79]
+Implementación de gestión de ubicaciones físicas
+T024 (CU-014) | Esta tarea consiste en implementar los endpoints REST necesarios para registrar y administrar las ubicaciones físicas asociadas a los actores de la cadena de suministro.
+Alta | 3 Story Points
+Criterios de Aceptación:a) Se implementarán los endpoints para crear, editar y desactivar ubicaciones físicas.b) Se implementará la asociación de una ubicación física a uno o más actores de la cadena.c) El sistema permitirá registrar dirección y coordenadas de cada ubicación.d) Los endpoints serán probados mediante pruebas unitarias o de integración.
+Autor: | Rodríguez Laguna Raysa Sofía
+
+--- TABLE 80 (rows: 6) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 81 (rows: 5) Header: Interfaz de actores y ubicaciones físicas ---
+[MATCH TABLE 81]
+Interfaz de actores y ubicaciones físicas
+T025 (CU-013, CU-014) | Esta tarea consiste en implementar la interfaz web en Angular para el registro y administración de actores de la cadena de suministro y sus ubicaciones físicas.
+Alta | 3 Story Points
+Criterios de Aceptación:a) Se implementará un formulario para el registro y edición de actores de la cadena.b) Se implementará un formulario para el registro y edición de ubicaciones físicas.c) La interfaz permitirá filtrar actores y ubicaciones por tipo y empresa asociada.d) La interfaz será validada en distintos tamaños de pantalla (responsive).
+Autor: | Rios Benavides Beimar
+
+--- TABLE 82 (rows: 6) Header: ID | Entrada | Acción / Proceso | Salida esperada ---
+
+--- TABLE 83 (rows: 17) Header: Sprint Backlog ---
+
+--- TABLE 84 (rows: 5) Header: SPRINT 1 ---
+
+--- TABLE 85 (rows: 7) Header: ID: T014   |   Tarea: T014 | IMPLEMENTACIÓN DE AUTENTICACIÓN Y RECUPERACIÓN DE CONTRASEÑA ---
+
+--- TABLE 86 (rows: 7) Header: ID: T015   |   Tarea: T015 | INTERFAZ DE INICIO DE SESIÓN Y RECUPERACIÓN DE CONTRASEÑA ---
+
+--- TABLE 87 (rows: 7) Header: ID: T016   |   Tarea: T016 | INTERFAZ DE AUTENTICACIÓN DE USUARIOS ---
+
+--- TABLE 88 (rows: 7) Header: ID: T017   |   Tarea: T017 | IMPLEMENTACIÓN DE GESTIÓN DE PRODUCTOS Y VARIANTES ---
+
+--- TABLE 89 (rows: 7) Header: ID: T018   |   Tarea: T018 | INTERFAZ DE REGISTRO Y EDICIÓN DE PRODUCTOS Y VARIANTES ---
+
+--- TABLE 90 (rows: 7) Header: ID: T019   |   Tarea: T019 | IMPLEMENTACIÓN DE CATEGORÍAS Y ATRIBUTOS DE PRODUCTOS ---
+
+--- TABLE 91 (rows: 7) Header: ID: T020   |   Tarea: T020 | INTERFAZ DE GESTIÓN DE CATEGORÍAS Y CATÁLOGO POR EMPRESA ---
+
+--- TABLE 92 (rows: 7) Header: ID: T021   |   Tarea: T021 | IMPLEMENTACIÓN DE CERTIFICACIONES Y ESPECIFICACIONES TÉCNICAS ---
+
+--- TABLE 93 (rows: 7) Header: ID: T022   |   Tarea: T022 | INTERFAZ DE GESTIÓN DE CERTIFICACIONES TÉCNICAS ---
+
+--- TABLE 94 (rows: 7) Header: ID: T023   |   Tarea: T023 | IMPLEMENTACIÓN DE GESTIÓN DE ACTORES DE LA CADENA DE SUMINISTRO ---
+
+--- TABLE 95 (rows: 7) Header: ID: T024   |   Tarea: T024 | IMPLEMENTACIÓN DE GESTIÓN DE UBICACIONES FÍSICAS ---
+
+--- TABLE 96 (rows: 7) Header: ID: T025   |   Tarea: T025 | INTERFAZ DE ACTORES Y UBICACIONES FÍSICAS ---
+
+--- TABLE 97 (rows: 13) Header: ID | Tarea | Caso de prueba | Descripción | Resultado esperado ---
+
+--- TABLE 98 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 98]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Organice las tareas a cumplir en el grupo | Comenzar investigación para CU-004 (Autenticación) y CU-006 (Productos y Variantes) | Ninguno
+VILCHES RODRIGUEZ SHECID | Investigación preliminar sobre categorías de productos | Diseñar estructura de categorías para CU-009 | Ninguno
+JAHUIRA POMA JIMENA | Revisión de requisitos para ubicaciones físicas | Investigar modelo de datos para CU-014 (Ubicaciones Físicas) | Ninguno
+RIOS BENAVIDES BEIMAR | Análisis de requerimientos para catálogo por empresa | Diseñar interfaz de catálogo para CU-008 | Ninguno
+ROCHA JAIMEZ DIOGO | Revisión de documentación sobre certificaciones técnicas | Investigar entidades certificadoras para CU-007 | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Estudio de actores en la cadena de suministro | Definir estructura de actores para CU-013 | Ninguno
+
+--- TABLE 99 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 99]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Investigación de autenticación JWT y OAuth2 | Implementar endpoints de autenticación (CU-004) | Ninguno
+VILCHES RODRIGUEZ SHECID | Diseño de estructura de categorías | Crear endpoints para gestión de categorías (CU-009) | Ninguno
+JAHUIRA POMA JIMENA | Investigación sobre ubicaciones físicas | Crear endpoints para ubicaciones (CU-014) | Ninguno
+RIOS BENAVIDES BEIMAR | Diseño de interfaz de catálogo | Configurar rutas y componentes Angular para catálogo (CU-008) | Ninguno
+ROCHA JAIMEZ DIOGO | Investigación de certificaciones técnicas | Diseñar estructura de certificaciones (CU-007) | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Definición de actores de cadena | Implementar endpoints para actores (CU-013) | Ninguno
+
+--- TABLE 100 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 100]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Implementación de endpoints de autenticación | Desarrollar login y registro de usuarios (CU-004) | Realizar pruebas de validación
+VILCHES RODRIGUEZ SHECID | Creación de endpoints para categorías | Desarrollar interfaz de categorías en Angular (CU-009) | Ninguno
+JAHUIRA POMA JIMENA | Creación de endpoints para ubicaciones | Desarrollar interfaz de ubicaciones en Angular (CU-014) | Ninguno
+RIOS BENAVIDES BEIMAR | Configuración de rutas de catálogo | Implementar listado y filtros de catálogo (CU-008) | Ninguno
+ROCHA JAIMEZ DIOGO | Diseño de estructura de certificaciones | Implementar endpoints para certificaciones (CU-007) | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFÍA | Implementación de endpoints para actores | Desarrollar interfaz de actores en Angular (CU-013) | Ninguno
+
+--- TABLE 101 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 101]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Desarrollo de login y registro | Implementar recuperación de contraseña (CU-004) | Ninguno
+VILCHES RODRIGUEZ SHECID | Interfaz de categorías en Angular | Validar CRUD de categorías con backend (CU-009) | Ninguno
+JAHUIRA POMA JIMENA | Interfaz de ubicaciones en Angular | Validar CRUD de ubicaciones (CU-014) | Ninguno
+RIOS BENAVIDES BEIMAR | Implementación de listado de catálogo | Agregar funcionalidad de búsqueda en catálogo (CU-008) | Ninguno
+ROCHA JAIMEZ DIOGO | Implementación de endpoints de certificaciones | Desarrollar interfaz de certificaciones (CU-007) | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFÍA | Interfaz de actores en Angular | Validar CRUD de actores (CU-013) | Ninguno
+
+--- TABLE 102 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 102]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Implementación de recuperación de contraseña | Empezar con CU-006 (Productos y Variantes) | Ninguno
+VILCHES RODRIGUEZ SHECID | Validación de categorías completada | Refinar interfaz y agregar validaciones (CU-009) | Ninguno
+JAHUIRA POMA JIMENA | Validación de ubicaciones completada | Refinar interfaz de ubicaciones (CU-014) | Ninguno
+RIOS BENAVIDES BEIMAR | Búsqueda en catálogo implementada | Optimizar rendimiento de catálogo (CU-008) | Ninguno
+ROCHA JAIMEZ DIOGO | Interfaz de certificaciones | Validar integración de certificaciones (CU-007) | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Validación de actores completada | Refinar interfaz de actores (CU-013) | Ninguno
+
+--- TABLE 103 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 103]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Inicio de CU-006 (Productos y Variantes) | Diseñar modelo de productos y variantes | Ninguno
+VILCHES RODRIGUEZ SHECID | Refinamiento de categorías | Preparar pruebas unitarias para categorías (CU-009) | Ninguno
+JAHUIRA POMA JIMENA | Refinamiento de ubicaciones | Preparar pruebas unitarias para ubicaciones (CU-014) | Ninguno
+RIOS BENAVIDES BEIMAR | Optimización de catálogo | Documentar API de catálogo (CU-008) | Ninguno
+ROCHA JAIMEZ DIOGO | Validación de certificaciones | Preparar pruebas de certificaciones (CU-007) | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Refinamiento de actores | Preparar pruebas de actores (CU-013) | Ninguno
+
+--- TABLE 104 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 104]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Diseño de modelo de productos | Implementar endpoints de productos (CU-006) | Ninguno
+VILCHES RODRIGUEZ SHECID | Pruebas unitarias de categorías | Revisar cobertura de pruebas (CU-009) | Ninguno
+JAHUIRA POMA JIMENA | Pruebas unitarias de ubicaciones | Integrar ubicaciones con actores (CU-014) | Ninguno
+RIOS BENAVIDES BEIMAR | Documentación de catálogo | Implementar exportación de catálogo (CU-008) | Ninguno
+ROCHA JAIMEZ DIOGO | Pruebas de certificaciones | Refinar interfaz de certificaciones (CU-007) | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Pruebas de actores | Integrar actores con ubicaciones (CU-013) | Ninguno
+
+--- TABLE 105 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 105]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Implementación de endpoints de productos | Desarrollar endpoints de variantes (CU-006) | Ninguno
+VILCHES RODRIGUEZ SHECID | Revisión de pruebas de categorías | Ayudar con integración de roductos-categorías (CU-009) | Ninguno
+JAHUIRA POMA JIMENA | Integración ubicaciones-actores | Validar relaciones de ubicaciones (CU-014) | Ninguno
+RIOS BENAVIDES BEIMAR | Exportación de catálogo implementada | Validar catálogo con productos registrados (CU-008) | Ninguno
+ROCHA JAIMEZ DIOGO | Refinamiento de certificaciones | Integrar certificaciones con productos (CU-007) | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Integración actores-ubicaciones | Validar relaciones de actores (CU-013) | Ninguno
+
+--- TABLE 106 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 106]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Desarrollo de variantes | Validar CRUD completo de productos (CU-006) | Ninguno
+VILCHES RODRIGUEZ SHECID | Integración productos-categorías | Validar asignación de categorías (CU-009) | Ninguno
+JAHUIRA POMA JIMENA | Validación de ubicaciones | Preparar documentación de ubicaciones (CU-014) | Ninguno
+RIOS BENAVIDES BEIMAR | Validación de catálogo | Optimizar visualización de productos en catálogo (CU-008) | Ninguno
+ROCHA JAIMEZ DIOGO | Integración certificaciones-productos | Validar certificaciones en productos (CU-007) | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Validación de actores | Preparar documentación de actores (CU-013) | Ninguno
+
+--- TABLE 107 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 107]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Validación de CRUD de productos | Revisar integración con frontend (CU-006) | Ninguno
+VILCHES RODRIGUEZ SHECID | Validación de categorías completada | Preparar demostración de categorías (CU-009) | Ninguno
+JAHUIRA POMA JIMENA | Documentación de ubicaciones | Preparar demostración de ubicaciones (CU-014) | Ninguno
+RIOS BENAVIDES BEIMAR | Optimización de catálogo | Preparar demostración de catálogo (CU-008) | Ninguno
+ROCHA JAIMEZ DIOGO | Validación de certificaciones | Preparar demostración de certificaciones (CU-007) | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Documentación de actores | Preparar demostración de actores (CU-013) | Ninguno
+
+--- TABLE 108 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 108]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Revisión de integración frontend | Preparar demostración de autenticación y productos (CU-004, CU-006) | Ninguno
+VILCHES RODRIGUEZ SHECID | Preparación de demostración | Documentar casos de uso de categorías (CU-009) | Ninguno
+JAHUIRA POMA JIMENA | Preparación de demostración | Documentar casos de uso de ubicaciones (CU-014) | Ninguno
+RIOS BENAVIDES BEIMAR | Preparación de demostración | Documentar casos de uso de catálogo (CU-008) | Ninguno
+ROCHA JAIMEZ DIOGO | Preparación de demostración | Documentar casos de uso de certificaciones (CU-007) | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Preparación de demostración | Documentar casos de uso de actores (CU-013) | Ninguno
+
+--- TABLE 109 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+
+--- TABLE 110 (rows: 48) Header: Revisión de Sprint 1 – Plataforma de Trazabilidad de Dispositivos Apple ---
+[MATCH TABLE 110]
+Revisión de Sprint 1 – Plataforma de Trazabilidad de Dispositivos Apple
+Objetivos del Sprint
+• Completar la seguridad de acceso mediante autenticación y recuperación de contraseña.• Implementar el inicio de sesión desde la plataforma Web y la aplicación Móvil.• Desarrollar la gestión de productos y variantes.• Implementar la gestión de categorías y atributos de productos.• Desarrollar el catálogo de productos independiente para cada empresa.• Implementar la gestión de certificaciones técnicas.• Registrar y administrar actores externos de la cadena de suministro.• Registrar y administrar ubicaciones físicas relacionadas con la trazabilidad.
+Participantes
+Nombre | Rol
+Vilches Rodriguez Shecid | Product Owner
+Rodríguez Laguna Raysa Sofía | Scrum Master
+Jahuira Poma Jimena | Team Developer
+Montaño Roca Rafael | Team Developer
+Rocha Jaimez Diogo | Team Developer
+Rios Benavides Beimar | Team Developer
+Presentación del incremento
+Función presentada | Retroalimentación recibida
+Autenticación y recuperación de contraseña – T014, T015, T016 | El inicio de sesión funciona correctamente tanto en Web como en Móvil. La recuperación de contraseña cumple el flujo establecido. Se recomienda mantener validaciones claras de credenciales y mensajes de error.
+Gestión de productos y variantes – T017, T018 | El registro, consulta y edición de productos y variantes cumple con el objetivo del Sprint. Se recomienda mantener validaciones para evitar información incompleta o duplicada.
+Categorías, atributos y catálogo por empresa – T019, T020 | Las categorías organizan correctamente los productos y el catálogo presenta la información de la empresa correspondiente. Se recomienda continuar validando el aislamiento entre tenants.
+Certificaciones técnicas – T021, T022 | La gestión de certificaciones permite registrar y asociar correctamente certificaciones técnicas a los productos. Se recomienda validar siempre la relación entre certificación y producto.
+Gestión de actores de la cadena – T023 | Se logró registrar y administrar participantes externos como proveedores, transportistas y entidades aduaneras. La funcionalidad queda preparada para los futuros eventos de trazabilidad.
+Gestión de ubicaciones físicas – T024 | El registro de almacenes, puertos, oficinas aduaneras y otras ubicaciones cumple con lo esperado. Se recomienda mantener datos consistentes para los movimientos logísticos.
+Interfaz de actores y ubicaciones – T025 | La interfaz Angular permite consultar y administrar correctamente actores y ubicaciones. Se recomienda mantener una navegación sencilla entre ambos elementos.
+Cumplimiento del objetivo y elementos “Done”
+Aspecto revisado | Conclusión de la Review
+Objetivo del Sprint 1 | Cumplido: se completó la seguridad de acceso y se implementaron las principales funcionalidades relacionadas con productos, catálogo, certificaciones, actores y ubicaciones.
+Incremento presentado | Se presentó un incremento integrado con autenticación Web y Móvil, recuperación de contraseña, productos, variantes, categorías, catálogo por empresa, certificaciones, actores y ubicaciones.
+Criterios de aceptación | Los casos de prueba correspondientes a las tareas T014 a T025 fueron ejecutados satisfactoriamente y obtuvieron estado Exitoso.
+Integración Web, Móvil y Backend | Se verificó la comunicación entre Angular, Flutter y la API REST desarrollada con FastAPI para las funcionalidades correspondientes al Sprint.
+Separación por empresa | Las funcionalidades relacionadas con productos y catálogo mantienen la organización de información correspondiente a cada empresa dentro del modelo multi-tenant.
+Problemas y soluciones | Se realizaron ajustes de validación, conexión entre interfaces y API, manejo de formularios y relaciones entre entidades, sin impedir el cumplimiento del Sprint.
+Feedback y adaptación del Product Backlog
+Feedback / observación | Adaptación acordada
+Mantener seguridad y validaciones de acceso. | Continuar utilizando autenticación y autorización como requisito obligatorio para los siguientes módulos.
+Garantizar aislamiento de información por empresa. | Toda nueva funcionalidad deberá respetar el tenant correspondiente y evitar acceso a información de otras empresas.
+Mantener consistencia entre productos, variantes y categorías. | Validar las relaciones antes de registrar información de inventario y unidades individuales.
+Preparar productos para las operaciones de compra. | Utilizar productos y variantes del Sprint 1 como base para las órdenes de compra del Sprint 2.
+Mantener actores y ubicaciones disponibles para trazabilidad. | Reutilizar actores y ubicaciones en recepción, envíos y movimientos logísticos.
+Continuar con valor visible para operaciones. | Priorizar en el siguiente Sprint compras, recepción, unidades individuales, identificadores QR y logística.
+Product Backlog revisado – posibles elementos para el siguiente Sprint
+Elemento / valor esperado | Prioridad propuesta
+Gestionar órdenes de compra – T026 / T027 | Alta
+Aprobar y rechazar órdenes de compra – T028 | Alta
+Gestionar recepción de mercancía – T029 / T030 | Alta
+Gestionar unidades individuales – T031 / T033 | Alta
+Asignar identificadores Serial / IMEI / EID – T032 | Alta
+Generar códigos QR únicos por unidad – T034 / T035 | Alta
+Gestionar envíos, movimientos y asignación de unidades – T036 | Alta
+Registrar recepción, transporte y condiciones desde móvil – T037 | Alta
+Resultado de la Sprint Review
+Al finalizar la Sprint Review del Sprint 1, el equipo Scrum presentó un incremento funcional que cumple con los objetivos establecidos. Se verificó correctamente la autenticación y recuperación de contraseña en Web y Móvil, así como la gestión de productos, variantes, categorías, catálogo por empresa, certificaciones técnicas, actores de la cadena de suministro y ubicaciones físicas. Los planes y reportes de prueba de las tareas T014 a T025 fueron completados satisfactoriamente y se consideran Done. El Sprint 1 deja preparada la estructura necesaria para avanzar al Sprint 2, orientado a compras, recepción, unidades por Serial/IMEI/EID, generación de códigos QR y procesos logísticos.
+
+--- TABLE 111 (rows: 9) Header: Retrospectiva de Sprint 1 – Plataforma de Trazabilidad de Dispositivos Apple ---
+[MATCH TABLE 111]
+Retrospectiva de Sprint 1 – Plataforma de Trazabilidad de Dispositivos Apple
+Fecha | 06/09/2026
+Facilitador | Vilches Rodriguez Shecid – Scrum Master
+Objetivo
+Analizar cómo se desarrolló el Sprint 1, identificando los aspectos que funcionaron bien, las dificultades encontradas durante la implementación de autenticación, productos, catálogo, certificaciones, actores y ubicaciones, y definir acciones concretas para mejorar la organización y el desarrollo durante el Sprint 2.
+Nombres de asistentes
+• Vilches Rodriguez Shecid – Product Owner• Rodríguez Laguna Raysa Sofía – Scrum Master• Jahuira Poma Jimena – Team Developer• Rios Benavides Beimar – Team Developer• Rocha Jaimez Diogo – Team Developer• Montaño Roca Rafael – Team Developer
+Temas a tratar
+• Organización y distribución de las tareas del Sprint 1.• Integración de la autenticación entre Backend, Web y Móvil.• Desarrollo de productos, variantes, categorías y catálogo.• Manejo de la información independiente por empresa.• Gestión de certificaciones técnicas.• Implementación de actores de la cadena y ubicaciones físicas.• Comunicación entre frontend y backend.• Pruebas realizadas durante el Sprint.• Aspectos a mejorar antes de comenzar el Sprint 2.
+
+--- TABLE 112 (rows: 21) Header: Discusión ---
+[MATCH TABLE 112]
+Discusión
+¿Qué salió bien? | ¿Qué no salió bien? | ¿Qué haremos de manera diferente?
+La distribución de las tareas permitió avanzar de forma ordenada entre Backend, Web y Móvil. | En algunos momentos hubo que esperar a que estuvieran listos los endpoints antes de terminar las interfaces. | Coordinar desde el inicio qué endpoints necesita cada interfaz y definirlos antes de comenzar el desarrollo frontend.
+La autenticación pudo integrarse correctamente tanto en Angular como en Flutter. | La conexión y el manejo de respuestas entre frontend y backend necesitó varios ajustes durante las pruebas. | Probar cada endpoint primero desde Swagger o Postman antes de integrarlo con Angular o Flutter.
+La gestión de productos y variantes quedó funcionando y sirve como base para los siguientes módulos. | Algunos campos y validaciones de productos tuvieron que corregirse después de empezar las interfaces. | Definir previamente los campos obligatorios, tipos de datos y reglas de validación antes de desarrollar formularios.
+Las categorías y el catálogo por empresa permitieron mantener mejor organizada la información de los productos. | Fue necesario prestar especial atención para evitar mostrar información perteneciente a otra empresa. | Mantener la validación del tenant en todas las consultas y probar siempre con al menos dos empresas diferentes.
+Las certificaciones técnicas pudieron asociarse correctamente a los productos. | Al principio no estaba totalmente claro qué datos debían almacenarse para cada certificación. | Definir una estructura de datos común para las certificaciones antes de realizar nuevas ampliaciones.
+Los actores y ubicaciones quedaron preparados para utilizarlos posteriormente en los procesos logísticos. | La relación entre actores, ubicaciones y los futuros eventos de trazabilidad generó algunas dudas durante el desarrollo. | Revisar previamente el flujo del Sprint 2 para asegurar que actores y ubicaciones tengan todos los datos necesarios.
+Las pruebas permitieron confirmar que las tareas desarrolladas cumplían con lo solicitado. | Algunas pruebas se realizaron cuando varias funcionalidades ya estaban terminadas. | Realizar pequeñas pruebas a medida que se termina cada tarea y no dejar todas para el final del Sprint.
+Hubo buena comunicación cuando aparecieron problemas de integración. | Algunos cambios realizados por distintos integrantes necesitaron ajustes antes de poder integrarse. | Mantener commits pequeños y descriptivos y revisar los cambios antes de integrarlos a la rama principal.
+Acciones acordadas para el siguiente Sprint
+Acción | Responsable | Resultado esperado
+Definir previamente los endpoints y datos necesarios para cada nueva funcionalidad. | Team Developers | Reducir cambios y retrabajo durante la integración.
+Probar las API con Swagger/Postman antes de conectarlas con las interfaces. | Backend + Frontend | Detectar errores antes de integrar Web o Móvil.
+Verificar siempre el aislamiento de información entre empresas. | Backend + Team Developers | Evitar que una empresa consulte información perteneciente a otra.
+Realizar pruebas al terminar cada tarea y no únicamente al final del Sprint. | Team Developers | Detectar fallos con mayor anticipación.
+Mejorar la coordinación entre tareas que dependen de Backend y Frontend. | Scrum Master + Team Developers | Evitar tiempos de espera entre integrantes.
+Revisar el modelo de datos para compras, unidades y logística antes de iniciar la implementación. | Backend + Team Developers | Tener preparada la estructura necesaria para el Sprint 2.
+Mantener actualizada la documentación técnica y el Product Backlog. | Scrum Master + Team Developers | Facilitar el seguimiento de los cambios realizados.
+Resultado de la retrospectiva
+El equipo considera que el Sprint 1 cumplió satisfactoriamente su objetivo, logrando completar las funcionalidades planificadas de autenticación, productos, variantes, categorías, catálogo por empresa, certificaciones técnicas, actores de la cadena y ubicaciones físicas. Durante el Sprint se presentaron ajustes principalmente en la integración entre frontend y backend, la definición de validaciones y la organización de algunos datos, pero estos inconvenientes se resolvieron sin impedir el cumplimiento de las tareas. Para el siguiente Sprint se acordó fortalecer la coordinación, realizar pruebas de manera más continua y definir previamente los datos y servicios necesarios. El Sprint 1 deja una base estable para avanzar al Sprint 2, donde se trabajará con órdenes de compra, recepción de mercancía, unidades identificadas mediante Serial/IMEI/EID, generación de códigos QR y procesos logísticos.
+
+--- TABLE 113 (rows: 8) Header: Integrante | Tareas asignadas | Esfuerzo estimado | Esfuerzo real | % del esfuerzo ---
+
+--- TABLE 114 (rows: 5) Header: Aprobar / Rechazar Compra ---
+[MATCH TABLE 114]
+Aprobar / Rechazar Compra
+T028 (CU-004) | Esta tarea consiste en implementar la lógica que permita al Administrador de Empresa revisar las órdenes de compra pendientes y aprobarlas o rechazarlas, actualizando el estado de la orden y registrando la decisión correspondiente.
+Alta | 5 Story Points
+Criterios de Aceptación:a) Se implementará el endpoint para aprobar una orden de compra pendiente.b) Se implementará el endpoint para rechazar una orden de compra pendiente, registrando la decisión correspondiente.c) El sistema validará que solo el Administrador de Empresa pueda aprobar o rechazar órdenes de compra.d) El sistema impedirá aprobar o rechazar una orden que ya se encuentre finalizada o anulada.e) Los endpoints serán probados mediante pruebas unitarias o de integración.
+Autor: | Jahuira Poma Jimena
+
+--- TABLE 115 (rows: 5) Header: Generar y Descargar Código QR ---
+[MATCH TABLE 115]
+Generar y Descargar Código QR
+T034 (CU-016) | Esta tarea consiste en implementar la generación de códigos QR únicos asociados a las unidades de producto y la interfaz que permita visualizar y descargar dichos códigos para su identificación y posterior consulta de trazabilidad.
+Alta | 5 Story Points
+Criterios de Aceptación:a) Se generará un código QR único para cada unidad de producto registrada.b) El código QR quedará asociado al identificador de la unidad correspondiente.c) La interfaz permitirá visualizar y descargar el código QR generado.d) El sistema impedirá generar códigos QR duplicados para una misma unidad.e) La generación y descarga del código QR serán validadas mediante pruebas funcionales.
+Autor: | Vilches Rodriguez Shecid
+
+--- TABLE 116 (rows: 5) Header: Registrar Eventos y Condiciones de Transporte ---
+[MATCH TABLE 116]
+Registrar Eventos y Condiciones de Transporte
+T037 (CU-021) | Esta tarea consiste en implementar el registro de eventos relacionados con la recepción, transporte y condiciones de traslado de las unidades o envíos, incluyendo datos como temperatura, humedad, vibración, ubicación, fecha y responsable.
+Alta | 5 Story Points
+Criterios de Aceptación:a) Se implementará un formulario para registrar eventos de transporte y condiciones asociadas a una unidad o envío.b) El sistema permitirá registrar fecha, ubicación, tipo de evento, temperatura, humedad y vibración cuando corresponda.c) Cada evento quedará asociado a la unidad o envío correspondiente y al usuario responsable del registro.d) Se validarán los campos obligatorios y los valores de las condiciones de transporte.e) El evento registrado quedará almacenado para formar parte del historial de trazabilidad y podrá quedar pendiente de sincronización con blockchain según el flujo definido.f) El registro será validado mediante pruebas funcionales de integración entre la interfaz y la API.
+Autor: | Rodriguez Laguna Raysa Sofia
+
+--- TABLE 117 (rows: 17) Header: Sprint Backlog ---
+
+--- TABLE 118 (rows: 5) Header: SPRINT 2 ---
+[MATCH TABLE 118]
+SPRINT 2
+Rol | Responsable | Concepto
+Product Owner | RIOS BENAVIDES BEIMAR | Es quien define qué debe construirse en el sistema, tomando en cuenta las necesidades de los usuarios. Se encarga de organizar y actualizar la lista de requerimientos, priorizando las funcionalidades más importantes para asegurar el valor del producto.
+Scrum Master | ROCHA JAIMEZ DIOGO | Supervisa el correcto uso de la metodologíaSCRUM dentro del equipo, brindando apoyoconstante durante el desarrollo. Se encarga de identificar y resolver dificultades, fortalecer la comunicación entre los integrantes y asegurar que el trabajo avance de manera organizada, manteniendo la eficiencia y el enfoque en los principios ágiles.
+Developer | JAHUIRA POMA JIMENAROCHA JAIMEZ DIOGOMONTAÑO ROCA RAFAELRODRIGUEZ LAGUNA RAYSA SOFIAVILCHES RODRIGUEZ SHECID | Está integrado por los miembros responsables de desarrollar el producto. Trabajan de forma colaborativa y autónoma, encargándose del diseño, programación, pruebas y entrega de cada funcionalidad, generando avances progresivos en cada presentación de sprint.
+
+--- TABLE 119 (rows: 9) Header: # | Característica general | Estado en el Sprint 2 ---
+[MATCH TABLE 119]
+# | Característica general | Estado en el Sprint 2
+1 | Solución universal | Cubierto
+2 | Gestion de usuarios | Cubierto
+3 | Log / Bitácora | Cubierto
+4 | Facilidad de uso | Cubierto
+5 | Reportes personalizables | En progreso
+6 | Backup / Restore | Cubierto
+7 | Web / Móvil | Cubierto
+8 | Modelo SaaS en la nube | Cubierto
+
+--- TABLE 120 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 120]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Organicé al equipo y revisé el Sprint Backlog del Sprint 2. Revisé el alcance del diagrama de navegación. | Identificar pantallas y flujos para el diagrama de navegación. | Ninguno
+VILCHES RODRIGUEZ SHECID | Revisé el CU-016 (Generar y Descargar Código QR). | Investigar generación de códigos QR en Flutter. | Ninguno
+JAHUIRA POMA JIMENA | Revisé el CU-011 (Aprobar / Rechazar Compra) y su flujo. | Investigar modelo de datos para CU-014 (Ubicaciones Físicas) | Ninguno
+RIOS BENAVIDES BEIMAR | Revisé la arquitectura actual del sistema para el modelo C4. | Identificar contenedores y componentes; listar las 8 características. | Ninguno
+ROCHA JAIMEZ DIOGO | Revisé los CU del Sprint 2 relacionados con logística y compras. Identifiqué estados posibles para el diagrama de estado. | Definir estados y transiciones de compra, recepción, unidad y envío. | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Revisé el CU-021 (Registrar Eventos y Condiciones de Transporte). | Diseñar formulario web para registro de eventos y condiciones. | Ninguno
+
+--- TABLE 121 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 121]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Identifiqué las pantallas principales de web y móvil para el diagrama de navegación. | Elaborar el primer borrador del diagrama de navegación. | Ninguno
+VILCHES RODRIGUEZ SHECID | Investigué librerías para generación de QR en Flutter. | Implementar generación y descarga de QR para CU-016. | Ninguno
+JAHUIRA POMA JIMENA | Preparé la estructura móvil para CU-011. | Implementar pantalla móvil de aprobación/rechazo de compra. | Ninguno
+RIOS BENAVIDES BEIMAR | Identifiqué los contenedores del modelo C4. | Documentar niveles 2 y 3; redactar las 8 características. | Ninguno
+ROCHA JAIMEZ DIOGO | Definí estados de orden de compra, recepción, unidad y envío. | Modelar transiciones y eventos del diagrama de estado. | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFÍA | Diseñé el formulario web de eventos y condiciones de transporte. | Implementar componente Angular para CU-021. | Ninguno
+
+--- TABLE 122 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 122]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Elaboré el borrador del diagrama de navegación. | Ajustar flujos según roles del sistema. | Ninguno
+VILCHES RODRIGUEZ SHECID | Implementé generación de QR en Flutter para CU-016. | Probar escaneo, descarga y validación. | Ninguno
+JAHUIRA POMA JIMENA | Implementé pantalla móvil de aprobación/rechazo para CU-011. | Conectar con la API y validar funcionamiento. | Ninguno
+RIOS BENAVIDES BEIMAR | Documenté el modelo C4 nivel 2. | Completar nivel 3 y las 8 características. | Ninguno
+ROCHA JAIMEZ DIOGO | Modelé las transiciones del diagrama de estado. | Validar con CU-019, CU-020 y CU-021. | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFÍA | Implementé componente Angular para CU-021. | Integrar con servicios y validar formulario. | Ninguno
+
+--- TABLE 123 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 123]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Ajusté el diagrama de navegación para PO, Admin y Gestor. | Validar con el equipo y documentar. | Ninguno
+VILCHES RODRIGUEZ SHECID | Probé generación y descarga de QR en Flutter. | Refinar UI y manejo de errores. | Ninguno
+JAHUIRA POMA JIMENA | Conecté CU-011 móvil con la API. | Realizar pruebas y corregir errores. | Ninguno
+RIOS BENAVIDES BEIMAR | Completé el modelo C4 nivel 3. | Redactar las 8 características y revisar. | Ninguno
+ROCHA JAIMEZ DIOGO | Interfaz de certificaciones | Validar integración de certificaciones (CU-007) | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Integré CU-021 web con la API. | Probar registro de condiciones y eventos. | Ninguno
+
+--- TABLE 124 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 124]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | Validé el diagrama de navegación con el equipo. | Incorporar observaciones y dejar versión final. | Ninguno
+VILCHES RODRIGUEZ SHECID | Refiné CU-016 móvil. | Documentar pruebas y preparar diagrama de secuencia. | Ninguno
+JAHUIRA POMA JIMENA | Probé CU-011 móvil. | Documentar pruebas y apoyar en el diagrama de comunicación. | Ninguno
+RIOS BENAVIDES BEIMAR | Redacté las 8 características. | Revisar y complementar el modelo C4. | Ninguno
+ROCHA JAIMEZ DIOGO | Refiné el diagrama de estado. | Documentar y preparar para revisión. | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Probé CU-021 web. | Documentar pruebas y preparar análisis de clases. | Ninguno
+
+--- TABLE 125 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 125]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | .Incorporé observaciones al diagrama de navegación. | Version final y documentación. | Ninguno
+VILCHES RODRIGUEZ SHECID | Elaboré el diagrama de secuencia (2.2.1.3.2). | Validar con CU-016 y CU-011. | Ninguno
+JAHUIRA POMA JIMENA | Elaboré el diagrama de comunicación (2.2.1.3.1). | Validar con CU-011 y CU-021. | Ninguno
+RIOS BENAVIDES BEIMAR | Revisé el modelo C4 y las 8 características. | Ajustes finales y documentación. | Ninguno
+ROCHA JAIMEZ DIOGO | Documenté el diagrama de estado. | Apoyar en el diagrama de tiempo si se asigna. | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Elaboré el análisis de clases (2.2.1.3.3). | Validar con CU-021 y CU-016. | Ninguno
+
+--- TABLE 126 (rows: 7) Header: Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos ---
+[MATCH TABLE 126]
+Miembro | ¿Qué hice? | ¿Qué haré? | Impedimentos
+MONTAÑO ROCA RAFAEL | .Finalicé el diagrama de navegación y lo documenté. | Presentar avances y coordinar cierre del Sprint 2. | Ninguno
+VILCHES RODRIGUEZ SHECID | Finalicé el diagrama de secuencia y la programación móvil de CU-016. | Presentar avances y pruebas. | Ninguno
+JAHUIRA POMA JIMENA | Finalicé el diagrama de comunicación y la programación móvil de CU-011. | Presentar avances y pruebas. | Ninguno
+RIOS BENAVIDES BEIMAR | Finalicé el modelo C4 y las 8 características. | Presentar avances. | Ninguno
+ROCHA JAIMEZ DIOGO | Finalicé el diagrama de estado y lo documenté. | Presentar avances. | Ninguno
+RODRIGUEZ LAGUNA RAYSA SOFIA | Finalicé el análisis de clases y la programación web de CU-021. | Presentar avances y pruebas. | Ninguno
+
+--- TABLE 127 (rows: 5) Header: Entrevistada: | Andrés Fernando López ---
+
+--- TABLE 128 (rows: 5) Header: Entrevistada: | Mariana Alejandra Suárez ---
+
+--- TABLE 129 (rows: 5) Header: Entrevistada: | Diego Mauricio Fernández ---

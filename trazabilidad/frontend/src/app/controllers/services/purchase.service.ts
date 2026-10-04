@@ -1,7 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { CompraItem, CompraListResponse, ActionPurchaseResponse } from '../../models/purchase.model';
+import { CompraItem, CompraListResponse, ActionPurchaseResponse, CompraCreate, CompraUpdate } from '../../models/purchase.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -45,5 +45,25 @@ export class PurchaseService {
 
   rejectPurchase(idcompra: number, motivo: string): Observable<ActionPurchaseResponse> {
     return this.http.patch<ActionPurchaseResponse>(`${this.apiUrl}/${idcompra}/reject`, { motivo });
+  }
+
+  createPurchase(data: CompraCreate): Observable<CompraItem> {
+    this.loadingSignal.set(true);
+    return this.http.post<CompraItem>(this.apiUrl, data).pipe(
+      tap({
+        next: () => this.loadingSignal.set(false),
+        error: () => this.loadingSignal.set(false)
+      })
+    );
+  }
+
+  updatePurchase(idcompra: number, data: CompraUpdate): Observable<CompraItem> {
+    this.loadingSignal.set(true);
+    return this.http.put<CompraItem>(`${this.apiUrl}/${idcompra}`, data).pipe(
+      tap({
+        next: () => this.loadingSignal.set(false),
+        error: () => this.loadingSignal.set(false)
+      })
+    );
   }
 }

@@ -33,3 +33,23 @@ export interface ActionPurchaseResponse {
   message: string;
   compra: CompraItem;
 }
+
+export interface CompraDetalleCreate {
+  idvariante: number;
+  cantidad: number;
+  costounitariousd: number;
+}
+
+export interface CompraCreate {
+  idproveedor: number;
+  numeroorden: string;
+  fechacompra: string;
+  detalles: CompraDetalleCreate[];
+}
+
+export interface CompraUpdate {
+  idproveedor?: number;
+  numeroorden?: string;
+  fechacompra?: string;
+  detalles?: CompraDetalleCreate[];
+}

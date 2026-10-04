@@ -35,6 +35,9 @@ export interface EnvioItem {
   idenvio: number;
   idtenant: number;
   codigoenvio: string;
+  idactororigen: number;
+  idactordestino: number;
+  idtransportista?: number;
   actor_origen_nombre?: string;
   actor_destino_nombre?: string;
   transportista_nombre?: string;
@@ -46,10 +49,67 @@ export interface EnvioItem {
   total_unidades: number;
 }
 
+export interface EnvioUnidadItem {
+  idenviounidad: number;
+  idunidad: number;
+  numeroserie: string;
+  idvariante?: number;
+  sku?: string;
+  producto_nombre?: string;
+  estado?: string;
+}
+
+export interface EnvioDetalle extends EnvioItem {
+  unidades: EnvioUnidadItem[];
+}
+
+export interface EnvioCreate {
+  idactororigen: number;
+  idactordestino: number;
+  idtransportista?: number;
+  codigoenvio: string;
+  fechaestimada?: string;
+  trackingexterno?: string;
+}
+
+export interface EnvioUpdate {
+  idactordestino?: number;
+  idtransportista?: number | null;
+  fechaestimada?: string;
+  trackingexterno?: string;
+}
+
 export interface EnvioTimelineResponse {
   envio: EnvioItem;
   eventos: EventoTrazabilidadItem[];
   unidades_numeros: string[];
+}
+
+export interface EnvioUnidadCandidateItem {
+  idunidad: number;
+  numeroserie: string;
+  idvariante: number;
+  sku?: string;
+  producto_nombre?: string;
+  estado?: string;
+  idrecepciondetalle?: number;
+}
+
+export interface EnvioUnidadAsignadaItem extends EnvioUnidadCandidateItem {
+  idenviounidad: number;
+}
+
+export interface EnvioUnidadesResponse {
+  idenvio: number;
+  codigoenvio: string;
+  estado: string;
+  asignadas: EnvioUnidadAsignadaItem[];
+  disponibles: EnvioUnidadCandidateItem[];
+}
+
+export interface EnvioUnidadActionResponse {
+  message: string;
+  unidades: EnvioUnidadAsignadaItem[];
 }
 
 export interface CreateTransportEventPayload {

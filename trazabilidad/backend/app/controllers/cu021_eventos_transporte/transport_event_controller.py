@@ -1,14 +1,14 @@
 import hashlib
-from typing import Optional, List
-from datetime import datetime, timezone, timedelta
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from typing import List
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func, cast, String
+from sqlalchemy import select
 
 from app.db.session import get_db
-from app.models.cu021_eventos_transporte.shipment import (
-    Envio,
-    EnvioUnidad,
+from app.models.cu019_envios_logisticos.shipment import Envio
+from app.models.cu020_asignacion_unidades_envio.shipment_unit import EnvioUnidad
+from app.models.cu021_eventos_transporte.transport_event import (
     EventoTrazabilidad,
     EventoUnidad,
     CondicionTransporte,
@@ -21,8 +21,9 @@ from app.models.cu005_bitacora.bitacora import Bitacora
 from app.models.cu002_usuarios.user import User
 from app.models.cu002_usuarios.usuario_tenant import UsuarioTenant
 from app.controllers.cu004_autenticacion.auth_controller import get_current_user
+from app.controllers.shared import get_bolivia_now, get_client_ip
+from app.views.cu019_envios_logisticos.shipment_views import EnvioResponse
 from app.views.cu021_eventos_transporte.transport_views import (
-    EnvioResponse,
     EnvioTimelineResponse,
     EventoTrazabilidadResponse,
     CondicionTransporteResponse,
@@ -32,72 +33,12 @@ from app.views.cu021_eventos_transporte.transport_views import (
 router = APIRouter(prefix="/shipments", tags=["Eventos y Condiciones de Transporte (CU-021)"])
 
 
-def _get_bolivia_now() -> datetime:
-    return datetime.now(timezone(timedelta(hours=-4))).replace(tzinfo=None)
-
-
-def _get_client_ip(request: Request) -> str:
-    return (
-        request.headers.get("x-forwarded-for", "").split(",")[0].strip()
-        or (request.client.host if request.client else "127.0.0.1")
-    )
-
-
 def _calculate_payload_hash(idenvio: int, tipoevento: str, idubicacion: int, timestamp: datetime) -> str:
     raw = f"{idenvio}:{tipoevento}:{idubicacion}:{timestamp.isoformat()}"
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
-class TransportController:
-
-    @staticmethod
-    def list_shipments(
-        db: Session,
-        current_user: User,
-        estado: Optional[str] = None,
-        skip: int = 0,
-        limit: int = 50
-    ) -> List[EnvioResponse]:
-        tenant_id = current_user.tenant.idtenant if current_user.tenant else 1
-
-        query = select(Envio).where(Envio.idtenant == tenant_id)
-        if estado and estado.strip():
-            query = query.where(cast(Envio.estado, String) == estado.strip().lower())
-
-        query = query.order_by(Envio.idenvio.desc()).offset(skip).limit(limit)
-        shipments = db.execute(query).scalars().all()
-
-        results = []
-        for s in shipments:
-            # Nombres de actores
-            actor_orig = db.execute(select(ActorCadena.razonsocial).where(ActorCadena.idactor == s.idactororigen)).scalar_one_or_none()
-            actor_dest = db.execute(select(ActorCadena.razonsocial).where(ActorCadena.idactor == s.idactordestino)).scalar_one_or_none()
-            transp = None
-            if s.idtransportista:
-                transp = db.execute(select(ActorCadena.razonsocial).where(ActorCadena.idactor == s.idtransportista)).scalar_one_or_none()
-
-            total_units = db.execute(
-                select(func.count(EnvioUnidad.idenviounidad)).where(EnvioUnidad.idenvio == s.idenvio)
-            ).scalar_one()
-
-            results.append(
-                EnvioResponse(
-                    idenvio=s.idenvio,
-                    idtenant=s.idtenant,
-                    codigoenvio=s.codigoenvio,
-                    actor_origen_nombre=actor_orig or f"Origen #{s.idactororigen}",
-                    actor_destino_nombre=actor_dest or f"Destino #{s.idactordestino}",
-                    transportista_nombre=transp or (f"Transportista #{s.idtransportista}" if s.idtransportista else None),
-                    fechasalida=s.fechasalida,
-                    fechaestimada=s.fechaestimada,
-                    fechaentrega=s.fechaentrega,
-                    estado=str(s.estado),
-                    trackingexterno=s.trackingexterno,
-                    total_unidades=total_units
-                )
-            )
-
-        return results
+class TransportEventController:
 
     @staticmethod
     def get_timeline(
@@ -133,6 +74,9 @@ class TransportController:
             idenvio=s.idenvio,
             idtenant=s.idtenant,
             codigoenvio=s.codigoenvio,
+            idactororigen=s.idactororigen,
+            idactordestino=s.idactordestino,
+            idtransportista=s.idtransportista,
             actor_origen_nombre=actor_orig or f"Origen #{s.idactororigen}",
             actor_destino_nombre=actor_dest or f"Destino #{s.idactordestino}",
             transportista_nombre=transp,
@@ -215,8 +159,8 @@ class TransportController:
                 detail=f"La ubicación con ID {body.idubicacion} no existe."
             )
 
-        hora_bolivia = _get_bolivia_now()
-        client_ip = _get_client_ip(request)
+        hora_bolivia = get_bolivia_now()
+        client_ip = get_client_ip(request)
         payload_hash = _calculate_payload_hash(envio.idenvio, body.tipoevento, body.idubicacion, hora_bolivia)
 
         # 1. Crear Evento de Trazabilidad
@@ -333,18 +277,6 @@ class TransportController:
 
 
 # Rutas FastAPI
-@router.get("", response_model=List[EnvioResponse])
-def list_shipments_route(
-    estado: Optional[str] = Query(None, description="Filtrar por estado del envío (preparacion, en_transito, entregado, retrasado, cancelado)"),
-    skip: int = Query(0, ge=0),
-    limit: int = Query(50, ge=1, le=100),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Listar envíos logísticos del tenant (CU-021)."""
-    return TransportController.list_shipments(db, current_user, estado, skip, limit)
-
-
 @router.get("/{idenvio}/timeline", response_model=EnvioTimelineResponse)
 def get_timeline_route(
     idenvio: int,
@@ -352,7 +284,7 @@ def get_timeline_route(
     current_user: User = Depends(get_current_user)
 ):
     """Obtener línea de tiempo completa y condiciones de un envío (CU-021)."""
-    return TransportController.get_timeline(db, current_user, idenvio)
+    return TransportEventController.get_timeline(db, current_user, idenvio)
 
 
 @router.post("/{idenvio}/events", response_model=EventoTrazabilidadResponse)
@@ -364,4 +296,4 @@ def record_event_route(
     current_user: User = Depends(get_current_user)
 ):
     """Registrar un nuevo hito de trazabilidad con telemetría ambiental (CU-021)."""
-    return TransportController.record_event(db, current_user, request, idenvio, body)
+    return TransportEventController.record_event(db, current_user, request, idenvio, body)

@@ -1,0 +1,824 @@
+=== SPRINT 2 PLANNING IN PRODUCT BACKLOG (lines 1590 to 1660) ===
+[1590] [1590] Alta
+[1591] [1591] 4h
+[1592] [1592] Web
+[1593] [1593] T034
+[1594] [1594] Development Team (Backend)
+[1595] [1595] Generación de códigos QR únicos por unidad
+[1596] [1596] Alta
+[1597] [1597] 4h
+[1598] [1598] Backend
+[1599] [1599] T035
+[1600] [1600] Development Team (Frontend)
+[1601] [1601] Interfaz de generación y descarga de códigos QR (UI Angular)
+[1602] [1602] Alta
+[1603] [1603] 4h
+[1604] [1604] Web
+[1605] [1605] T036
+[1606] [1606] Development Team (Backend)
+[1607] [1607] Implementación de envíos, movimientos y asignación de unidades
+[1608] [1608] Alta
+[1609] [1609] 5h
+[1610] [1610] Backend
+[1611] [1611] T037
+[1612] [1612] Development Team (Mobile)
+[1613] [1613] Registro de recepción, transporte y condiciones mediante aplicación móvil
+[1614] [1614] Alta
+[1615] [1615] 5h
+[1616] [1616] Móvil
+[1617] [1617] Casos de uso cubiertos
+[1618] [1618] CU-010: Gestionar Órdenes de Compra
+[1619] [1619] CU-011: Aprobar / Rechazar Compra
+[1620] [1620] CU-012: Gestionar Recepciones de Mercancía
+[1621] [1621] CU-015: Gestionar Unidades de Producto
+[1622] [1622] CU-016: Generar y Descargar Código QR
+[1623] [1623] CU-019: Gestionar Envíos Logísticos
+[1624] [1624] CU-020: Asignar / Desasignar Unidades a Envío
+[1625] [1625] CU-021: Registrar Eventos y Condiciones de Transporte
+[1626] [1626] SPRINT 3 – Trazabilidad, Blockchain y autenticidad
+[1627] [1627] Objetivo: implementar la trazabilidad digital de las unidades y su integración con Blockchain, permitiendo consultar el historial, verificar autenticidad, escanear códigos QR y registrar evidencias de las operaciones.
+[1628] [1628] SPRINT 3
+[1629] [1629] ID
+[1630] [1630] ROL
+[1631] [1631] Características / Funcionalidad
+[1632] [1632] Prioridad
+[1633] [1633] Tiempo estimado
+[1634] [1634] Plataforma
+[1635] [1635] T038
+[1636] [1636] Development Team (Backend)
+[1637] [1637] Implementación del registro de eventos de trazabilidad (API REST)
+[1638] [1638] Alta
+[1639] [1639] 5h
+[1640] [1640] Backend
+[1641] [1641] T039
+[1642] [1642] Development Team (Blockchain)
+[1643] [1643] Configuración de conexión con la red Blockchain Ethereum (Testnet)
+[1644] [1644] Alta
+[1645] [1645] 4h
+[1646] [1646] Blockchain
+[1647] [1647] T040
+[1648] [1648] Development Team (Blockchain)
+[1649] [1649] Diseño del Smart Contract para registro de eventos
+[1650] [1650] Alta
+[1651] [1651] 5h
+[1652] [1652] Blockchain
+[1653] [1653] T041
+[1654] [1654] Development Team (Blockchain)
+[1655] [1655] Implementación del registro de eventos mediante Smart Contract
+[1656] [1656] Alta
+[1657] [1657] 5h
+[1658] [1658] Blockchain
+[1659] [1659] T042
+
+
+=== SPRINT 2 SECTION (lines 4570 to 5320) ===
+[4570] [4570] 12 tareas
+[4571] [4571] 52 hrs
+[4572] [4572] 60 hrs
+[4573] [4573] 100.00%
+[4574] [4574] 2.8. Scrum Taskboard (Backlog, to do, doing, done)-200024409575
+[4575] [4575] 3. Sprint 2
+[4576] [4576] 3.1. Sprint Planning
+[4577] [4577] 3.1.1. Objetivos del Sprint
+[4578] [4578] El objetivo del Sprint 2 es ampliar las funcionalidades de la Plataforma y Aplicación Móvil con Blockchain para la Trazabilidad de un Producto hasta el Consumidor, implementando la gestión de órdenes de compra y su aprobación o rechazo, la recepción de mercancía, el registro y control de unidades individuales de producto con la generación y descarga de códigos QR, y los procesos logísticos de envíos, asignación de unidades y registro de eventos de transporte.
+[4579] [4579] Durante este Sprint se ampliará la interacción de los usuarios con la plataforma (administradores, productores, distribuidores y consumidores), permitiendo gestionar el ciclo de compras y recepción de mercancía, el control físico de las unidades de producto y su trazabilidad logística mediante códigos QR y el registro de eventos de transporte.
+[4580] [4580] Durante este Sprint se trabajará con los siguientes casos de uso:
+[4581] [4581] ●     CU-010: Gestionar Órdenes de Compra
+[4582] [4582] ●     CU-011: Aprobar / Rechazar Compra
+[4583] [4583] ●     CU-012: Gestionar Recepciones de Mercancía
+[4584] [4584] ●     CU-015: Gestionar Unidades de Producto
+[4585] [4585] ●     CU-016: Generar y Descargar Código QR
+[4586] [4586] ●     CU-019: Gestionar Envíos Logísticos
+[4587] [4587] ●     CU-020: Asignar / Desasignar Unidades a Envío
+[4588] [4588] ●     CU-021: Registrar Eventos y Condiciones de Transporte
+[4589] [4589] Actividades técnicas principales
+[4590] [4590] ●     Implementación de la gestión de órdenes de compra:
+[4591] [4591] ○     Registro y consulta de órdenes de compra (API REST).
+[4592] [4592] ○     Interfaz de creación y consulta de órdenes de compra (UI Angular).
+[4593] [4593] ●     Implementación de la aprobación y rechazo de órdenes de compra:
+[4594] [4594] ○     Validación y actualización del estado de la orden según la decisión del Administrador de Empresa.
+[4595] [4595] ●     Implementación de la recepción de mercancía:
+[4596] [4596] ○     Registro de recepción y actualización de existencias.
+[4597] [4597] ○     Interfaz de recepción y consulta de mercancía (UI Angular).
+[4598] [4598] ●     Implementación del registro y gestión de unidades individuales de producto:
+[4599] [4599] ○     Asignación de identificadores únicos a unidades (número de serie, IMEI, EID).
+[4600] [4600] ○     Interfaz de administración de unidades individuales (UI Angular).
+[4601] [4601] ●     Implementación de la generación de códigos QR:
+[4602] [4602] ○     Generación de códigos QR únicos por unidad.
+[4603] [4603] ○     Interfaz de generación y descarga de códigos QR (UI Angular).
+[4604] [4604] ●     Implementación de los procesos logísticos:
+[4605] [4605] ○     Registro de envíos, movimientos y asignación/desasignación de unidades a envíos.
+[4606] [4606] ○     Registro de recepción, transporte y condiciones de traslado mediante aplicación móvil.
+[4607] [4607] ●     Ejecución de pruebas iniciales:
+[4608] [4608] ○     Registro y aprobación/rechazo de órdenes de compra.
+[4609] [4609] ○     Recepción de mercancía y actualización de existencias.
+[4610] [4610] ○     Generación y descarga de códigos QR.
+[4611] [4611] ○     Registro de envíos, asignación de unidades y eventos de transporte.
+[4612] [4612] 3.1.2. Historias de Usuario
+[4613] [4613] Aprobar / Rechazar Compra
+[4614] [4614] T028 (CU-004)
+[4615] [4615] Esta tarea consiste en implementar la lógica que permita al Administrador de Empresa revisar las órdenes de compra pendientes y aprobarlas o rechazarlas, actualizando el estado de la orden y registrando la decisión correspondiente.
+[4616] [4616] Alta
+[4617] [4617] 5 Story Points
+[4618] [4618] Criterios de Aceptación:
+[4619] [4619] a) Se implementará el endpoint para aprobar una orden de compra pendiente.
+[4620] [4620] b) Se implementará el endpoint para rechazar una orden de compra pendiente, registrando la decisión correspondiente.
+[4621] [4621] c) El sistema validará que solo el Administrador de Empresa pueda aprobar o rechazar órdenes de compra.
+[4622] [4622] d) El sistema impedirá aprobar o rechazar una orden que ya se encuentre finalizada o anulada.
+[4623] [4623] e) Los endpoints serán probados mediante pruebas unitarias o de integración.
+[4624] [4624] Autor:
+[4625] [4625] Jahuira Poma Jimena
+[4626] [4626] Generar y Descargar Código QR
+[4627] [4627] T034 (CU-016)
+[4628] [4628] Esta tarea consiste en implementar la generación de códigos QR únicos asociados a las unidades de producto y la interfaz que permita visualizar y descargar dichos códigos para su identificación y posterior consulta de trazabilidad.
+[4629] [4629] Alta
+[4630] [4630] 5 Story Points
+[4631] [4631] Criterios de Aceptación:
+[4632] [4632] a) Se generará un código QR único para cada unidad de producto registrada.
+[4633] [4633] b) El código QR quedará asociado al identificador de la unidad correspondiente.
+[4634] [4634] c) La interfaz permitirá visualizar y descargar el código QR generado.
+[4635] [4635] d) El sistema impedirá generar códigos QR duplicados para una misma unidad.
+[4636] [4636] e) La generación y descarga del código QR serán validadas mediante pruebas funcionales.
+[4637] [4637] Autor:
+[4638] [4638] Vilches Rodriguez Shecid
+[4639] [4639] Registrar Eventos y Condiciones de Transporte
+[4640] [4640] T037 (CU-021)
+[4641] [4641] Esta tarea consiste en implementar el registro de eventos relacionados con la recepción, transporte y condiciones de traslado de las unidades o envíos, incluyendo datos como temperatura, humedad, vibración, ubicación, fecha y responsable.
+[4642] [4642] Alta
+[4643] [4643] 5 Story Points
+[4644] [4644] Criterios de Aceptación:
+[4645] [4645] a) Se implementará un formulario para registrar eventos de transporte y condiciones asociadas a una unidad o envío.
+[4646] [4646] b) El sistema permitirá registrar fecha, ubicación, tipo de evento, temperatura, humedad y vibración cuando corresponda.
+[4647] [4647] c) Cada evento quedará asociado a la unidad o envío correspondiente y al usuario responsable del registro.
+[4648] [4648] d) Se validarán los campos obligatorios y los valores de las condiciones de transporte.
+[4649] [4649] e) El evento registrado quedará almacenado para formar parte del historial de trazabilidad y podrá quedar pendiente de sincronización con blockchain según el flujo definido.
+[4650] [4650] f) El registro será validado mediante pruebas funcionales de integración entre la interfaz y la API.
+[4651] [4651] Autor:
+[4652] [4652] Rodriguez Laguna Raysa Sofia
+[4653] [4653] 3.1.3. Contexto del sistema
+[4654] [4654] 3.1.4. Sprint Backlog
+[4655] [4655] Sprint Backlog
+[4656] [4656] Número de Sprint: 2
+[4657] [4657] Tiempo Programado: -
+[4658] [4658] Objetivo: Implementar la gestión de órdenes de compra (creación, consulta, aprobación y rechazo), la recepción de mercancía con actualización de existencias, el registro y administración de unidades individuales con asignación de identificadores únicos (Serial/IMEI/EID) y generación de códigos QR, y el registro de envíos, movimientos y asignación de unidades, incluyendo la aplicación móvil de recepción y transporte.
+[4659] [4659] Fecha de Inicio: 07/09/2026
+[4660] [4660] Fecha de Finalización: -/-/-
+[4661] [4661] ID
+[4662] [4662] Tarea
+[4663] [4663] Tipo
+[4664] [4664] Estimación (horas)
+[4665] [4665] Responsable
+[4666] [4666] Estado
+[4667] [4667] Prioridad
+[4668] [4668] T026
+[4669] [4669] Implementación de gestión de órdenes de compra (API REST)
+[4670] [4670] Implementación
+[4671] [4671] 5h
+[4672] [4672] Development Team (Backend)
+[4673] [4673] Completo
+[4674] [4674] Alta
+[4675] [4675] T027
+[4676] [4676] Interfaz de creación y consulta de órdenes de compra (UI Angular)
+[4677] [4677] Implementación
+[4678] [4678] 4h
+[4679] [4679] Development Team (Frontend)
+[4680] [4680] Completo
+[4681] [4681] Alta
+[4682] [4682] T028
+[4683] [4683] Implementación de aprobación y rechazo de órdenes de compra
+[4684] [4684] Implementación
+[4685] [4685] 4h
+[4686] [4686] Development Team (Backend)
+[4687] [4687] Completo
+[4688] [4688] Alta
+[4689] [4689] T029
+[4690] [4690] Implementación de recepción de mercancía y actualización de existencias
+[4691] [4691] Implementación
+[4692] [4692] 5h
+[4693] [4693] Development Team (Backend)
+[4694] [4694] Completo
+[4695] [4695] Alta
+[4696] [4696] T030
+[4697] [4697] Interfaz de recepción y consulta de mercancía (UI Angular)
+[4698] [4698] Implementación
+[4699] [4699] 4h
+[4700] [4700] Development Team (Frontend)
+[4701] [4701] Completo
+[4702] [4702] Alta
+[4703] [4703] T031
+[4704] [4704] Implementación de registro y gestión de unidades individuales
+[4705] [4705] Implementación
+[4706] [4706] 5h
+[4707] [4707] Development Team (Backend)
+[4708] [4708] Completo
+[4709] [4709] Alta
+[4710] [4710] T032
+[4711] [4711] Asignación de identificadores únicos a unidades (Serial/IMEI/EID)
+[4712] [4712] Implementación
+[4713] [4713] 4h
+[4714] [4714] Development Team (Backend)
+[4715] [4715] Completo
+[4716] [4716] Alta
+[4717] [4717] T033
+[4718] [4718] Interfaz de administración de unidades individuales (UI Angular)
+[4719] [4719] Implementación
+[4720] [4720] 4h
+[4721] [4721] Development Team (Frontend)
+[4722] [4722] Completo
+[4723] [4723] Alta
+[4724] [4724] T034
+[4725] [4725] Generación de códigos QR únicos por unidad
+[4726] [4726] Implementación
+[4727] [4727] 4h
+[4728] [4728] Development Team (Backend)
+[4729] [4729] Completo
+[4730] [4730] Alta
+[4731] [4731] T035
+[4732] [4732] Interfaz de generación y descarga de códigos QR (UI Angular)
+[4733] [4733] Implementación
+[4734] [4734] 4h
+[4735] [4735] Development Team (Frontend)
+[4736] [4736] Completo
+[4737] [4737] Alta
+[4738] [4738] T036
+[4739] [4739] Implementación de envíos, movimientos y asignación de unidades
+[4740] [4740] Implementación
+[4741] [4741] 5h
+[4742] [4742] Development Team (Backend)
+[4743] [4743] Completo
+[4744] [4744] Alta
+[4745] [4745] T037
+[4746] [4746] Registro de recepción, transporte y condiciones mediante aplicación móvil
+[4747] [4747] Implementación
+[4748] [4748] 5h
+[4749] [4749] Development Team (Mobile)
+[4750] [4750] Completo
+[4751] [4751] Alta
+[4752] [4752] 3.1.5. Equipo SCRUM
+[4753] [4753] SPRINT 2
+[4754] [4754] Rol
+[4755] [4755] Responsable
+[4756] [4756] Concepto
+[4757] [4757] Product Owner
+[4758] [4758] RIOS BENAVIDES BEIMAR
+[4759] [4759] Es quien define qué debe construirse en el sistema, tomando en cuenta las necesidades de los usuarios.
+[4760] [4760] Se encarga de organizar y actualizar la lista de requerimientos, priorizando las funcionalidades más importantes para asegurar el valor del producto.
+[4761] [4761] Scrum Master
+[4762] [4762] ROCHA JAIMEZ DIOGO
+[4763] [4763] Supervisa el correcto uso de la metodología
+[4764] [4764] SCRUM dentro del equipo, brindando apoyo
+[4765] [4765] constante durante el desarrollo.
+[4766] [4766] Se encarga de identificar y resolver dificultades, fortalecer la comunicación entre los integrantes y asegurar que el trabajo avance de manera organizada, manteniendo la eficiencia y el enfoque en los principios ágiles.
+[4767] [4767] Developer
+[4768] [4768] JAHUIRA POMA JIMENA
+[4769] [4769] ROCHA JAIMEZ DIOGO
+[4770] [4770] MONTAÑO ROCA RAFAEL
+[4771] [4771] RODRIGUEZ LAGUNA RAYSA SOFIA
+[4772] [4772] VILCHES RODRIGUEZ SHECID
+[4773] [4773] Está integrado por los miembros responsables de desarrollar el producto. Trabajan de forma colaborativa y autónoma, encargándose del diseño, programación, pruebas y entrega de cada funcionalidad, generando avances progresivos en cada presentación de sprint.
+[4774] [4774] 3.2. Proceso/patrón de desarrollo por Historia de usuario
+[4775] [4775] 3.2.1. Diseño
+[4776] [4776] 3.2.1.1. Diseño de la arquitectura
+[4777] [4777] 3.2.1.1.1. Nivel 1: Diagrama de contexto
+[4778] [4778] 3.2.1.1.2. Nivel 2 : Diagrama de Contenedores
+[4779] [4779] 3.2.1.1.3. Nivel 3 : Diagrama de Componentes
+[4780] [4780] 3.2.1.1.4. Nivel 4 : Diagrama de Código
+[4781] [4781] 3.2.1.1.1. Características Generales del Proyecto
+[4782] [4782] Resumen de cumplimiento
+[4783] [4783] #
+[4784] [4784] Característica general
+[4785] [4785] Estado en el Sprint 2
+[4786] [4786] 1
+[4787] [4787] Solución universal
+[4788] [4788] Cubierto
+[4789] [4789] 2
+[4790] [4790] Gestion de usuarios
+[4791] [4791] Cubierto
+[4792] [4792] 3
+[4793] [4793] Log / Bitácora
+[4794] [4794] Cubierto
+[4795] [4795] 4
+[4796] [4796] Facilidad de uso
+[4797] [4797] Cubierto
+[4798] [4798] 5
+[4799] [4799] Reportes personalizables
+[4800] [4800] En progreso
+[4801] [4801] 6
+[4802] [4802] Backup / Restore
+[4803] [4803] Cubierto
+[4804] [4804] 7
+[4805] [4805] Web / Móvil
+[4806] [4806] Cubierto
+[4807] [4807] 8
+[4808] [4808] Modelo SaaS en la nube
+[4809] [4809] Cubierto
+[4810] [4810] 1. Solución universal
+[4811] [4811] Aunque enfocamos el sistema en la importación de dispositivos celulares Apple, diseñamos el módulo de Abastecimiento, Unidades y Logística para poder distribuir otros productos de dicha marca en el futuro. Relacionamos OrdenCompra, DetalleOrdenCompra y Unidad con Producto mediante claves foráneas genéricas, de modo que cualquier empresa que necesite trazar unidades físicas serializadas -repuestos automotrices, equipos médicos, maquinaria industrial, entre otros- pueda usar el mismo flujo de compra, recepción, identificación individual (número de serie, IMEI o EID) y despacho sin que tengamos que tocar una sola linea de codigo, solo configurando su propio catálogo de productos dentro de su tenant.
+[4812] [4812] 2. Gestión de usuarios
+[4813] [4813] Para este sprint no creamos un modelo de permisos nuevo: reutilizamos el esquema de roles y privilegios que definimos a nivel de toda la plataforma, donde el Administrador de cada empresa configura con libertad qué botones, formularios y opciones de menú puede ver y usar cada grupo de usuarios. Aquí eso se traduce en reglas concretas que ya implementamos: solo el Administrador de Empresa puede aprobar o rechazar una orden de compra (CU-011), mientras que dejamos el registro de recepciones, la generacion de codigos QR y el registro de eventos de transporte habilitados exclusivamente para el rol Gestor de Operaciones (CU-012, CU-015, CU-021). No asumimos de antemano cuántos grupos de usuarios va a necesitar cada empresa ni qué privilegios tendrá cada uno: dejamos que cada una defina los suyos propios.
+[4814] [4814] 3. Log / Bitácora
+[4815] [4815] Registramos toda acción critica que ocurre dentro de los casos de uso del sprint -aprobar o rechazar una compra, generar un código QR, asignar o desasignar una unidad a un envío, registrar un evento de transporte- a través de nuestro componente AuditoriaNotificacionService, que guarda la dirección IP de origen, el usuario responsable, la fecha y hora exacta, y la acción realizada. Como nos pide la cátedra, mantenemos este registro como confidencial: ni siquiera nosotros como administradores de la base de datos consultamos estas tablas directamente; dejamos el acceso restringido a una llave de desarrollador que solo se invoca desde dentro del propio sistema, nunca por una consulta SQL directa.
+[4816] [4816] 4. Facilidad de uso
+[4817] [4817] Al diseñar los ocho casos de uso del sprint, separamos con claridad que tareas necesitan agilidad de campo y cuales necesitan planificación de oficina. En los casos de uso móviles (CU-012 Gestionar Recepciones de Mercancía, CU-015 Gestionar Unidades de Producto, CU-021 Registrar Eventos y Condiciones de Transporte) priorizamos el escaneo de código QR o NFC por sobre digitar manualmente números de serie, para reducir errores de tipeo y el tiempo que toma capturar datos en almacén. En los formularios web (CU-010, CU-016, CU-019, CU-020) incorporamos validaciones en línea y ayuda contextual, para que un usuario nuevo pueda completar una orden de compra o planificar un envío sin necesitar una capacitación previa extensa.
+[4818] [4818] 5. Reportes personalizables
+[4819] [4819] Este es el punto que todavía tenemos pendiente de este sprint: los ocho casos de uso actuales no incluyen un motor de reportes configurable por el usuario. Ya identificamos dónde encaja mejor -como una extensión natural de CU-019 (Gestionar Envíos Logísticos)- para que el usuario pueda elegir columnas, criterios de filtro y orden antes de generar el reporte, con exportación a Excel, HTML, correo electrónico y PDF. Por ahora, lo más cercano que ofrecemos es la descarga masiva de códigos QR (CU-016), y ya dejamos anotado incorporar el reporte personalizable como parte de un próximo sprint.
+[4820] [4820] 6. Backup / Restore
+[4821] [4821] No implementamos lógica de respaldo dentro de los módulos de negocio de este sprint porque ya la resolvemos a nivel de infraestructura: configuramos snapshots periódicos sobre la base de datos PostgreSQL que desplegamos en Google Cloud Platform. Gracias a eso, todos los datos que generamos en este sprint -órdenes de compra, unidades, códigos QR, envíos y eventos de transporte- quedan protegidos automáticamente, sin que tengamos que añadir nada extra en cada módulo.
+[4822] [4822] 7. Web / Móvil
+[4823] [4823] Definimos la distribución entre plataformas desde que planificamos el sprint: llevamos a la aplicación Web las tareas de gestión, planificación y aprobación que manejan mayor volumen de información y necesitan una visión completa (Gestionar Órdenes de Compra, Generar y Descargar Código QR, Gestionar Envios Logisticos, Asignar/Desasignar Unidades a Envio), y llevamos a la aplicación Móvil las tareas que ocurren físicamente en almacén o en tránsito y que necesitan una respuesta inmediata (Aprobar/Rechazar Compra, Gestionar Recepciones de Mercancía, Gestionar Unidades de Producto, Registrar Eventos y Condiciones de Transporte).
+[4824] [4824] 8. Modelo SaaS en la nube
+[4825] [4825] Reflejamos el enfoque de suscripción multi-tenant que definimos para toda la plataforma directamente en las entidades de este sprint: diseñamos OrdenCompra, Unidad y Envio con una clave foránea hacia la empresa (tenant) que las origina, para garantizar que los datos de cada cliente queden aislados de los demás. Desplegamos el backend y la base de datos en Google Cloud Platform bajo este mismo esquema, de forma que sumar una nueva empresa cliente no nos exige una instalación separada: solo aprovisionamos un nuevo tenant dentro de la plataforma que ya tenemos funcionando.
+[4826] [4826] 3.2.1.2. DIseño de datos
+[4827] [4827] 3.2.1.3. Diseño de la lógica de negocio
+[4828] [4828] 3.2.1.3.1. Diagrama de comunicación
+[4829] [4829] 3.2.1.3.2. Diagrama de Secuencia
+[4830] [4830] CU-011 Aprobar/Rechazar Compra Web
+[4831] [4831] Cu-021 Registrar Eventos y Condiciones de Transporte Web
+[4832] [4832] Cu-016 Generar y Descargar código Qr Móvil
+[4833] [4833] 3.2.1.3.3  Análisis de clases
+[4834] [4834] CU 11: Aprobar rechazar compra
+[4835] [4835] CU 16: Generar descargar QR
+[4836] [4836] CU 21: Registrar eventos trazabilidad
+[4837] [4837] 2.2.1.3.4 Diagrama de navegación
+[4838] [4838] CU 11: Aprobar rechazar compra
+[4839] [4839] CU 16: Generar descargar QR
+[4840] [4840] CU 21: Registrar eventos trazabilidad
+[4841] [4841] 3.2.2. Implementación
+[4842] [4842] Componentes y artefactos generados
+[4843] [4843] 3.2.3. Pruebas
+[4844] [4844] Plan de pruebas (criterios de aceptación)
+[4845] [4845] Reporte de prueba
+[4846] [4846] 3.3. Daily SCRUM (o scrum diario)
+[4847] [4847] Daily Scrum
+[4848] [4848] 10/09/26
+[4849] [4849] Miembro
+[4850] [4850] ¿Qué hice?
+[4851] [4851] ¿Qué haré?
+[4852] [4852] Impedimentos
+[4853] [4853] MONTAÑO ROCA RAFAEL
+[4854] [4854] Organicé al equipo y revisé el Sprint Backlog del Sprint 2. Revisé el alcance del diagrama de navegación.
+[4855] [4855] Identificar pantallas y flujos para el diagrama de navegación.
+[4856] [4856] Ninguno
+[4857] [4857] VILCHES RODRIGUEZ SHECID
+[4858] [4858] Revisé el CU-016 (Generar y Descargar Código QR).
+[4859] [4859] Investigar generación de códigos QR en Flutter.
+[4860] [4860] Ninguno
+[4861] [4861] JAHUIRA POMA JIMENA
+[4862] [4862] Revisé el CU-011 (Aprobar / Rechazar Compra) y su flujo.
+[4863] [4863] Investigar modelo de datos para CU-014 (Ubicaciones Físicas)
+[4864] [4864] Ninguno
+[4865] [4865] RIOS BENAVIDES BEIMAR
+[4866] [4866] Revisé la arquitectura actual del sistema para el modelo C4.
+[4867] [4867] Identificar contenedores y componentes; listar las 8 características.
+[4868] [4868] Ninguno
+[4869] [4869] ROCHA JAIMEZ DIOGO
+[4870] [4870] Revisé los CU del Sprint 2 relacionados con logística y compras. Identifiqué estados posibles para el diagrama de estado.
+[4871] [4871] Definir estados y transiciones de compra, recepción, unidad y envío.
+[4872] [4872] Ninguno
+[4873] [4873] RODRIGUEZ LAGUNA RAYSA SOFIA
+[4874] [4874] Revisé el CU-021 (Registrar Eventos y Condiciones de Transporte).
+[4875] [4875] Diseñar formulario web para registro de eventos y condiciones.
+[4876] [4876] Ninguno
+[4877] [4877] Daily Scrum 11/09/26
+[4878] [4878] Miembro
+[4879] [4879] ¿Qué hice?
+[4880] [4880] ¿Qué haré?
+[4881] [4881] Impedimentos
+[4882] [4882] MONTAÑO ROCA RAFAEL
+[4883] [4883] Identifiqué las pantallas principales de web y móvil para el diagrama de navegación.
+[4884] [4884] Elaborar el primer borrador del diagrama de navegación.
+[4885] [4885] Ninguno
+[4886] [4886] VILCHES RODRIGUEZ SHECID
+[4887] [4887] Investigué librerías para generación de QR en Flutter.
+[4888] [4888] Implementar generación y descarga de QR para CU-016.
+[4889] [4889] Ninguno
+[4890] [4890] JAHUIRA POMA JIMENA
+[4891] [4891] Preparé la estructura móvil para CU-011.
+[4892] [4892] Implementar pantalla móvil de aprobación/rechazo de compra.
+[4893] [4893] Ninguno
+[4894] [4894] RIOS BENAVIDES BEIMAR
+[4895] [4895] Identifiqué los contenedores del modelo C4.
+[4896] [4896] Documentar niveles 2 y 3; redactar las 8 características.
+[4897] [4897] Ninguno
+[4898] [4898] ROCHA JAIMEZ DIOGO
+[4899] [4899] Definí estados de orden de compra, recepción, unidad y envío.
+[4900] [4900] Modelar transiciones y eventos del diagrama de estado.
+[4901] [4901] Ninguno
+[4902] [4902] RODRIGUEZ LAGUNA RAYSA SOFÍA
+[4903] [4903] Diseñé el formulario web de eventos y condiciones de transporte.
+[4904] [4904] Implementar componente Angular para CU-021.
+[4905] [4905] Ninguno
+[4906] [4906] Daily Scrum 12/09/26
+[4907] [4907] Miembro
+[4908] [4908] ¿Qué hice?
+[4909] [4909] ¿Qué haré?
+[4910] [4910] Impedimentos
+[4911] [4911] MONTAÑO ROCA RAFAEL
+[4912] [4912] Elaboré el borrador del diagrama de navegación.
+[4913] [4913] Ajustar flujos según roles del sistema.
+[4914] [4914] Ninguno
+[4915] [4915] VILCHES RODRIGUEZ SHECID
+[4916] [4916] Implementé generación de QR en Flutter para CU-016.
+[4917] [4917] Probar escaneo, descarga y validación.
+[4918] [4918] Ninguno
+[4919] [4919] JAHUIRA POMA JIMENA
+[4920] [4920] Implementé pantalla móvil de aprobación/rechazo para CU-011.
+[4921] [4921] Conectar con la API y validar funcionamiento.
+[4922] [4922] Ninguno
+[4923] [4923] RIOS BENAVIDES BEIMAR
+[4924] [4924] Documenté el modelo C4 nivel 2.
+[4925] [4925] Completar nivel 3 y las 8 características.
+[4926] [4926] Ninguno
+[4927] [4927] ROCHA JAIMEZ DIOGO
+[4928] [4928] Modelé las transiciones del diagrama de estado.
+[4929] [4929] Validar con CU-019, CU-020 y CU-021.
+[4930] [4930] Ninguno
+[4931] [4931] RODRIGUEZ LAGUNA RAYSA SOFÍA
+[4932] [4932] Implementé componente Angular para CU-021.
+[4933] [4933] Integrar con servicios y validar formulario.
+[4934] [4934] Ninguno
+[4935] [4935] Daily Scrum 13/09/26
+[4936] [4936] Miembro
+[4937] [4937] ¿Qué hice?
+[4938] [4938] ¿Qué haré?
+[4939] [4939] Impedimentos
+[4940] [4940] MONTAÑO ROCA RAFAEL
+[4941] [4941] Ajusté el diagrama de navegación para PO, Admin y Gestor.
+[4942] [4942] Validar con el equipo y documentar.
+[4943] [4943] Ninguno
+[4944] [4944] VILCHES RODRIGUEZ SHECID
+[4945] [4945] Probé generación y descarga de QR en Flutter.
+[4946] [4946] Refinar UI y manejo de errores.
+[4947] [4947] Ninguno
+[4948] [4948] JAHUIRA POMA JIMENA
+[4949] [4949] Conecté CU-011 móvil con la API.
+[4950] [4950] Realizar pruebas y corregir errores.
+[4951] [4951] Ninguno
+[4952] [4952] RIOS BENAVIDES BEIMAR
+[4953] [4953] Completé el modelo C4 nivel 3.
+[4954] [4954] Redactar las 8 características y revisar.
+[4955] [4955] Ninguno
+[4956] [4956] ROCHA JAIMEZ DIOGO
+[4957] [4957] Interfaz de certificaciones
+[4958] [4958] Validar integración de certificaciones (CU-007)
+[4959] [4959] Ninguno
+[4960] [4960] RODRIGUEZ LAGUNA RAYSA SOFIA
+[4961] [4961] Integré CU-021 web con la API.
+[4962] [4962] Probar registro de condiciones y eventos.
+[4963] [4963] Ninguno
+[4964] [4964] Daily Scrum 14/09/26
+[4965] [4965] Miembro
+[4966] [4966] ¿Qué hice?
+[4967] [4967] ¿Qué haré?
+[4968] [4968] Impedimentos
+[4969] [4969] MONTAÑO ROCA RAFAEL
+[4970] [4970] Validé el diagrama de navegación con el equipo.
+[4971] [4971] Incorporar observaciones y dejar versión final.
+[4972] [4972] Ninguno
+[4973] [4973] VILCHES RODRIGUEZ SHECID
+[4974] [4974] Refiné CU-016 móvil.
+[4975] [4975] Documentar pruebas y preparar diagrama de secuencia.
+[4976] [4976] Ninguno
+[4977] [4977] JAHUIRA POMA JIMENA
+[4978] [4978] Probé CU-011 móvil.
+[4979] [4979] Documentar pruebas y apoyar en el diagrama de comunicación.
+[4980] [4980] Ninguno
+[4981] [4981] RIOS BENAVIDES BEIMAR
+[4982] [4982] Redacté las 8 características.
+[4983] [4983] Revisar y complementar el modelo C4.
+[4984] [4984] Ninguno
+[4985] [4985] ROCHA JAIMEZ DIOGO
+[4986] [4986] Refiné el diagrama de estado.
+[4987] [4987] Documentar y preparar para revisión.
+[4988] [4988] Ninguno
+[4989] [4989] RODRIGUEZ LAGUNA RAYSA SOFIA
+[4990] [4990] Probé CU-021 web.
+[4991] [4991] Documentar pruebas y preparar análisis de clases.
+[4992] [4992] Ninguno
+[4993] [4993] Daily Scrum 15/09/26
+[4994] [4994] Miembro
+[4995] [4995] ¿Qué hice?
+[4996] [4996] ¿Qué haré?
+[4997] [4997] Impedimentos
+[4998] [4998] MONTAÑO ROCA RAFAEL
+[4999] [4999] .Incorporé observaciones al diagrama de navegación.
+[5000] [5000] Version final y documentación.
+[5001] [5001] Ninguno
+[5002] [5002] VILCHES RODRIGUEZ SHECID
+[5003] [5003] Elaboré el diagrama de secuencia (2.2.1.3.2).
+[5004] [5004] Validar con CU-016 y CU-011.
+[5005] [5005] Ninguno
+[5006] [5006] JAHUIRA POMA JIMENA
+[5007] [5007] Elaboré el diagrama de comunicación (2.2.1.3.1).
+[5008] [5008] Validar con CU-011 y CU-021.
+[5009] [5009] Ninguno
+[5010] [5010] RIOS BENAVIDES BEIMAR
+[5011] [5011] Revisé el modelo C4 y las 8 características.
+[5012] [5012] Ajustes finales y documentación.
+[5013] [5013] Ninguno
+[5014] [5014] ROCHA JAIMEZ DIOGO
+[5015] [5015] Documenté el diagrama de estado.
+[5016] [5016] Apoyar en el diagrama de tiempo si se asigna.
+[5017] [5017] Ninguno
+[5018] [5018] RODRIGUEZ LAGUNA RAYSA SOFIA
+[5019] [5019] Elaboré el análisis de clases (2.2.1.3.3).
+[5020] [5020] Validar con CU-021 y CU-016.
+[5021] [5021] Ninguno
+[5022] [5022] Daily Scrum 16/09/26
+[5023] [5023] Miembro
+[5024] [5024] ¿Qué hice?
+[5025] [5025] ¿Qué haré?
+[5026] [5026] Impedimentos
+[5027] [5027] MONTAÑO ROCA RAFAEL
+[5028] [5028] .Finalicé el diagrama de navegación y lo documenté.
+[5029] [5029] Presentar avances y coordinar cierre del Sprint 2.
+[5030] [5030] Ninguno
+[5031] [5031] VILCHES RODRIGUEZ SHECID
+[5032] [5032] Finalicé el diagrama de secuencia y la programación móvil de CU-016.
+[5033] [5033] Presentar avances y pruebas.
+[5034] [5034] Ninguno
+[5035] [5035] JAHUIRA POMA JIMENA
+[5036] [5036] Finalicé el diagrama de comunicación y la programación móvil de CU-011.
+[5037] [5037] Presentar avances y pruebas.
+[5038] [5038] Ninguno
+[5039] [5039] RIOS BENAVIDES BEIMAR
+[5040] [5040] Finalicé el modelo C4 y las 8 características.
+[5041] [5041] Presentar avances.
+[5042] [5042] Ninguno
+[5043] [5043] ROCHA JAIMEZ DIOGO
+[5044] [5044] Finalicé el diagrama de estado y lo documenté.
+[5045] [5045] Presentar avances.
+[5046] [5046] Ninguno
+[5047] [5047] RODRIGUEZ LAGUNA RAYSA SOFIA
+[5048] [5048] Finalicé el análisis de clases y la programación web de CU-021.
+[5049] [5049] Presentar avances y pruebas.
+[5050] [5050] Ninguno
+[5051] [5051] 3.4. Sprint Review
+[5052] [5052] 3.5. Sprint Retrospective
+[5053] [5053] 3.6. Burndown and Burn Up Chart
+[5054] [5054] 3.6.1. Burndown
+[5055] [5055] 3.6.2. BurnUp
+[5056] [5056] 3.7. Gráfica de esfuerzo y datos de esfuerzo
+[5057] [5057] 3.8. Scrum Taskboard (Backlog, to do, doing, done)
+[5058] [5058] 10.  BIBLIOGRAFÍA
+[5059] [5059] a. Libros/literatura papel/digital
+[5060] [5060] Pressman, R. S., & Maxim, B. R. (2020). Ingeniería de software: Un enfoque práctico (9.ª ed.). McGraw-Hill.
+[5061] [5061] Laudon, K. C., & Laudon, J. P. (2016). Sistemas de información gerencial (14.ª ed.). Pearson Educación.
+[5062] [5062] Han, J., Kamber, M., & Pei, J. (2012). Data Mining: Concepts and Techniques (3rd ed.). Morgan Kaufmann.
+[5063] [5063] Sommerville, I. (2016). Ingeniería de software (10.ª ed.). Pearson Educación.
+[5064] [5064] Russell, S., & Norvig, P. (2021). Artificial Intelligence: A Modern Approach (4th ed.). Pearson.
+[5065] [5065] b. Sitios web especializados
+[5066] [5066] PostgreSQL Global Development Group. Documentación oficial del sistema gestor de bases de datos PostgreSQL.https://www.postgresql.org
+[5067] [5067] Python Software Foundation. Documentación oficial del lenguaje de programación Python.https://www.python.org
+[5068] [5068] Django Software Foundation. Documentación oficial del framework Django para desarrollo web.https://www.djangoproject.com
+[5069] [5069] Blockchain en la cadena de suministro: casos de uso y ejemplos. https://innowise.com/es/blog/blockchain-in-supply-chain-use-cases/
+[5070] [5070] Google AI for Developers. Recursos y documentación relacionados con inteligencia artificial, aprendizaje automático y procesamiento de imágenes.https://ai.google
+[5071] [5071] c. Personas (Entrevistas/comunicación con casos de estudio)
+[5072] [5072] Para complementar la investigación sobre los sistemas de trazabilidad de productos y el uso de tecnologías blockchain (IBM Food Trust, Nestlé, Walmart), se consideró la opinión de personas involucradas directamente en la importación, recepción, registro y comercialización de productos electrónicos. Estas entrevistas permitieron comprender cómo se gestionan actualmente los productos dentro de la cadena de suministro, así como identificar las principales dificultades relacionadas con el registro, control y consulta de su información.
+[5073] [5073] Las entrevistas se enfocaron principalmente en dos perfiles relacionados con el proceso de trazabilidad:
+[5074] [5074] Personal encargado de la importación y comercialización de productos, quienes aportaron su experiencia sobre la recepción de productos provenientes de diferentes proveedores, el control de facturas, números de serie o IMEI y la gestión de garantías.
+[5075] [5075] Consumidores finales, quienes pueden beneficiarse de mecanismos que permitan consultar la procedencia, historial y autenticidad de un producto mediante códigos QR y una aplicación móvil.
+[5076] [5076] Las entrevistas permitieron identificar la dependencia de herramientas como hojas de cálculo, facturas y otros documentos para registrar la información de los productos. Esto puede dificultar la búsqueda de información y la identificación del origen o historial de una unidad específica, especialmente cuando se trabaja con diferentes proveedores o lotes.
+[5077] [5077] 11.  ANEXOS
+[5078] [5078] QR Y LINK DEL REPOSITORIO
+[5079] [5079] https://github.com/DiogoMars777/BlockChain.git
+[5080] [5080] 11.1. Documentación impresa/digital complementaria (de casos de estudio)
+[5081] [5081] Caso De Estudio 1
+[5082] [5082] IBM Food Trust
+[5083] [5083] Objetivos
+[5084] [5084] Los objetivos que persigue Amazon con sus iniciativas de trazabilidad y blockchain son:
+[5085] [5085] Eliminar las falsificaciones: Garantizar que cada producto vendido en su plataforma sea auténtico y provenga del fabricante legítimo, protegiendo la confianza del consumidor y la reputación de las marcas.
+[5086] [5086] Proveer trazabilidad de extremo a extremo: Ofrecer a los consumidores y a las marcas una visibilidad completa del recorrido del producto, desde la fábrica hasta la puerta de la casa del comprador.
+[5087] [5087] Reducir el tiempo de respuesta en retiros de productos: Permitir que, ante un problema de calidad o seguridad, las marcas puedan identificar y localizar lotes específicos en minutos (no en semanas) mediante la consulta al libro de contabilidad distribuido.
+[5088] [5088] Crear una "única fuente de verdad": Fragmentar los silos de información entre fabricantes, distribuidores y transportistas, centralizando los datos críticos del producto en un registro inmutable y compartido.
+[5089] [5089] Fortalecer la confianza en el comercio electrónico: Reducir la incertidumbre del comprador online, demostrando que el producto que recibe es exactamente el que el fabricante envió, con todos sus atributos de calidad y origen verificables.
+[5090] [5090] Alcance y características
+[5091] [5091] El alcance de la solución de trazabilidad de Amazon abarca los siguientes aspectos:
+[5092] [5092] Nivel geográfico: Global, con presencia en Norteamérica, Europa, Asia y Latinoamérica a través de la red de Amazon y los centros de datos de AWS.
+[5093] [5093] Sectores involucrados: Alimentación y bebidas (productos perecederos, vinos, suplementos); moda y calzado (zapatos Bata, marcas de lujo); farmacéutico y salud (vacunas, mediante cadena de frío); bienes de consumo masivo (electrónica, cosméticos, juguetes); y sector forestal y agrícola (algodón, madera, a través de alianzas como BASF y Biond Forest).
+[5094] [5094] Actores participantes: Fabricantes y marcas (más de 33,000 marcas registradas en Transparency); distribuidores y transportistas; Amazon (como plataforma de venta y verificador); y el consumidor final (como beneficiario de la información).
+[5095] [5095] Cobertura de productos: Más de 900 millones de unidades de producto verificadas con serialización única.
+[5096] [5096] Las características principales del caso de Amazon son las siguientes:
+[5097] [5097] Serialización única por unidad: Cada producto recibe un código 2D (Data Matrix) único e irrepetible, a diferencia de los códigos de barras tradicionales que son genéricos por lote.
+[5098] [5098] Inmutabilidad descentralizada: Los registros de la cadena de suministro (producción, transporte, almacenamiento) se almacenan en una blockchain gestionada (Amazon Managed Blockchain), garantizando que ningún actor puede alterar el historial retrospectivamente.
+[5099] [5099] Verificación preenvío: Antes de que Amazon envíe el producto al consumidor, el sistema valida automáticamente la autenticidad del código, evitando que productos falsos lleguen al comprador.
+[5100] [5100] Interoperabilidad con sistemas existentes: Los fabricantes pueden utilizar sus propios números de serie sin necesidad de cambiar sus procesos de empaque, ya que Transparency se integró para ser compatible con sistemas de serialización propios de las marcas.
+[5101] [5101] Modelo híbrido de datos: Los metadatos pesados (imágenes, documentos) se almacenan en almacenamiento descentralizado (IPFS / S3), mientras que los registros críticos (hash, timestamp, propietario) van a la blockchain.
+[5102] [5102] Cadena de frío y condiciones ambientales: Registro de condiciones de transporte (temperatura, humedad) para productos sensibles, implementado en colaboración con aerolíneas como Korean Air.
+[5103] [5103] Tokenización de activos: Mediante AWS Managed Blockchain, se permite la tokenización de cadenas de valor (ej. algodón, madera) para certificar sostenibilidad y prácticas éticas.
+[5104] [5104] Funcionalidades
+[5105] [5105] Las funcionalidades operativas del caso de Amazon incluyen:
+[5106] [5106] Generación de códigos únicos: El fabricante genera, a través de la plataforma de Amazon, un código 2D único para cada unidad de producto, que se imprime en el empaque o en una etiqueta adherida.
+[5107] [5107] Registro en blockchain de eventos clave: Cada evento crítico (fabricación, control de calidad, salida de fábrica, recepción en almacén Amazon, envío al consumidor) se registra como una transacción inmutable en la red blockchain.
+[5108] [5108] Escaneo y verificación por el consumidor: El consumidor escanea el código 2D con la aplicación de Amazon (o la cámara de su teléfono) y accede instantáneamente al historial completo del producto, incluyendo origen, fecha de producción y certificaciones.
+[5109] [5109] Trazabilidad inversa (recalls): Las marcas y Amazon pueden rastrear de manera rápida y precisa todos los lotes afectados por un problema de calidad, identificando a los consumidores que adquirieron esos productos para notificarles de manera proactiva.
+[5110] [5110] Panel de control para marcas: Las marcas registradas en Transparency disponen de un dashboard donde visualizan estadísticas de escaneos, ubicación geográfica de sus productos, incidencias reportadas y estado de la cadena de suministro.
+[5111] [5111] Auditoría en tiempo real: Los participantes de la cadena pueden consultar el estado de un producto en cualquier momento, con total transparencia sobre su ubicación y condiciones.
+[5112] [5112] Certificación digital de autenticidad: Al escanear el código, el consumidor recibe un "certificado digital" que confirma la autenticidad del producto y resume su recorrido, similar al certificado de trazabilidad propuesto en este proyecto.
+[5113] [5113] Integración con el flujo de compra: La información de trazabilidad se muestra en la página de detalles del producto dentro de la tienda online de Amazon, ayudando al consumidor a tomar decisiones de compra informadas antes de añadir el producto al carrito.
+[5114] [5114] Aporte al proyecto
+[5115] [5115] El caso de Amazon es extremadamente relevante para el proyecto del Grupo 5, ya que valida la mayoría de los módulos y decisiones tecnológicas planteadas. A continuación, se detalla su aporte específico:
+[5116] [5116] Identificador digital (QR/NFC): Amazon utiliza un código 2D (Data Matrix) equivalente a un código QR. Esto confirma que la asignación de un código único por unidad (módulo 5.1.3) es una práctica comercialmente viable y probada a escala masiva (900M+ unidades).
+[5117] [5117] Registro en blockchain de eventos: Amazon Managed Blockchain demuestra que registrar eventos de la cadena de suministro en una red descentralizada (módulo 5.1.5) no solo es técnicamente factible, sino que genera confianza entre los actores y reduce los costos de auditoría.
+[5118] [5118] Integración con comercio electrónico: Amazon muestra cómo la trazabilidad debe ser parte nativa del flujo de compra (módulo 5.1.10). El widget de trazabilidad que propone el proyecto para la tienda online ya existe en Amazon, lo que valida la necesidad de mostrar el historial en la ficha del producto antes de la compra.
+[5119] [5119] Certificados digitales de trazabilidad: El "certificado de autenticidad" que visualiza el consumidor al escanear el código en Amazon es exactamente el certificado digital (módulo 5.1.8) que el proyecto busca generar, reforzando su valor como diferenciador de marca.
+[5120] [5120] Verificación preenvío: Amazon introduce un concepto clave: la verificación preenvío. El proyecto puede adoptar esta funcionalidad para que el productor o distribuidor valide la autenticidad antes de enviar el producto, reduciendo el riesgo de devoluciones.
+[5121] [5121] Interoperabilidad: Amazon permite a las marcas usar sus propios números de serie. Esto enseña que el sistema debe ser flexible e interoperable (sección 2.7), permitiendo a los productores bolivianos integrar sus sistemas de gestión existentes sin reemplazarlos por completo.
+[5122] [5122] Gestión de incidencias (cadena de frío): El caso de Korean Air con Amazon demuestra que la trazabilidad blockchain debe registrar condiciones ambientales (módulo 5.1.4) como temperatura y humedad. Esto es vital para productos agroalimentarios bolivianos (quinua, café, carne).
+[5123] [5123] Escalabilidad: Amazon gestiona miles de marcas y millones de productos. Esto demuestra que la arquitectura basada en PostgreSQL para datos operativos + Blockchain para registros críticos (sección 7.1) es la combinación correcta para lograr escalabilidad y bajo costo.
+[5124] [5124] Análisis predictivo y reportes: Los dashboards que Amazon ofrece a las marcas validan la necesidad de reportes de trazabilidad (módulo 5.1.12) con indicadores como incidencias, tiempos de tránsito y geolocalización de productos.
+[5125] [5125] Confianza del consumidor: El caso demuestra que la trazabilidad blockchain aumenta la tasa de conversión en e-commerce y reduce las devoluciones por productos falsificados, alineándose con el problema planteado en la sección 3 (Descripción del problema).
+[5126] [5126] Prototipo:
+[5127] [5127] Caso De Estudio 2
+[5128] [5128] Walmart Inc.
+[5129] [5129] Objetivos:
+[5130] [5130] Ofrecer productos de calidad a precios accesibles, buscando satisfacer las necesidades de los consumidores.
+[5131] [5131] Optimizar la cadena de suministro, desde los proveedores hasta las tiendas y centros de distribución.
+[5132] [5132] Garantizar la disponibilidad de productos, reduciendo faltantes y mejorando la reposición de inventario.
+[5133] [5133] Mejorar la eficiencia operativa mediante el uso de tecnologías y sistemas de información.
+[5134] [5134] Fortalecer la trazabilidad de los productos, especialmente en categorías donde el origen y la seguridad son importantes.
+[5135] [5135] Mejorar la experiencia del cliente, tanto en las tiendas físicas como mediante sus canales digitales.
+[5136] [5136] Reducir costos y desperdicios mediante una gestión más eficiente del inventario, transporte y almacenamiento.
+[5137] [5137] Alcance y características
+[5138] [5138] El alcance de Walmart abarca una cadena de suministro y una operación minorista de gran escala, conectando proveedores, centros de distribución, tiendas y clientes.
+[5139] [5139] Características principales
+[5140] [5140] Amplia red de proveedores y distribuidores: coordina múltiples actores dentro de la cadena de suministro.
+[5141] [5141] Gestión de inventarios: controla existencias y movimientos de productos para mantener su disponibilidad.
+[5142] [5142] Centros de distribución: permiten almacenar, organizar y distribuir productos hacia las tiendas.
+[5143] [5143] Logística integrada: coordina transporte y distribución para mejorar los tiempos y costos.
+[5144] [5144] Digitalización de procesos: utiliza tecnologías para administrar operaciones, inventarios y ventas.
+[5145] [5145] Comercio omnicanal: integra las compras realizadas en tiendas físicas y mediante canales digitales.
+[5146] [5146] Trazabilidad: permite realizar seguimiento de determinados productos a través de la cadena de suministro.
+[5147] [5147] Análisis de datos: utiliza información de ventas, inventarios y comportamiento del consumidor para apoyar la toma de decisiones.
+[5148] [5148] Funcionalidades
+[5149] [5149] Entre las principales funcionalidades que puede aportar Walmart al proyecto se encuentran:
+[5150] [5150] Gestión de inventarios: registro y control de las cantidades disponibles de productos.
+[5151] [5151] Control de productos: seguimiento de productos desde proveedores hasta los puntos de venta.
+[5152] [5152] Gestión de proveedores: coordinación y seguimiento de los proveedores que abastecen a la empresa.
+[5153] [5153] Distribución de productos: planificación del movimiento de mercancías desde centros de distribución hacia las tiendas.
+[5154] [5154] Reposición de inventario: identificación de necesidades de abastecimiento para evitar faltantes.
+[5155] [5155] Registro de ventas: recopilación de información sobre los productos vendidos.
+[5156] [5156] Seguimiento de la cadena de suministro: permite conocer los movimientos de los productos entre diferentes etapas.
+[5157] [5157] Análisis de información: utilización de datos para mejorar inventarios, ventas, logística y planificación.
+[5158] [5158] Comercio electrónico: permite realizar compras y gestionar pedidos mediante canales digitales.
+[5159] [5159] Gestión de pedidos: seguimiento de las órdenes desde su generación hasta su entrega o recogida.
+[5160] [5160] Aporte de Walmart al proyecto
+[5161] [5161] Walmart puede aportar al proyecto principalmente como actor de distribución y comercialización, permitiendo conectar la información de los productos con el punto de venta y el consumidor.
+[5162] [5162] Sus principales aportes serían:
+[5163] [5163] Integración de la cadena de suministro: conecta proveedores, distribución y puntos de venta.
+[5164] [5164] Trazabilidad: aporta información sobre el movimiento de los productos hasta su llegada al consumidor.
+[5165] [5165] Gestión de inventarios: permite conocer la disponibilidad y ubicación de los productos.
+[5166] [5166] Información de ventas: proporciona datos que pueden utilizarse para analizar la demanda.
+[5167] [5167] Optimización logística: contribuye a mejorar la distribución y reducir tiempos y costos.
+[5168] [5168] Seguridad alimentaria: en el caso de alimentos, la trazabilidad facilita identificar rápidamente productos o lotes involucrados en algún problema.
+[5169] [5169] Reducción del desperdicio: una mejor gestión del inventario puede ayudar a disminuir pérdidas, especialmente en productos perecederos.
+[5170] [5170] Experiencia del consumidor: permite complementar la información de la cadena de suministro con los procesos de compra.
+[5171] [5171] Prototipo
+[5172] [5172] Caso de Estudio 3
+[5173] [5173] Nestlé S.A.
+[5174] [5174] Objetivos:
+[5175] [5175] Los objetivos que persigue Nestlé con sus iniciativas de trazabilidad blockchain son:
+[5176] [5176] Ofrecer transparencia al consumidor: Permitir que los consumidores accedan a información verificable sobre el origen, la producción y el recorrido de los productos que compran, fortaleciendo la confianza en la marca.
+[5177] [5177] Verificar la sostenibilidad y el comercio justo: Colaborar con organizaciones independientes como Rainforest Alliance para que certifiquen y suban su propia información a la blockchain, garantizando que los productos cumplen con estándares ambientales y sociales.
+[5178] [5178] Reducir el tiempo de respuesta en incidentes de seguridad alimentaria: Digitalizar los registros de la cadena de suministro para que, ante un problema de calidad, se pueda rastrear el origen en segundos, no en días o semanas.
+[5179] [5179] Demostrar el compromiso con la producción responsable: Ser el primer gran productor de alimentos en pilotar blockchain pública (OpenSC) para monitorear y comunicar abiertamente datos de sostenibilidad de commodities como leche y aceite de palma.
+[5180] [5180] Escalar la tecnología a múltiples categorías de productos: Probar y expandir el uso de blockchain en diferentes líneas de productos (café, puré de papa, leche infantil, lácteos, aceite de palma) para construir un portafolio tecnológico robusto que cubra la mayoría de los casos de uso.
+[5181] [5181] Características principales:
+[5182] [5182] Doble enfoque en blockchain (privada y pública): Nestlé no se limitó a una sola plataforma. Por un lado, utiliza IBM Food Trust (blockchain privada y permissioned) para productos de consumo como café y puré. Por otro lado, fue el primer gran productor de alimentos en pilotar OpenSC, una blockchain pública que permite a cualquier persona, en cualquier lugar del mundo, acceder a datos verificables de sostenibilidad y cadena de suministro.
+[5183] [5183] Participación de terceros independientes: Nestlé incorpora a organizaciones externas como Rainforest Alliance para que carguen su propia información de certificación directamente en la blockchain. Esto garantiza que los datos no provienen únicamente de Nestlé, sino que son validados por una entidad independiente y altamente reconocida.
+[5184] [5184] Acceso mediante código QR: Los consumidores escanean un código QR en el empaque del producto con su teléfono inteligente y acceden inmediatamente a todo el historial de trazabilidad almacenado en la blockchain.
+[5185] [5185] Información detallada y verificable: Los datos disponibles incluyen información sobre los agricultores, la fecha de cosecha, los certificados de transacción de los envíos específicos, el período de tostado, los parámetros de control de calidad, los tiempos de almacenamiento y la ubicación de los almacenes.
+[5186] [5186] Cobertura de toda la cadena de valor: La trazabilidad cubre desde el origen (la granja o el productor) hasta la fábrica y el punto de venta, proporcionando visibilidad de extremo a extremo.
+[5187] [5187] Enfoque en sostenibilidad y ética: Los proyectos de blockchain están directamente vinculados a los compromisos de Nestlé con la sostenibilidad, incluyendo la trazabilidad del cacao para combatir el trabajo infantil y la monitorización de la deforestación en la cadena de aceite de palma mediante tecnologías satelitales.
+[5188] [5188] Funcionalidades:
+[5189] [5189] Las funcionalidades operativas del caso de Nestlé incluyen:
+[5190] [5190] Registro de eventos en blockchain: Cada etapa crítica de la cadena de suministro (cosecha, certificación, transporte, recepción en fábrica, tostado, empaque, distribución) se registra como una transacción inmutable en la blockchain.
+[5191] [5191] Generación de códigos QR por producto o lote: Nestlé genera códigos QR únicos que se imprimen en los empaques de los productos participantes, permitiendo que cada unidad o lote tenga su propio identificador digital.
+[5192] [5192] Consulta por parte del consumidor: El consumidor escanea el código QR con su teléfono y accede a una plataforma (IBM Food Trust o el sitio web de Roastelier) donde visualiza el historial completo del producto, incluyendo mapas, fechas, certificaciones y datos de los agricultores.
+[5193] [5193] Certificación independiente en blockchain: Organizaciones como Rainforest Alliance cargan directamente sus certificaciones en la blockchain, garantizando que la información de sostenibilidad es confiable y no ha sido alterada por Nestlé.
+[5194] [5194] Trazabilidad de commodities críticos: A través de OpenSC, Nestlé rastrea leche desde granjas en Nueva Zelanda hasta sus fábricas en Oriente Medio, y aceite de palma desde América, para evaluar la escalabilidad de la tecnología en cadenas de suministro complejas.
+[5195] [5195] Panel de control para socios comerciales: Los minoristas (como Carrefour) y los proveedores pueden acceder a los datos de trazabilidad para gestionar inventarios, verificar la autenticidad y asegurar el cumplimiento de estándares.
+[5196] [5196] Seguimiento de sostenibilidad y deforestación: Nestlé combina blockchain con imágenes satelitales (Starling de Airbus) para monitorear en tiempo real si se está produciendo deforestación en su cadena de aceite de palma, verificando así sus compromisos de "No Deforestación".
+[5197] [5197] Expansión gradual y diversificación: Nestlé ha escalado el uso de blockchain desde un piloto inicial (Mousline purée, 2019) hasta múltiples categorías de productos en diferentes regiones, demostrando la adaptabilidad de la tecnología.
+[5198] [5198] Aporte al proyecto:
+[5199] [5199] El caso de Nestlé es fundamental para el proyecto del Grupo 5, ya que valida múltiples decisiones técnicas y funcionales, y aporta lecciones clave sobre la implementación de trazabilidad blockchain en el sector alimentario. A continuación, se detalla su aporte específico:
+[5200] [5200] Doble estrategia blockchain (pública vs. privada): Nestlé demuestra que no existe una única solución. Utiliza IBM Food Trust (blockchain privada) para productos de consumo y OpenSC (blockchain pública) para sostenibilidad. Esto valida que el proyecto pueda adoptar Hyperledger Fabric (blockchain privada) para los registros operativos de trazabilidad, manteniendo la flexibilidad de explorar blockchains públicas en el futuro.
+[5201] [5201] Código QR como puente físico-digital: Nestlé confirma que el código QR en el empaque es el mecanismo estándar y efectivo para que el consumidor acceda al historial del producto. Esto valida el módulo de identificación digital (5.1.3) del proyecto.
+[5202] [5202] Participación de terceros certificadores: Nestlé integra a Rainforest Alliance para que cargue sus propias certificaciones en la blockchain. Esto enseña que el sistema debe permitir que entidades externas (certificadoras, gobiernos, ONGs) puedan registrar información verificable, fortaleciendo la confianza del consumidor.
+[5203] [5203] Trazabilidad de extremo a extremo: Nestlé cubre toda la cadena, desde el agricultor hasta el estante del minorista. Esto valida el módulo de cadena de suministro (5.1.4) del proyecto, que debe registrar cada eslabón: origen, producción, transporte, almacenamiento y punto de venta.
+[5204] [5204] Información detallada al consumidor: Los datos que Nestlé muestra (agricultores, cosecha, certificados, calidad, almacenamiento) son exactamente los que el proyecto planea incluir en el certificado digital de trazabilidad (5.1.8) y en el portal del consumidor (5.1.7).
+[5205] [5205] Integración con minoristas: La colaboración con Carrefour demuestra que el sistema debe permitir que los minoristas y distribuidores (5.1.4) accedan y verifiquen la información de trazabilidad, mejorando la eficiencia de la cadena.
+[5206] [5206] Escalabilidad y diversificación: Nestlé ha pasado de un piloto con un solo producto (Mousline, 2019) a múltiples categorías en diferentes países. Esto demuestra que la arquitectura basada en blockchain + base de datos relacional (PostgreSQL) es escalable y puede adaptarse a diferentes tipos de productos y volúmenes.
+[5207] [5207] Blockchain para sostenibilidad y ética: Nestlé utiliza blockchain para rastrear cacao y combatir el trabajo infantil, y para monitorear la deforestación en la cadena de aceite de palma. Esto abre la puerta a que el proyecto boliviano incorpore certificaciones de comercio justo, orgánico y sostenibilidad como atributos trazables en la blockchain.
+[5208] [5208] Verificación preenvío y control de calidad: Nestlé registra parámetros de control de calidad y tiempos de almacenamiento en la blockchain. Esto valida la necesidad de que el proyecto incluya un módulo de control de calidad que registre estas variables antes de que el producto salga de fábrica.
+[5209] [5209] Lecciones sobre desafíos tecnológicos: Nestlé ha reconocido públicamente que la implementación de blockchain en cadenas de suministro complejas requiere tiempo y esfuerzo, especialmente para implementar las tecnologías adecuadas desde el principio. Esto enseña al proyecto la importancia de una arquitectura bien planificada y de comenzar con pilotos controlados antes de escalar.
+[5210] [5210] Prototipo:
+[5211] [5211] 11.2. Entrevistas realizadas
+[5212] [5212] 11.2.1.  Entrevista N.º 1:
+[5213] [5213] Entrevistada:
+[5214] [5214] Andrés Fernando López
+[5215] [5215] Cargo:
+[5216] [5216] Propietario
+[5217] [5217] Rubro:
+[5218] [5218] Venta de iPhone y accesorios Apple
+[5219] [5219] Ubicación:
+[5220] [5220] Equipetrol, Santa Cruz de la Sierra, Bolivia
+[5221] [5221] Fecha de entrevista:
+[5222] [5222] 06/08/2026
+[5223] [5223] Desarrollo de la Entrevista:
+[5224] [5224] P: ¿Cómo registran actualmente los productos electrónicos que reciben de sus proveedores?
+[5225] [5225] R: “Cuando recibimos los iPhone revisamos la factura, el modelo, capacidad, color, número de serie y cantidad. Parte de la información la registramos en Excel y otra queda en las facturas. No tenemos todo centralizado en un solo sistema.”
+[5226] [5226] P: ¿Qué información consideran importante conocer de un producto desde que lo reciben?
+[5227] [5227] R: “Para nosotros es muy importante saber el modelo exacto del iPhone, capacidad, color, número de serie, IMEI, proveedor, fecha de compra y factura. También necesitamos saber si el equipo es nuevo y contar con la información de garantía.”
+[5228] [5228] P: ¿Actualmente pueden conocer todo el recorrido que realizó un producto antes de llegar a su negocio?
+[5229] [5229] R: “No completamente. Sabemos quién nos vendió el equipo, pero normalmente no podemos consultar todo el recorrido que tuvo desde el fabricante hasta que llegó a nuestro negocio.”
+[5230] [5230] P: ¿Qué dificultades tienen cuando reciben productos de diferentes proveedores o lotes?
+[5231] [5231] R: “A veces recibimos varios iPhone del mismo modelo pero de diferentes proveedores. Si no registramos correctamente el número de serie o IMEI, después puede ser complicado identificar exactamente de qué compra o proveedor salió determinado equipo.”
+[5232] [5232] P: ¿Han tenido problemas para identificar el origen de un producto cuando presenta algún defecto o inconveniente?
+[5233] [5233] R: “Sí, especialmente cuando un cliente regresa con un equipo que presenta algún problema. Tenemos que buscar la factura y verificar el número de serie o IMEI para comprobar cuándo se compró y de qué proveedor provino.”
+[5234] [5234] P: ¿Cómo registran actualmente los movimientos de los productos dentro de la cadena de suministro?
+[5235] [5235] R: “Registramos cuándo recibimos los equipos y cuándo se venden. Para las entregas utilizamos facturas y comprobantes, pero no tenemos un historial completo que muestre todos los movimientos del iPhone desde su origen.”
+[5236] [5236] P: ¿Qué problemas ocasiona que la información de los productos no esté centralizada en un solo sistema?
+[5237] [5237] R: “Hace que la búsqueda sea más lenta. Cuando necesitamos comprobar un equipo tenemos que revisar Excel, facturas y otros documentos. También existe el riesgo de que algún dato no esté actualizado.”
+[5238] [5238] P: ¿Considera útil poder consultar la información de un producto mediante un código QR? ¿Por qué?
+[5239] [5239] R: “Sí, sería bastante útil. Podríamos escanear un código y acceder rápidamente a la información del iPhone sin tener que buscar manualmente su registro.”
+[5240] [5240] P: ¿Qué información le gustaría encontrar al escanear el código QR de un producto?
+[5241] [5241] R: “Me gustaría que aparezca el modelo, capacidad, número de serie, IMEI, proveedor, fecha de ingreso, historial del producto, garantía y la información necesaria para comprobar su procedencia.”
+[5242] [5242] P: ¿Considera importante que los registros de trazabilidad estén protegidos contra modificaciones no autorizadas? ¿Por qué?
+[5243] [5243] R: “Sí, porque estamos trabajando con equipos de bastante valor. La información sobre el origen, número de serie y movimientos debe ser confiable y no debería poder modificarse fácilmente.”
+[5244] [5244] P: ¿Qué beneficios tendría para su negocio contar con un sistema que permita consultar el historial completo de cada producto?
+[5245] [5245] R: “Nos permitiría comprobar rápidamente la procedencia de los equipos, atender mejor las garantías y responder a los clientes con mayor seguridad. También nos ayudaría a tener un mejor control de nuestro inventario.”
+[5246] [5246] P: ¿Qué características debería tener un sistema de trazabilidad para que usted decidiera utilizarlo en su negocio?
+[5247] [5247] R: “Debe ser fácil de utilizar, permitir registrar cada iPhone mediante su número de serie o IMEI, generar códigos QR, mostrar el historial del equipo y proteger la información. También sería importante que permita realizar búsquedas y generar reportes.
+[5248] [5248] 11.2.2.  Entrevista N.º 2:
+[5249] [5249] Entrevistada:
+[5250] [5250] Mariana Alejandra Suárez
+[5251] [5251] Cargo:
+[5252] [5252] Encargada de ventas y control de inventario
+[5253] [5253] Rubro:
+[5254] [5254] Comercialización de iPhone, iPad y accesorios Apple
+[5255] [5255] Ubicación:
+[5256] [5256] Avenida San Martín, Santa Cruz de la Sierra, Bolivia
+[5257] [5257] Fecha de entrevista:
+[5258] [5258] 08/08/2026
+[5259] [5259] Desarrollo de la Entrevista:
+[5260] [5260] P: ¿Cómo registran actualmente los productos electrónicos que reciben de sus proveedores?
+[5261] [5261] R: “Cuando llegan los equipos primero verificamos que coincidan con la factura. Después registramos el modelo, almacenamiento, color y número de serie. Utilizamos un sistema básico para las ventas, pero algunos datos adicionales los guardamos en Excel.”
+[5262] [5262] P: ¿Qué información consideran importante conocer de un producto desde que lo reciben?
+[5263] [5263] R: “Necesitamos conocer el proveedor, modelo, capacidad, color, número de serie, IMEI, precio de compra y fecha de recepción. También nos interesa conservar la factura y cualquier información relacionada con la garantía.”
+[5264] [5264] P: ¿Actualmente pueden conocer todo el recorrido que realizó un producto antes de llegar a su negocio?
+[5265] [5265] R: “No. Podemos identificar al proveedor que nos entregó el producto, pero no tenemos acceso a toda la información de las etapas anteriores. Para obtener más información debemos comunicarnos directamente con el proveedor.”
+[5266] [5266] P: ¿Qué dificultades tienen cuando reciben productos de diferentes proveedores o lotes?
+[5267] [5267] R: “El principal problema aparece cuando tenemos muchos equipos iguales. Aunque sean del mismo modelo, cada uno tiene un número de serie y puede pertenecer a una compra diferente. Si no registramos correctamente esos datos, después cuesta identificar su procedencia.”
+[5268] [5268] P: ¿Han tenido problemas para identificar el origen de un producto cuando presenta algún defecto o inconveniente?
+[5269] [5269] R: “Sí. Cuando un cliente trae un iPhone por una falla, necesitamos verificar el IMEI o número de serie y buscar la información de la venta. Dependiendo de cuándo se compró, encontrar todos los datos puede tomar tiempo.”
+[5270] [5270] P: ¿Cómo registran actualmente los movimientos de los productos dentro de la cadena de suministro?
+[5271] [5271] R: “Registramos la entrada cuando recibimos los equipos y la salida cuando se realiza la venta. También tenemos comprobantes de las compras y ventas, pero no contamos con una plataforma que muestre el recorrido completo del producto.”
+[5272] [5272] P: ¿Qué problemas ocasiona que la información de los productos no esté centralizada en un solo sistema?
+[5273] [5273] R: “Tenemos que revisar diferentes lugares para encontrar información. Eso puede generar retrasos y también errores. Si necesitamos conocer rápidamente el origen de un equipo, sería mucho más práctico tener toda la información en un solo sistema.”
+[5274] [5274] P: ¿Considera útil poder consultar la información de un producto mediante un código QR? ¿Por qué?
+[5275] [5275] R: “Sí. Sería práctico tanto para nosotros como para los clientes. Con solo escanear el código podríamos consultar los datos del equipo y verificar que correspondan con el registro.”
+[5276] [5276] P: ¿Qué información le gustaría encontrar al escanear el código QR de un producto?
+[5277] [5277] R: “Debería mostrar el modelo, capacidad, número de serie, IMEI, proveedor, fecha de ingreso, información de garantía y el historial de movimientos. También sería bueno que indique si existen documentos asociados al producto.”
+[5278] [5278] P: ¿Considera importante que los registros de trazabilidad estén protegidos contra modificaciones no autorizadas? ¿Por qué?
+[5279] [5279] R: “Sí, porque la información debe mantenerse confiable. No sería conveniente que alguien pueda cambiar el proveedor, número de serie o historial de un equipo después de registrarlo.”
+[5280] [5280] P: ¿Qué beneficios tendría para su negocio contar con un sistema que permita consultar el historial completo de cada producto?
+[5281] [5281] R: “Nos ayudaría principalmente con el control del inventario y las garantías. Podríamos encontrar rápidamente la información de cada iPhone y atender los reclamos de los clientes de una manera más organizada.”
+[5282] [5282] P: ¿Qué características debería tener un sistema de trazabilidad para que usted decidiera utilizarlo en su negocio?
+[5283] [5283] R: “Debe ser sencillo, funcionar desde una computadora o celular y permitir registrar los equipos mediante IMEI o número de serie. También debería tener códigos QR, búsqueda rápida, historial de movimientos y reportes.
+[5284] [5284] 11.2.3.  Entrevista N.º 3:
+[5285] [5285] Entrevistada:
+[5286] [5286] Diego Mauricio Fernández
+[5287] [5287] Cargo:
+[5288] [5288] Administrador
+[5289] [5289] Rubro:
+[5290] [5290] Venta de iPhone, equipos Apple y accesorios tecnológicos
+[5291] [5291] Ubicación:
+[5292] [5292] Avenida Grigotá, Santa Cruz de la Sierra, Bolivia
+[5293] [5293] Fecha de entrevista:
+[5294] [5294] 10/08/2026
+[5295] [5295] Desarrollo de la Entrevista:
+[5296] [5296] P: ¿Cómo registran actualmente los productos electrónicos que reciben de sus proveedores?
+[5297] [5297] R: “Registramos los equipos cuando llegan y verificamos que los datos coincidan con la documentación del proveedor. Anotamos el modelo, almacenamiento, color, IMEI y número de serie. La información de compra se guarda principalmente en documentos y archivos digitales.”
+[5298] [5298] P: ¿Qué información consideran importante conocer de un producto desde que lo reciben?
+[5299] [5299] R: “Lo más importante es identificar correctamente cada equipo. Necesitamos el modelo, número de serie, IMEI, proveedor, fecha de adquisición, factura y datos relacionados con la garantía. Para nosotros el IMEI es especialmente importante porque permite diferenciar cada teléfono.”
+[5300] [5300] P: ¿Actualmente pueden conocer todo el recorrido que realizó un producto antes de llegar a su negocio?
+[5301] [5301] R: “No tenemos esa posibilidad de manera directa. Conocemos el proveedor y la fecha en que recibimos el equipo, pero no podemos consultar desde nuestra plataforma las etapas anteriores de la cadena de suministro.”
+[5302] [5302] P: ¿Qué dificultades tienen cuando reciben productos de diferentes proveedores o lotes?
+[5303] [5303] R: “Cuando tenemos equipos provenientes de diferentes proveedores debemos tener mucho cuidado con los registros. Si se mezclan los datos, después podemos tener problemas para determinar a quién corresponde un equipo o una determinada compra.”
+[5304] [5304] P: ¿Han tenido problemas para identificar el origen de un producto cuando presenta algún defecto o inconveniente?
+[5305] [5305] R: “Sí. En algunas ocasiones debemos revisar el número de serie o IMEI y buscar la factura correspondiente. Si la información no está bien organizada, podemos tardar bastante en encontrar el registro necesario.”
+[5306] [5306] P: ¿Cómo registran actualmente los movimientos de los productos dentro de la cadena de suministro?
+[5307] [5307] R: “Controlamos la entrada de los equipos cuando llegan y la salida cuando son vendidos. También guardamos las facturas de compra y venta. Sin embargo, no tenemos una línea de tiempo que muestre todos los movimientos de cada teléfono.”
+[5308] [5308] P: ¿Qué problemas ocasiona que la información de los productos no esté centralizada en un solo sistema?
+[5309] [5309] R: “Principalmente dificulta el control. Cuando necesitamos información sobre un teléfono tenemos que consultar diferentes documentos. También aumenta la posibilidad de cometer errores al ingresar o buscar información.”
+[5310] [5310] P: ¿Considera útil poder consultar la información de un producto mediante un código QR? ¿Por qué?
+[5311] [5311] R: “Sí. Sería una herramienta bastante práctica. El personal podría escanear el código y consultar inmediatamente la información registrada del equipo. También podría servir para que el cliente compruebe determinados datos del producto.”
+[5312] [5312] P: ¿Qué información le gustaría encontrar al escanear el código QR de un producto?
+[5313] [5313] R: “El código debería permitir consultar el modelo, número de serie, IMEI, proveedor, fecha de ingreso, historial de movimientos, garantía y documentos relacionados. La información que se muestre al cliente podría ser diferente de la información administrativa.”
+[5314] [5314] P: ¿Considera importante que los registros de trazabilidad estén protegidos contra modificaciones no autorizadas? ¿Por qué?
+[5315] [5315] R: “Sí. Es fundamental que los registros sean confiables, especialmente porque los equipos tienen un valor elevado. Si alguien pudiera modificar información sobre la procedencia o el historial, podría generar problemas para el negocio y para los clientes.”
+[5316] [5316] P: ¿Qué beneficios tendría para su negocio contar con un sistema que permita consultar el historial completo de cada producto?
+[5317] [5317] R: “Tendríamos un mayor control de los equipos desde que ingresan hasta que son vendidos. También sería más sencillo gestionar garantías, reclamos y devoluciones, porque podríamos consultar rápidamente la información del producto.”
+[5318] [5318] P: ¿Qué características debería tener un sistema de trazabilidad para que usted decidiera utilizarlo en su negocio?
+[5319] [5319] R: “Debería ser seguro y fácil de utilizar. Tiene que permitir registrar los iPhone por IMEI y número de serie, controlar proveedores y lotes, generar códigos QR, consultar el historial y obtener reportes. También sería importante que tenga diferentes niveles de acceso para proteger la información administrativa.

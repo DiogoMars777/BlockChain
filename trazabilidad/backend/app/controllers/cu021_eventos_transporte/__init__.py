@@ -1,3 +1,3 @@
-from app.controllers.cu021_eventos_transporte.transport_controller import TransportController, router
+from app.controllers.cu021_eventos_transporte.transport_event_controller import TransportEventController, router
 
-__all__ = ["TransportController", "router"]
+__all__ = ["TransportEventController", "router"]

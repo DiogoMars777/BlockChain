@@ -1,0 +1,300 @@
+<div class="recepcion-wrapper">
+  <header class="recepcion-nav">
+    <div class="brand">
+      <span class="logo-icon">📥</span>
+      <span class="brand-name">Recepción de Mercancía (CU-012)</span>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a routerLink="/dashboard" class="btn-secondary">Volver al Panel</a>
+      <button class="btn-primary" (click)="openCreateModal()">+ Registrar Recepción</button>
+    </div>
+  </header>
+
+  <main class="recepcion-content">
+    @if (successMessage()) {
+      <div class="alert-success">{{ successMessage() }}</div>
+    }
+    @if (errorMessage()) {
+      <div class="alert-error">{{ errorMessage() }}</div>
+    }
+
+    <div class="filter-bar">
+      <div class="filter-inputs">
+        <select [ngModel]="selectedEstado()" (ngModelChange)="selectedEstado.set($event); loadRecepciones()">
+          @for (est of estadosRecepcion; track est.value) {
+            <option [value]="est.value">{{ est.label }}</option>
+          }
+        </select>
+        <button class="btn-secondary" (click)="loadRecepciones()">Filtrar</button>
+      </div>
+      <div class="total-count">
+        Total: <strong>{{ recepciones().length }}</strong> recepciones registradas
+      </div>
+    </div>
+
+    <div class="grid-card">
+      @if (isLoading()) {
+        <div style="padding: 2rem; text-align: center; color: #94a3b8;">Cargando recepciones de mercancía...</div>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Documento</th>
+              <th>Orden de Compra</th>
+              <th>Proveedor</th>
+              <th>Ubicación de Recepción</th>
+              <th>Unidades Recibidas</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (rec of recepciones(); track rec.idrecepcion) {
+              <tr>
+                <td>
+                  <div class="code-id">REM-{{ rec.numerodocumento }}</div>
+                  <div class="muted-text">{{ formatDate(rec.fecharecepcion) }}</div>
+                </td>
+                <td>
+                  <div style="font-weight: 700; color: #f8fafc;">#{{ rec.numeroorden }}</div>
+                  <div class="muted-text">Compra #{{ rec.idcompra }}</div>
+                </td>
+                <td>{{ rec.proveedor_nombre || 'N/A' }}</td>
+                <td>{{ rec.ubicacion_nombre || 'Ubicación #' + rec.idubicacion }}</td>
+                <td>
+                  <strong style="color: #38bdf8;">{{ rec.total_recibido }}</strong>
+                  <span class="muted-text"> unidad(es)</span>
+                </td>
+                <td>
+                  <span class="status-badge" [ngClass]="getEstadoClass(rec.estado)">
+                    {{ etiquetaEstado(rec.estado) }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn-sm-edit" (click)="openDetail(rec)">Ver Detalle</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 2rem; color: #64748b;">
+                  No hay recepciones de mercancía registradas en el sistema.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </main>
+
+  <!-- Modal Registrar Recepción -->
+  @if (isModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card modal-lg">
+        <div class="modal-header">
+          <h3>Registrar Recepción de Mercancía</h3>
+          <button class="btn-close" (click)="isModalOpen.set(false)">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Orden de Compra *</label>
+            <select [ngModel]="receptionForm.idcompra" (ngModelChange)="onCompraChange($event)">
+              <option [ngValue]="0">-- Seleccione una orden --</option>
+              @for (c of comprasRecepcionables(); track c.idcompra) {
+                <option [ngValue]="c.idcompra">
+                  #{{ c.numeroorden }} — {{ c.proveedor_nombre }} ({{ c.estado }})
+                </option>
+              }
+            </select>
+            @if (comprasRecepcionables().length === 0) {
+              <small class="hint-text">
+                No hay órdenes de compra en estado 'enviada' o 'recibida_parcial'. Apruebe y envíe una compra primero.
+              </small>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Ubicación de Recepción *</label>
+              <select [ngModel]="receptionForm.idubicacion" (ngModelChange)="receptionForm.idubicacion = $event">
+                <option [ngValue]="0">-- Seleccione una ubicación --</option>
+                @for (l of locations(); track l.idubicacion) {
+                  <option [value]="l.idubicacion">{{ l.nombre }} ({{ l.tipo }})</option>
+                }
+              </select>
+            </div>
+            <div class="form-group half">
+              <label>Nº Documento / Remisión *</label>
+              <input type="text" [(ngModel)]="receptionForm.numerodocumento" placeholder="Ej. REM-2026-0145" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Estado de la Recepción</label>
+            <select [(ngModel)]="receptionForm.estado">
+              <option value="pendiente">Pendiente</option>
+              <option value="parcial">Parcial</option>
+              <option value="completa">Completa</option>
+              <option value="rechazada">Rechazada</option>
+            </select>
+          </div>
+
+          <h4 class="section-title">Detalle de Productos Recibidos</h4>
+          @if (receptionForm.detalles.length === 0) {
+            <p class="muted-text">Seleccione una orden de compra para cargar sus productos.</p>
+          } @else {
+            <table class="data-table inner-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th style="width: 140px;">Esperado</th>
+                  <th style="width: 140px;">Recibido</th>
+                  <th style="width: 90px;"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (det of receptionForm.detalles; track $index) {
+                  <tr>
+                    <td>
+                      <select
+                        [ngModel]="det.idvariante"
+                        (ngModelChange)="det.idvariante = $event"
+                      >
+                        <option [ngValue]="0">-- Seleccione un producto --</option>
+                        @for (d of (selectedCompra()?.detalles ?? []); track d.idcompradetalle) {
+                          <option [value]="d.idvariante">{{ d.sku }} — {{ d.producto_nombre }}</option>
+                        }
+                      </select>
+                    </td>
+                    <td>
+                      <input type="number" min="1" [(ngModel)]="det.cantidadesperada" />
+                    </td>
+                    <td>
+                      <input type="number" min="0" [(ngModel)]="det.cantidadrecibida" />
+                    </td>
+                    <td>
+                      <button class="btn-sm-delete" (click)="removeDetalle($index)">Quitar</button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+            <button class="btn-secondary btn-sm" (click)="addDetalle()">+ Agregar línea</button>
+          }
+
+          <p class="hint-text">
+            Cada unidad física recibida se registra automáticamente en el inventario con su número de serie
+            (Serial/IMEI), lista para generar su código QR en CU-016.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="isModalOpen.set(false)">Cancelar</button>
+          <button class="btn-primary" (click)="saveRecepcion()" [disabled]="isSaving()">
+            {{ isSaving() ? 'Registrando...' : 'Registrar Recepción' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Detalle de Recepción -->
+  @if (isDetailModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card modal-lg">
+        <div class="modal-header">
+          <h3>
+            Detalle de Recepción
+            @if (selectedRecepcion(); as rec) {
+              <span class="code-id">REM-{{ rec.numerodocumento }}</span>
+            }
+          </h3>
+          <button class="btn-close" (click)="closeDetail()">×</button>
+        </div>
+        <div class="modal-body">
+          @if (selectedRecepcion(); as rec) {
+            <div class="info-grid">
+              <div class="info-box">
+                <span>Orden de Compra</span>
+                <strong>#{{ rec.numeroorden }}</strong>
+              </div>
+              <div class="info-box">
+                <span>Proveedor</span>
+                <strong>{{ rec.proveedor_nombre || 'N/A' }}</strong>
+              </div>
+              <div class="info-box">
+                <span>Ubicación</span>
+                <strong>{{ rec.ubicacion_nombre }}</strong>
+              </div>
+              <div class="info-box">
+                <span>Fecha de Recepción</span>
+                <strong>{{ formatDate(rec.fecharecepcion) }}</strong>
+              </div>
+              <div class="info-box">
+                <span>Estado</span>
+                <strong>
+                  <span class="status-badge" [ngClass]="getEstadoClass(rec.estado)">
+                    {{ etiquetaEstado(rec.estado) }}
+                  </span>
+                </strong>
+              </div>
+              <div class="info-box">
+                <span>Unidades en Existencias</span>
+                <strong style="color: #38bdf8;">{{ rec.total_recibido }}</strong>
+              </div>
+            </div>
+
+            <h4 class="section-title">Productos Recibidos</h4>
+            <table class="data-table inner-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th style="width: 120px;">Esperado</th>
+                  <th style="width: 120px;">Recibido</th>
+                  <th style="width: 160px;">Unidades Creadas</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (det of rec.detalles; track det.idrecepciondetalle) {
+                  <tr>
+                    <td>
+                      <div style="font-weight: 700; color: #f8fafc;">{{ det.sku }}</div>
+                      <div class="muted-text">{{ det.producto_nombre }}</div>
+                    </td>
+                    <td>{{ det.cantidadesperada }}</td>
+                    <td>{{ det.cantidadrecibida }}</td>
+                    <td>
+                      @if (det.unidades_generadas > 0) {
+                        <span class="badge-ok">{{ det.unidades_generadas }} serial(es)</span>
+                      } @else {
+                        <span class="muted-text">—</span>
+                      }
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="4" style="text-align: center; padding: 1.5rem; color: #64748b;">
+                      Esta recepción no tiene detalle de productos.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <div style="padding: 2rem; text-align: center; color: #94a3b8;">Cargando detalle...</div>
+          }
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeDetail()">Cerrar</button>
+          @if (selectedRecepcion(); as rec) {
+            @for (nuevo of transicionesDisponibles(rec.estado); track nuevo) {
+              <button
+                class="btn-primary"
+                (click)="cambiarEstado(rec, nuevo)"
+              >Marcar como {{ etiquetaEstado(nuevo) }}</button>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

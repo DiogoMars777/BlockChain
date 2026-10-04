@@ -1,0 +1,87 @@
+
+==================== CU-010 ====================
+Line 1618: [1618] CU-010: Gestionar Órdenes de Compra
+Line 2247: [2247] CU-010
+Line 4581: [4581] ●     CU-010: Gestionar Órdenes de Compra
+Line 4817: [4817] Al diseñar los ocho casos de uso del sprint, separamos con claridad que tareas necesitan agilidad de campo y cuales necesitan planificación de oficina. En los casos de uso móviles (CU-012 Gestionar Recepciones de Mercancía, CU-015 Gestionar Unidades de Producto, CU-021 Registrar Eventos y Condiciones de Transporte) priorizamos el escaneo de código QR o NFC por sobre digitar manualmente números de serie, para reducir errores de tipeo y el tiempo que toma capturar datos en almacén. En los formularios web (CU-010, CU-016, CU-019, CU-020) incorporamos validaciones en línea y ayuda contextual, para que un usuario nuevo pueda completar una orden de compra o planificar un envío sin necesitar una capacitación previa extensa.
+
+==================== CU-011 ====================
+Line 1619: [1619] CU-011: Aprobar / Rechazar Compra
+Line 2253: [2253] CU-011
+Line 2801: [2801] CU-011 Aprobar/Rechazar Compra Web
+Line 4582: [4582] ●     CU-011: Aprobar / Rechazar Compra
+Line 4813: [4813] Para este sprint no creamos un modelo de permisos nuevo: reutilizamos el esquema de roles y privilegios que definimos a nivel de toda la plataforma, donde el Administrador de cada empresa configura con libertad qué botones, formularios y opciones de menú puede ver y usar cada grupo de usuarios. Aquí eso se traduce en reglas concretas que ya implementamos: solo el Administrador de Empresa puede aprobar o rechazar una orden de compra (CU-011), mientras que dejamos el registro de recepciones, la generacion de codigos QR y el registro de eventos de transporte habilitados exclusivamente para el rol Gestor de Operaciones (CU-012, CU-015, CU-021). No asumimos de antemano cuántos grupos de usuarios va a necesitar cada empresa ni qué privilegios tendrá cada uno: dejamos que cada una defina los suyos propios.
+Line 4830: [4830] CU-011 Aprobar/Rechazar Compra Web
+Line 4862: [4862] Revisé el CU-011 (Aprobar / Rechazar Compra) y su flujo.
+Line 4891: [4891] Preparé la estructura móvil para CU-011.
+Line 4920: [4920] Implementé pantalla móvil de aprobación/rechazo para CU-011.
+Line 4949: [4949] Conecté CU-011 móvil con la API.
+Line 4978: [4978] Probé CU-011 móvil.
+Line 5004: [5004] Validar con CU-016 y CU-011.
+Line 5008: [5008] Validar con CU-011 y CU-021.
+Line 5036: [5036] Finalicé el diagrama de comunicación y la programación móvil de CU-011.
+
+==================== CU-012 ====================
+Line 1620: [1620] CU-012: Gestionar Recepciones de Mercancía
+Line 2259: [2259] CU-012
+Line 4583: [4583] ●     CU-012: Gestionar Recepciones de Mercancía
+Line 4813: [4813] Para este sprint no creamos un modelo de permisos nuevo: reutilizamos el esquema de roles y privilegios que definimos a nivel de toda la plataforma, donde el Administrador de cada empresa configura con libertad qué botones, formularios y opciones de menú puede ver y usar cada grupo de usuarios. Aquí eso se traduce en reglas concretas que ya implementamos: solo el Administrador de Empresa puede aprobar o rechazar una orden de compra (CU-011), mientras que dejamos el registro de recepciones, la generacion de codigos QR y el registro de eventos de transporte habilitados exclusivamente para el rol Gestor de Operaciones (CU-012, CU-015, CU-021). No asumimos de antemano cuántos grupos de usuarios va a necesitar cada empresa ni qué privilegios tendrá cada uno: dejamos que cada una defina los suyos propios.
+Line 4817: [4817] Al diseñar los ocho casos de uso del sprint, separamos con claridad que tareas necesitan agilidad de campo y cuales necesitan planificación de oficina. En los casos de uso móviles (CU-012 Gestionar Recepciones de Mercancía, CU-015 Gestionar Unidades de Producto, CU-021 Registrar Eventos y Condiciones de Transporte) priorizamos el escaneo de código QR o NFC por sobre digitar manualmente números de serie, para reducir errores de tipeo y el tiempo que toma capturar datos en almacén. En los formularios web (CU-010, CU-016, CU-019, CU-020) incorporamos validaciones en línea y ayuda contextual, para que un usuario nuevo pueda completar una orden de compra o planificar un envío sin necesitar una capacitación previa extensa.
+
+==================== CU-015 ====================
+Line 1621: [1621] CU-015: Gestionar Unidades de Producto
+Line 2277: [2277] CU-015
+Line 4584: [4584] ●     CU-015: Gestionar Unidades de Producto
+Line 4813: [4813] Para este sprint no creamos un modelo de permisos nuevo: reutilizamos el esquema de roles y privilegios que definimos a nivel de toda la plataforma, donde el Administrador de cada empresa configura con libertad qué botones, formularios y opciones de menú puede ver y usar cada grupo de usuarios. Aquí eso se traduce en reglas concretas que ya implementamos: solo el Administrador de Empresa puede aprobar o rechazar una orden de compra (CU-011), mientras que dejamos el registro de recepciones, la generacion de codigos QR y el registro de eventos de transporte habilitados exclusivamente para el rol Gestor de Operaciones (CU-012, CU-015, CU-021). No asumimos de antemano cuántos grupos de usuarios va a necesitar cada empresa ni qué privilegios tendrá cada uno: dejamos que cada una defina los suyos propios.
+Line 4817: [4817] Al diseñar los ocho casos de uso del sprint, separamos con claridad que tareas necesitan agilidad de campo y cuales necesitan planificación de oficina. En los casos de uso móviles (CU-012 Gestionar Recepciones de Mercancía, CU-015 Gestionar Unidades de Producto, CU-021 Registrar Eventos y Condiciones de Transporte) priorizamos el escaneo de código QR o NFC por sobre digitar manualmente números de serie, para reducir errores de tipeo y el tiempo que toma capturar datos en almacén. En los formularios web (CU-010, CU-016, CU-019, CU-020) incorporamos validaciones en línea y ayuda contextual, para que un usuario nuevo pueda completar una orden de compra o planificar un envío sin necesitar una capacitación previa extensa.
+
+==================== CU-016 ====================
+Line 1622: [1622] CU-016: Generar y Descargar Código QR
+Line 2283: [2283] CU-016
+Line 2803: [2803] Cu-016 Generar y Descargar código Qr Móvil
+Line 4585: [4585] ●     CU-016: Generar y Descargar Código QR
+Line 4627: [4627] T034 (CU-016)
+Line 4817: [4817] Al diseñar los ocho casos de uso del sprint, separamos con claridad que tareas necesitan agilidad de campo y cuales necesitan planificación de oficina. En los casos de uso móviles (CU-012 Gestionar Recepciones de Mercancía, CU-015 Gestionar Unidades de Producto, CU-021 Registrar Eventos y Condiciones de Transporte) priorizamos el escaneo de código QR o NFC por sobre digitar manualmente números de serie, para reducir errores de tipeo y el tiempo que toma capturar datos en almacén. En los formularios web (CU-010, CU-016, CU-019, CU-020) incorporamos validaciones en línea y ayuda contextual, para que un usuario nuevo pueda completar una orden de compra o planificar un envío sin necesitar una capacitación previa extensa.
+Line 4819: [4819] Este es el punto que todavía tenemos pendiente de este sprint: los ocho casos de uso actuales no incluyen un motor de reportes configurable por el usuario. Ya identificamos dónde encaja mejor -como una extensión natural de CU-019 (Gestionar Envíos Logísticos)- para que el usuario pueda elegir columnas, criterios de filtro y orden antes de generar el reporte, con exportación a Excel, HTML, correo electrónico y PDF. Por ahora, lo más cercano que ofrecemos es la descarga masiva de códigos QR (CU-016), y ya dejamos anotado incorporar el reporte personalizable como parte de un próximo sprint.
+Line 4832: [4832] Cu-016 Generar y Descargar código Qr Móvil
+Line 4858: [4858] Revisé el CU-016 (Generar y Descargar Código QR).
+Line 4888: [4888] Implementar generación y descarga de QR para CU-016.
+Line 4916: [4916] Implementé generación de QR en Flutter para CU-016.
+Line 4974: [4974] Refiné CU-016 móvil.
+Line 5004: [5004] Validar con CU-016 y CU-011.
+Line 5020: [5020] Validar con CU-021 y CU-016.
+Line 5032: [5032] Finalicé el diagrama de secuencia y la programación móvil de CU-016.
+
+==================== CU-019 ====================
+Line 1623: [1623] CU-019: Gestionar Envíos Logísticos
+Line 2301: [2301] CU-019
+Line 4586: [4586] ●     CU-019: Gestionar Envíos Logísticos
+Line 4817: [4817] Al diseñar los ocho casos de uso del sprint, separamos con claridad que tareas necesitan agilidad de campo y cuales necesitan planificación de oficina. En los casos de uso móviles (CU-012 Gestionar Recepciones de Mercancía, CU-015 Gestionar Unidades de Producto, CU-021 Registrar Eventos y Condiciones de Transporte) priorizamos el escaneo de código QR o NFC por sobre digitar manualmente números de serie, para reducir errores de tipeo y el tiempo que toma capturar datos en almacén. En los formularios web (CU-010, CU-016, CU-019, CU-020) incorporamos validaciones en línea y ayuda contextual, para que un usuario nuevo pueda completar una orden de compra o planificar un envío sin necesitar una capacitación previa extensa.
+Line 4819: [4819] Este es el punto que todavía tenemos pendiente de este sprint: los ocho casos de uso actuales no incluyen un motor de reportes configurable por el usuario. Ya identificamos dónde encaja mejor -como una extensión natural de CU-019 (Gestionar Envíos Logísticos)- para que el usuario pueda elegir columnas, criterios de filtro y orden antes de generar el reporte, con exportación a Excel, HTML, correo electrónico y PDF. Por ahora, lo más cercano que ofrecemos es la descarga masiva de códigos QR (CU-016), y ya dejamos anotado incorporar el reporte personalizable como parte de un próximo sprint.
+Line 4929: [4929] Validar con CU-019, CU-020 y CU-021.
+
+==================== CU-020 ====================
+Line 1624: [1624] CU-020: Asignar / Desasignar Unidades a Envío
+Line 2307: [2307] CU-020
+Line 4587: [4587] ●     CU-020: Asignar / Desasignar Unidades a Envío
+Line 4817: [4817] Al diseñar los ocho casos de uso del sprint, separamos con claridad que tareas necesitan agilidad de campo y cuales necesitan planificación de oficina. En los casos de uso móviles (CU-012 Gestionar Recepciones de Mercancía, CU-015 Gestionar Unidades de Producto, CU-021 Registrar Eventos y Condiciones de Transporte) priorizamos el escaneo de código QR o NFC por sobre digitar manualmente números de serie, para reducir errores de tipeo y el tiempo que toma capturar datos en almacén. En los formularios web (CU-010, CU-016, CU-019, CU-020) incorporamos validaciones en línea y ayuda contextual, para que un usuario nuevo pueda completar una orden de compra o planificar un envío sin necesitar una capacitación previa extensa.
+Line 4929: [4929] Validar con CU-019, CU-020 y CU-021.
+
+==================== CU-021 ====================
+Line 1625: [1625] CU-021: Registrar Eventos y Condiciones de Transporte
+Line 2313: [2313] CU-021
+Line 2802: [2802] Cu-021 Registrar Eventos y Condiciones de Transporte Web
+Line 4588: [4588] ●     CU-021: Registrar Eventos y Condiciones de Transporte
+Line 4640: [4640] T037 (CU-021)
+Line 4813: [4813] Para este sprint no creamos un modelo de permisos nuevo: reutilizamos el esquema de roles y privilegios que definimos a nivel de toda la plataforma, donde el Administrador de cada empresa configura con libertad qué botones, formularios y opciones de menú puede ver y usar cada grupo de usuarios. Aquí eso se traduce en reglas concretas que ya implementamos: solo el Administrador de Empresa puede aprobar o rechazar una orden de compra (CU-011), mientras que dejamos el registro de recepciones, la generacion de codigos QR y el registro de eventos de transporte habilitados exclusivamente para el rol Gestor de Operaciones (CU-012, CU-015, CU-021). No asumimos de antemano cuántos grupos de usuarios va a necesitar cada empresa ni qué privilegios tendrá cada uno: dejamos que cada una defina los suyos propios.
+Line 4817: [4817] Al diseñar los ocho casos de uso del sprint, separamos con claridad que tareas necesitan agilidad de campo y cuales necesitan planificación de oficina. En los casos de uso móviles (CU-012 Gestionar Recepciones de Mercancía, CU-015 Gestionar Unidades de Producto, CU-021 Registrar Eventos y Condiciones de Transporte) priorizamos el escaneo de código QR o NFC por sobre digitar manualmente números de serie, para reducir errores de tipeo y el tiempo que toma capturar datos en almacén. En los formularios web (CU-010, CU-016, CU-019, CU-020) incorporamos validaciones en línea y ayuda contextual, para que un usuario nuevo pueda completar una orden de compra o planificar un envío sin necesitar una capacitación previa extensa.
+Line 4831: [4831] Cu-021 Registrar Eventos y Condiciones de Transporte Web
+Line 4874: [4874] Revisé el CU-021 (Registrar Eventos y Condiciones de Transporte).
+Line 4904: [4904] Implementar componente Angular para CU-021.
+Line 4929: [4929] Validar con CU-019, CU-020 y CU-021.
+Line 4932: [4932] Implementé componente Angular para CU-021.
+Line 4961: [4961] Integré CU-021 web con la API.
+Line 4990: [4990] Probé CU-021 web.
+Line 5008: [5008] Validar con CU-011 y CU-021.
+Line 5020: [5020] Validar con CU-021 y CU-016.
+Line 5048: [5048] Finalicé el análisis de clases y la programación web de CU-021.

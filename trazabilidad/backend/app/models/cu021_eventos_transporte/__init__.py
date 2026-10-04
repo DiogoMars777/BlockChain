@@ -1,11 +1,8 @@
-from app.models.cu021_eventos_transporte.shipment import (
-    Envio,
-    EnvioUnidad,
+from app.models.cu021_eventos_transporte.transport_event import (
     EventoTrazabilidad,
     EventoUnidad,
     CondicionTransporte,
     Alerta,
-    ESTADO_ENVIO_ENUM,
     TIPO_EVENTO_ENUM,
     ESTADO_VERIFICACION_ENUM,
     TIPO_ALERTA_ENUM,
@@ -14,13 +11,10 @@ from app.models.cu021_eventos_transporte.shipment import (
 )
 
 __all__ = [
-    "Envio",
-    "EnvioUnidad",
     "EventoTrazabilidad",
     "EventoUnidad",
     "CondicionTransporte",
     "Alerta",
-    "ESTADO_ENVIO_ENUM",
     "TIPO_EVENTO_ENUM",
     "ESTADO_VERIFICACION_ENUM",
     "TIPO_ALERTA_ENUM",
