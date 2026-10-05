@@ -4,11 +4,13 @@ import '../controllers/notification_controller.dart';
 import '../controllers/bitacora_controller.dart';
 import '../controllers/qr_controller.dart';
 import '../controllers/transport_controller.dart';
+import '../controllers/purchase_controller.dart';
 import 'login_view.dart';
 import 'notifications_view.dart';
 import 'bitacora_view.dart';
 import 'qr_generator_view.dart';
 import 'shipment_list_view.dart';
+import 'purchase_list_view.dart';
 
 class DashboardView extends StatefulWidget {
   final AuthController authController;
@@ -24,6 +26,7 @@ class _DashboardViewState extends State<DashboardView> {
   late final BitacoraController _bitacoraController;
   late final QrController _qrController;
   late final TransportController _transportController;
+  late final PurchaseController _purchaseController;
 
   @override
   void initState() {
@@ -32,6 +35,8 @@ class _DashboardViewState extends State<DashboardView> {
     _bitacoraController = BitacoraController();
     _qrController = QrController();
     _transportController = TransportController();
+    _purchaseController = PurchaseController();
+    _purchaseController.loadPurchases();
     _notificationController.fetchNotifications().then((_) {
       if (mounted) setState(() {});
     });
@@ -391,6 +396,174 @@ class _DashboardViewState extends State<DashboardView> {
                   ),
                 ),
               ),
+            ),
+            const SizedBox(height: 12),
+
+            // Tarjeta CU-010: Gestión de Órdenes de Compra
+            Card(
+              color: const Color(0xFF1E293B),
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF0284C7), width: 1.2),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => PurchaseListView(controller: _purchaseController),
+                    ),
+                  ).then((_) => _purchaseController.loadPurchases());
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0284C7).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.shopping_cart_checkout_rounded,
+                          size: 30,
+                          color: Color(0xFF38BDF8),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Órdenes de Compra (CU-010)',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Gestión de adquisiciones, emisión de órdenes y catálogo de variantes',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 18,
+                        color: Color(0xFF38BDF8),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Tarjeta CU-011: Aprobación / Rechazo de Compras
+            ListenableBuilder(
+              listenable: _purchaseController,
+              builder: (context, _) {
+                final pending = _purchaseController.pendingCount;
+                return Card(
+                  color: const Color(0xFF1E293B),
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(
+                      color: pending > 0 ? const Color(0xFFF59E0B) : const Color(0xFF334155),
+                      width: pending > 0 ? 1.5 : 1.0,
+                    ),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => PurchaseListView(
+                            controller: _purchaseController,
+                            initialOnlyPending: true,
+                          ),
+                        ),
+                      ).then((_) => _purchaseController.loadPurchases());
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.fact_check_rounded,
+                              size: 30,
+                              color: Color(0xFFF59E0B),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Aprobar Compras (CU-011)',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    if (pending > 0) ...[
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFF59E0B),
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          '$pending pendiente${pending > 1 ? "s" : ""}',
+                                          style: const TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                const Text(
+                                  'Aprobación ejecutiva, validación de presupuestos y rechazos',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF94A3B8),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 18,
+                            color: Color(0xFFF59E0B),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
