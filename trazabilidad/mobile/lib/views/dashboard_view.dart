@@ -11,6 +11,8 @@ import 'bitacora_view.dart';
 import 'qr_generator_view.dart';
 import 'shipment_list_view.dart';
 import 'purchase_list_view.dart';
+import '../controllers/ai_assistant_controller.dart';
+import 'widgets/voice_assistant_sheet.dart';
 
 class DashboardView extends StatefulWidget {
   final AuthController authController;
@@ -27,10 +29,12 @@ class _DashboardViewState extends State<DashboardView> {
   late final QrController _qrController;
   late final TransportController _transportController;
   late final PurchaseController _purchaseController;
+  late final AiAssistantController _aiController;
 
   @override
   void initState() {
     super.initState();
+    _aiController = AiAssistantController();
     _notificationController = NotificationController(authController: widget.authController);
     _bitacoraController = BitacoraController();
     _qrController = QrController();
@@ -40,6 +44,12 @@ class _DashboardViewState extends State<DashboardView> {
     _notificationController.fetchNotifications().then((_) {
       if (mounted) setState(() {});
     });
+  }
+
+  @override
+  void dispose() {
+    _aiController.dispose();
+    super.dispose();
   }
 
   @override
@@ -58,6 +68,11 @@ class _DashboardViewState extends State<DashboardView> {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.mic, color: Color(0xFF38BDF8)),
+            tooltip: 'Informes por Voz (IA)',
+            onPressed: () => VoiceAssistantSheet.show(context, _aiController),
+          ),
           IconButton(
             icon: const Icon(Icons.receipt_long_outlined, color: Color(0xFF38BDF8)),
             tooltip: 'Consultar Bitácora',
@@ -189,6 +204,94 @@ class _DashboardViewState extends State<DashboardView> {
             const Text(
               'Módulos y Auditoría',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+            const SizedBox(height: 12),
+
+            // Tarjeta Destacada: Informes Dinámicos por Voz con IA (CU-022)
+            Card(
+              color: const Color(0xFF1E293B),
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF38BDF8), width: 1.8),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () => VoiceAssistantSheet.show(context, _aiController),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xFF0284C7).withValues(alpha: 0.18),
+                        const Color(0xFF1E293B),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(18.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0284C7).withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: const Color(0xFF38BDF8).withValues(alpha: 0.4)),
+                        ),
+                        child: const Icon(
+                          Icons.mic_rounded,
+                          size: 32,
+                          color: Color(0xFF38BDF8),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text(
+                                  'Informes con Voz (IA)',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF0284C7),
+                                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                                  ),
+                                  child: const Text('CU-022', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Consultas dinámicas de stock, compras y telemetría con descarga en PDF y Excel',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.auto_awesome,
+                        size: 22,
+                        color: Color(0xFF38BDF8),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 12),
 
@@ -567,6 +670,16 @@ class _DashboardViewState extends State<DashboardView> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: const Color(0xFF0284C7),
+        elevation: 6,
+        icon: const Icon(Icons.mic, color: Colors.white),
+        label: const Text(
+          'Comando de Voz IA',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        onPressed: () => VoiceAssistantSheet.show(context, _aiController),
       ),
     );
   }

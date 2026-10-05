@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     SMTP_FROM: Optional[str] = None
     SMTP_STARTTLS: bool = True
 
+    GEMINI_API_KEY: Optional[str] = None
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

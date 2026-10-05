@@ -113,6 +113,11 @@
       </span>
       }
 
+      <button (click)="toggleAiModal()"
+        style="background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); color: white; border: none; padding: 0.45rem 0.95rem; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; box-shadow: 0 2px 10px rgba(56, 189, 248, 0.35);">
+        ✨ Informes con Voz (IA)
+      </button>
+
       <button class="logout-btn" (click)="onLogout()">
         Cerrar sesión
       </button>
@@ -124,6 +129,181 @@
       <span class="status-icon">✓</span>
       <h2>Sesión iniciada correctamente</h2>
     </div>
+
+    <!-- Tarjeta Destacada de IA en Web -->
+    <div (click)="toggleAiModal()"
+      style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(30, 41, 59, 0.9) 100%); border: 1.5px solid #38bdf8; border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div style="background: rgba(2, 132, 199, 0.25); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem;">
+          🎙️
+        </div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <h3 style="margin: 0; font-size: 1.1rem; color: #ffffff; font-weight: 700;">Informes Dinámicos con Voz (IA)</h3>
+            <span style="background: #0284c7; color: white; padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">CU-022</span>
+          </div>
+          <p style="margin: 0.25rem 0 0 0; color: #94a3b8; font-size: 0.85rem;">Consulta stock de dispositivos, compras y telemetría por comandos de voz con descarga oficial en PDF y Excel.</p>
+        </div>
+      </div>
+      <button style="background: #38bdf8; color: #0f172a; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
+        Abrir Asistente ✨
+      </button>
+    </div>
+
+    <!-- Modal Interactivo del Asistente de IA -->
+    @if (showAiModal()) {
+    <div style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem;" (click)="toggleAiModal()">
+      <div style="background: #0f172a; border: 1px solid #334155; border-radius: 20px; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 1.75rem; box-shadow: 0 20px 50px rgba(0,0,0,0.6);" (click)="$event.stopPropagation()">
+        
+        <!-- Header Modal -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; padding-bottom: 1rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <span style="font-size: 1.4rem;">✨</span>
+            <h2 style="margin: 0; font-size: 1.25rem; color: #ffffff; font-weight: 700;">Asistente de Informes Dinámicos por Voz</h2>
+          </div>
+          <button (click)="toggleAiModal()" style="background: transparent; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer;">✕</button>
+        </div>
+
+        <!-- Sección de Entrada de Voz / Texto -->
+        <div style="background: #1e293b; border-radius: 14px; padding: 1.25rem; text-align: center; margin-bottom: 1.25rem;"
+          [style.border]="aiService.isListeningSignal() ? '2px solid #38bdf8' : '1px solid #334155'">
+          <div style="display: flex; justify-content: center; margin-bottom: 0.75rem;">
+            <button (click)="aiService.isListeningSignal() ? onStopVoice() : onStartVoice()"
+              [style.background]="aiService.isListeningSignal() ? 'linear-gradient(135deg, #ef4444, #f87171)' : 'linear-gradient(135deg, #0284c7, #38bdf8)'"
+              style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid #38bdf8; color: white; font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);">
+              {{ aiService.isListeningSignal() ? '⏹️' : '🎙️' }}
+            </button>
+          </div>
+          <p [style.color]="aiService.isListeningSignal() ? '#38bdf8' : '#94a3b8'" style="margin: 0; font-size: 0.85rem; font-weight: 600;">
+            {{ aiService.isListeningSignal() ? 'Escuchando tu voz... Habla con claridad' : 'Haz clic en el micrófono para hablar o escribe abajo' }}
+          </p>
+
+          <!-- Input Manual -->
+          <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+            <input type="text" [value]="queryInput()" (input)="queryInput.set($any($event.target).value)" (keyup.enter)="onSubmitQuery()"
+              placeholder="Ej: ¿Cuánto stock tenemos disponible de iPhone en almacén?"
+              style="flex: 1; background: #0f172a; border: 1px solid #334155; color: white; padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.85rem; outline: none;" />
+            <button (click)="onSubmitQuery()" [disabled]="aiService.isLoadingSignal()"
+              style="background: #0284c7; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <!-- Píldoras sugeridas -->
+        @if (!aiService.currentReportSignal() && !aiService.isLoadingSignal()) {
+        <div style="margin-bottom: 1.25rem;">
+          <p style="margin: 0 0 0.5rem 0; color: #94a3b8; font-size: 0.8rem;">O prueba una consulta sugerida:</p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            @for (p of quickPrompts; track p) {
+              <button (click)="onSelectPrompt(p)"
+                style="background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">
+                {{ p }}
+              </button>
+            }
+          </div>
+        </div>
+        }
+
+        <!-- Cargando -->
+        @if (aiService.isLoadingSignal()) {
+        <div style="text-align: center; padding: 2rem 1rem;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚡</div>
+          <p style="color: #38bdf8; font-weight: 600; margin: 0;">Consultando datos de tu empresa y redactando análisis con Gemini...</p>
+        </div>
+        }
+
+        <!-- Error -->
+        @if (aiService.errorMessageSignal()) {
+        <div style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1rem;">
+          ⚠️ {{ aiService.errorMessageSignal() }}
+        </div>
+        }
+
+        <!-- Resultado del Reporte de IA -->
+        @if (aiService.currentReportSignal(); as r) {
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+
+          <!-- Barra de Voz TTS -->
+          <div style="background: #1e293b; border-left: 4px solid #38bdf8; border-radius: 10px; padding: 1rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+            <button (click)="aiService.isPlayingAudioSignal() ? aiService.stopSpeaking() : aiService.speak(r.voice_summary)"
+              style="background: rgba(2, 132, 199, 0.3); border: 1px solid #0284c7; color: #38bdf8; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
+              {{ aiService.isPlayingAudioSignal() ? '⏸️' : '🔊' }}
+            </button>
+            <div>
+              <span style="color: #38bdf8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Síntesis de Voz Ejecutiva</span>
+              <p style="margin: 0.25rem 0 0 0; color: #f8fafc; font-size: 0.9rem; line-height: 1.4;">{{ r.voice_summary }}</p>
+            </div>
+          </div>
+
+          <!-- Botones de Descarga PDF y Excel -->
+          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <span style="color: #94a3b8; font-size: 0.75rem; font-weight: 600;">EXPORTACIÓN OFICIAL AUDITADA</span>
+              <h4 style="margin: 0.2rem 0 0 0; color: white; font-size: 0.95rem;">Descargar Documento con Membrete</h4>
+            </div>
+            <div style="display: flex; gap: 0.6rem;">
+              <button (click)="onDownload(r.report_id, 'pdf')"
+                style="background: #dc2626; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);">
+                📄 Descargar PDF
+              </button>
+              <button (click)="onDownload(r.report_id, 'excel')"
+                style="background: #059669; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);">
+                📊 Exportar Excel
+              </button>
+            </div>
+          </div>
+
+          <!-- KPIs Grid -->
+          @if (r.kpis.length > 0) {
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem;">
+            @for (k of r.kpis; track k.label) {
+            <div style="background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 0.85rem;">
+              <span style="color: #94a3b8; font-size: 0.75rem; text-transform: uppercase;">{{ k.label }}</span>
+              <div [style.color]="k.color || '#38bdf8'" style="font-size: 1.25rem; font-weight: 800; margin: 0.2rem 0;">{{ k.value }}</div>
+              @if (k.trend) {
+              <span style="color: #64748b; font-size: 0.7rem;">{{ k.trend }}</span>
+              }
+            </div>
+            }
+          </div>
+          }
+
+          <!-- Análisis Ejecutivo Markdown -->
+          <div style="background: #1e293b; border-radius: 12px; padding: 1.25rem;">
+            <h4 style="margin: 0 0 0.75rem 0; color: #38bdf8; font-size: 0.95rem; font-weight: 700;">📊 Conclusiones y Análisis Estratégico</h4>
+            <div style="color: #cbd5e1; font-size: 0.88rem; line-height: 1.5; white-space: pre-wrap;">{{ r.executive_summary }}</div>
+          </div>
+
+          <!-- Tabla de Datos -->
+          @if (r.table_rows.length > 0) {
+          <div style="background: #1e293b; border-radius: 12px; padding: 1rem; overflow-x: auto;">
+            <h4 style="margin: 0 0 0.75rem 0; color: white; font-size: 0.9rem; font-weight: 700;">Registros Consolidados ({{ r.table_rows.length }})</h4>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
+              <thead>
+                <tr style="border-bottom: 2px solid #334155; color: #38bdf8;">
+                  @for (h of r.table_headers; track h) {
+                  <th style="padding: 0.5rem 0.75rem; font-weight: 700;">{{ h }}</th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of r.table_rows; track $index) {
+                <tr style="border-bottom: 1px solid #334155; color: #e2e8f0;">
+                  @for (cell of row; track $index) {
+                  <td style="padding: 0.45rem 0.75rem;">{{ cell }}</td>
+                  }
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+    }
 
     @if (isLoading()) {
     <div class="loading-state">

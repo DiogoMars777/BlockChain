@@ -123,5 +123,7 @@ class ApiConfig {
   static String get purchases => '$baseUrl/purchases';
   static String get actors => '$baseUrl/actors';
   static String get tenantCatalog => '$baseUrl/tenant-catalog';
+  static String get aiVoiceReport => '$baseUrl/ai/voice-report';
+  static String aiReportExport(String reportId, String format) => '$baseUrl/ai/reports/$reportId/export?format=$format';
 }
 

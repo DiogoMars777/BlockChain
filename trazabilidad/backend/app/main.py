@@ -22,6 +22,7 @@ from app.controllers.cu016_codigos_qr.qr_controller import router as qr_router
 from app.controllers.cu019_envios_logisticos.shipment_controller import router as shipment_router
 from app.controllers.cu020_asignacion_unidades_envio.shipment_unit_controller import router as shipment_unit_router
 from app.controllers.cu021_eventos_transporte.transport_event_controller import router as transport_event_router
+from app.controllers.cu022_ia.ai_report_controller import router as ai_report_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -65,6 +66,7 @@ app.include_router(transport_event_router, prefix="/api/v1")
 # CU-020 comparte el prefijo /shipments con CU-019 y CU-021: sus subrutas
 # /{idenvio}/units no colisionan con /{idenvio} ni /{idenvio}/events.
 app.include_router(shipment_unit_router, prefix="/api/v1")
+app.include_router(ai_report_router, prefix="/api/v1")
 
 
 import jwt

@@ -45,6 +45,13 @@ class AuthController:
     def _find_tenant(db: Session, tenant_slug: str) -> Optional[Tenant]:
         clean_slug = tenant_slug.strip().lower()
         
+        # 0. Coincidencia por alias demo predeterminado
+        if clean_slug in ("empresa-demo", "demo", "default"):
+            stmt_first = select(Tenant).where(Tenant.activo != False).order_by(Tenant.idtenant)
+            first_tenant = db.execute(stmt_first).scalars().first()
+            if first_tenant:
+                return first_tenant
+
         # 1. Coincidencia directa por ID si es numérico
         if clean_slug.isdigit():
             stmt = select(Tenant).where(Tenant.idtenant == int(clean_slug))

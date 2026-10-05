@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { TenantService } from '../services/tenant.service';
+import { AiAssistantService } from '../services/ai-assistant.service';
 import { User } from '../../models/auth.models';
 
 @Component({
@@ -16,13 +17,54 @@ import { User } from '../../models/auth.models';
 export class DashboardController implements OnInit {
   private authService = inject(AuthService);
   private tenantService = inject(TenantService);
+  aiService = inject(AiAssistantService);
 
   currentUser: Signal<User | null> = this.authService.currentUser;
   isLoading = signal(false);
   tenants = this.tenantService.tenantsSignal;
 
+  showAiModal = signal(false);
+  queryInput = signal('');
+  quickPrompts = [
+    '📦 Stock disponible de iPhones',
+    '🛒 Reporte de órdenes de compra',
+    '🚚 Envíos y telemetría de sensores IoT',
+    '🛡️ Resumen de bitácora y auditoría'
+  ];
+
   ngOnInit(): void {
     this.tenantService.getTenants().subscribe();
+  }
+
+  toggleAiModal(): void {
+    this.showAiModal.update((v) => !v);
+  }
+
+  onStartVoice(): void {
+    this.aiService.startListening((text) => {
+      this.queryInput.set(text);
+      this.onSubmitQuery(text);
+    });
+  }
+
+  onStopVoice(): void {
+    this.aiService.stopListening();
+  }
+
+  onSubmitQuery(text?: string): void {
+    const q = text || this.queryInput();
+    if (!q.trim()) return;
+    this.queryInput.set(q);
+    this.aiService.generateVoiceReport(q).subscribe();
+  }
+
+  onSelectPrompt(prompt: string): void {
+    this.queryInput.set(prompt);
+    this.onSubmitQuery(prompt);
+  }
+
+  onDownload(reportId: string, format: 'pdf' | 'excel'): void {
+    this.aiService.downloadReportFile(reportId, format);
   }
 
   onTenantChange(event: Event): void {
