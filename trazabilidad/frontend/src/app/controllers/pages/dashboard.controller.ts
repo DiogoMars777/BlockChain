@@ -33,6 +33,7 @@ export class DashboardController implements OnInit {
       this.authService.switchTenant(tenantId).subscribe({
         next: () => {
           this.isLoading.set(false);
+          window.location.reload();
         },
         error: (err) => {
           this.isLoading.set(false);
@@ -44,5 +45,59 @@ export class DashboardController implements OnInit {
 
   onLogout(): void {
     this.authService.logout();
+  }
+
+  canAccess(module: string): boolean {
+    const roles = this.currentUser()?.roles || [];
+    if (roles.includes('SuperAdministrador')) {
+      return true;
+    }
+
+    switch (module) {
+      case 'tenants':
+        return roles.includes('AdministradorEmpresa');
+
+      case 'users':
+      case 'roles':
+        return roles.includes('AdministradorEmpresa');
+
+      case 'bitacora':
+        return roles.includes('AdministradorEmpresa') || roles.includes('Auditor');
+
+      case 'categories':
+      case 'certifications':
+      case 'actors':
+      case 'locations':
+      case 'receptions':
+        return roles.includes('AdministradorEmpresa') || roles.includes('GestorOperaciones');
+
+      case 'products':
+      case 'tenant-catalog':
+      case 'units':
+      case 'qr-codes':
+        return (
+          roles.includes('AdministradorEmpresa') ||
+          roles.includes('GestorOperaciones') ||
+          roles.includes('GestorVentasPostventa') ||
+          roles.includes('Auditor')
+        );
+
+      case 'purchases':
+        return (
+          roles.includes('AdministradorEmpresa') ||
+          roles.includes('GestorOperaciones') ||
+          roles.includes('GestorVentasPostventa')
+        );
+
+      case 'shipments':
+        return (
+          roles.includes('AdministradorEmpresa') ||
+          roles.includes('GestorOperaciones') ||
+          roles.includes('Auditor')
+        );
+
+      default:
+        return false;
+    }
   }
 }

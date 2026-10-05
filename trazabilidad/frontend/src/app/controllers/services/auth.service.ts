@@ -39,6 +39,19 @@ export class AuthService {
     return this.token();
   }
 
+  hasRole(roleName: string): boolean {
+    const roles = this.currentUser()?.roles || [];
+    return roles.includes(roleName);
+  }
+
+  hasAnyRole(roleNames: string[]): boolean {
+    const roles = this.currentUser()?.roles || [];
+    if (roles.includes('SuperAdministrador')) {
+      return true;
+    }
+    return roleNames.some(r => roles.includes(r));
+  }
+
   login(credentials: LoginRequest): Observable<TokenResponse> {
     return this.http.post<TokenResponse>(`${this.apiUrl}/login`, credentials, {
       withCredentials: true

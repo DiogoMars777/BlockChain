@@ -44,6 +44,7 @@ export interface User {
   activo?: boolean;
   fecharegistro?: string;
   tenant?: Tenant;
+  roles?: string[];
 
   // Getters para compatibilidad con la interfaz
   id?: string | number;

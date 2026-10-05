@@ -19,6 +19,7 @@ import { ReceptionManagementController } from './controllers/pages/reception-man
 import { QrManagementController } from './controllers/pages/qr-management.controller';
 import { TransportManagementController } from './controllers/pages/transport-management.controller';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -26,20 +27,20 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordController },
   { path: 'reset-password', component: ResetPasswordController },
   { path: 'dashboard', component: DashboardController, canActivate: [authGuard] },
-  { path: 'tenants', component: TenantManagementController, canActivate: [authGuard] },
-  { path: 'users', component: UserManagementController, canActivate: [authGuard] },
-  { path: 'roles', component: RoleManagementController, canActivate: [authGuard] },
-  { path: 'bitacora', component: AuditNotificationController, canActivate: [authGuard] },
-  { path: 'categories', component: CategoryManagementController, canActivate: [authGuard] },
-  { path: 'products', component: ProductManagementController, canActivate: [authGuard] },
-  { path: 'certifications', component: CertificationManagementController, canActivate: [authGuard] },
-  { path: 'tenant-catalog', component: TenantCatalogManagementController, canActivate: [authGuard] },
-  { path: 'actors', component: ActorManagementController, canActivate: [authGuard] },
-  { path: 'locations', component: LocationManagementController, canActivate: [authGuard] },
-  { path: 'units', component: UnitManagementController, canActivate: [authGuard] },
-  { path: 'purchases', component: PurchaseManagementController, canActivate: [authGuard] },
-  { path: 'receptions', component: ReceptionManagementController, canActivate: [authGuard] },
-  { path: 'qr-codes', component: QrManagementController, canActivate: [authGuard] },
-  { path: 'shipments', component: TransportManagementController, canActivate: [authGuard] },
+  { path: 'tenants', component: TenantManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa'])] },
+  { path: 'users', component: UserManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa'])] },
+  { path: 'roles', component: RoleManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa'])] },
+  { path: 'bitacora', component: AuditNotificationController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'Auditor'])] },
+  { path: 'categories', component: CategoryManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones'])] },
+  { path: 'products', component: ProductManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones', 'GestorVentasPostventa'])] },
+  { path: 'certifications', component: CertificationManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones'])] },
+  { path: 'tenant-catalog', component: TenantCatalogManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones', 'GestorVentasPostventa'])] },
+  { path: 'actors', component: ActorManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones'])] },
+  { path: 'locations', component: LocationManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones'])] },
+  { path: 'units', component: UnitManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones', 'GestorVentasPostventa', 'Auditor'])] },
+  { path: 'purchases', component: PurchaseManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones', 'GestorVentasPostventa'])] },
+  { path: 'receptions', component: ReceptionManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones'])] },
+  { path: 'qr-codes', component: QrManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones', 'GestorVentasPostventa'])] },
+  { path: 'shipments', component: TransportManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones', 'Auditor'])] },
   { path: '**', redirectTo: 'login' }
 ];

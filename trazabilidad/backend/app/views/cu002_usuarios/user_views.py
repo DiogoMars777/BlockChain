@@ -27,6 +27,7 @@ class UserResponse(UserBase):
     activo: Optional[bool] = True
     fecharegistro: Optional[datetime] = None
     tenant: Optional[TenantResponse] = None
+    roles: List[str] = []
 
     model_config = ConfigDict(from_attributes=True)
 

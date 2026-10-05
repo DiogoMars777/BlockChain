@@ -9,6 +9,7 @@ from app.models.cu003_roles_permisos.permission import Permiso
 from app.models.cu003_roles_permisos.role_permission import RolPermiso
 from app.models.cu002_usuarios.usuario_tenant import UsuarioTenant
 from app.models.cu003_roles_permisos.usuario_tenant_rol import UsuarioTenantRol
+from app.models.cu001_tenants.tenant import Tenant
 from app.models.cu002_usuarios.user import User
 from app.controllers.cu004_autenticacion.auth_controller import get_current_user
 from app.views.cu003_roles_permisos.role_views import (
@@ -68,9 +69,14 @@ class RoleController:
                 detail=f"Usuario con ID {idusuario} no encontrado."
             )
 
-        # 2. Obtener registro de usuariotenant
+        # 2. Obtener registro de usuariotenant en el contexto actual si existe
+        tenant_id = getattr(getattr(current_user, "tenant", None), "idtenant", None)
         stmt_ut = select(UsuarioTenant).where(UsuarioTenant.idusuario == idusuario)
-        ut = db.execute(stmt_ut).scalars().first()
+        ut = None
+        if tenant_id:
+            ut = db.execute(stmt_ut.where(UsuarioTenant.idtenant == tenant_id)).scalars().first()
+        if not ut:
+            ut = db.execute(stmt_ut).scalars().first()
         if not ut:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -82,6 +88,7 @@ class RoleController:
             select(Role)
             .join(UsuarioTenantRol, UsuarioTenantRol.idrol == Role.idrol)
             .where(UsuarioTenantRol.idusuariotenant == ut.idusuariotenant)
+            .distinct()
         )
         roles = db.execute(stmt_r).scalars().all()
 
@@ -108,9 +115,14 @@ class RoleController:
                 detail=f"Usuario con ID {idusuario} no encontrado."
             )
 
-        # 2. Obtener registro de usuariotenant
+        # 2. Obtener registro de usuariotenant en el contexto actual
+        tenant_id = getattr(getattr(current_user, "tenant", None), "idtenant", None)
         stmt_ut = select(UsuarioTenant).where(UsuarioTenant.idusuario == idusuario)
-        ut = db.execute(stmt_ut).scalars().first()
+        ut = None
+        if tenant_id:
+            ut = db.execute(stmt_ut.where(UsuarioTenant.idtenant == tenant_id)).scalars().first()
+        if not ut:
+            ut = db.execute(stmt_ut).scalars().first()
         if not ut:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -137,6 +149,48 @@ class RoleController:
         for rid in set(data.role_ids):
             utr = UsuarioTenantRol(idusuariotenant=ut.idusuariotenant, idrol=rid)
             db.add(utr)
+        db.flush()
+
+        # Si se incluye o retira el rol SuperAdministrador, sincronizarlo para todas las empresas
+        stmt_super_role = select(Role).where(Role.nombrerol == "SuperAdministrador")
+        super_role = db.execute(stmt_super_role).scalars().first()
+        if super_role:
+            all_tenants = db.execute(select(Tenant)).scalars().all()
+            if super_role.idrol in data.role_ids:
+                # Otorgar SuperAdministrador en las demás empresas
+                for t in all_tenants:
+                    if t.idtenant == ut.idtenant:
+                        continue
+                    t_ut = db.execute(
+                        select(UsuarioTenant).where(
+                            UsuarioTenant.idusuario == idusuario,
+                            UsuarioTenant.idtenant == t.idtenant
+                        )
+                    ).scalars().first()
+                    if not t_ut:
+                        t_ut = UsuarioTenant(idusuario=idusuario, idtenant=t.idtenant)
+                        db.add(t_ut)
+                        db.flush()
+                    has_role = db.execute(
+                        select(UsuarioTenantRol).where(
+                            UsuarioTenantRol.idusuariotenant == t_ut.idusuariotenant,
+                            UsuarioTenantRol.idrol == super_role.idrol
+                        )
+                    ).scalars().first()
+                    if not has_role:
+                        db.add(UsuarioTenantRol(idusuariotenant=t_ut.idusuariotenant, idrol=super_role.idrol))
+            else:
+                # Quitar SuperAdministrador de todas las empresas para evitar roles fantasma
+                all_user_uts = db.execute(
+                    select(UsuarioTenant.idusuariotenant).where(UsuarioTenant.idusuario == idusuario)
+                ).scalars().all()
+                if all_user_uts:
+                    db.execute(
+                        delete(UsuarioTenantRol).where(
+                            UsuarioTenantRol.idusuariotenant.in_(all_user_uts),
+                            UsuarioTenantRol.idrol == super_role.idrol
+                        )
+                    )
 
         db.commit()
 

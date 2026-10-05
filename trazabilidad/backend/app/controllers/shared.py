@@ -80,9 +80,13 @@ def require_roles(*allowed: str):
         db: Session = Depends(get_db),
         current_user: User = Depends(get_current_user)
     ) -> User:
+        user_roles = getattr(current_user, "roles", []) or []
+        if "SuperAdministrador" in user_roles:
+            return current_user
+
         idut = get_idusuariotenant(db, current_user)
         roles = get_user_role_names(db, idut)
-        if not roles & permitidos:
+        if not (roles & permitidos or "SuperAdministrador" in roles):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"No tiene permisos para esta operacion. Se requiere uno de estos roles: {etiqueta}."

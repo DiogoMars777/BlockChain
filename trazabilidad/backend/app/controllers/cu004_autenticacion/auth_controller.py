@@ -20,6 +20,8 @@ from app.db.session import get_db
 from app.models.cu001_tenants.tenant import Tenant
 from app.models.cu002_usuarios.user import User
 from app.models.cu002_usuarios.usuario_tenant import UsuarioTenant
+from app.models.cu003_roles_permisos.role import Role
+from app.models.cu003_roles_permisos.usuario_tenant_rol import UsuarioTenantRol
 from app.models.cu004_autenticacion.password_reset_token import PasswordResetToken
 from app.models.cu004_autenticacion.refresh_token import RefreshToken
 from app.core.mail_service import MailService
@@ -133,6 +135,27 @@ class AuthController:
         db.commit()
 
         user.tenant = TenantResponse.model_validate(tenant)
+        stmt_roles = (
+            select(Role.nombrerol)
+            .join(UsuarioTenantRol, UsuarioTenantRol.idrol == Role.idrol)
+            .where(UsuarioTenantRol.idusuariotenant == link.idusuariotenant)
+        )
+        user_roles = list(db.execute(stmt_roles).scalars().all())
+
+        stmt_super = (
+            select(Role.nombrerol)
+            .join(UsuarioTenantRol, UsuarioTenantRol.idrol == Role.idrol)
+            .join(UsuarioTenant, UsuarioTenant.idusuariotenant == UsuarioTenantRol.idusuariotenant)
+            .where(
+                UsuarioTenant.idusuario == user.idusuario,
+                Role.nombrerol == "SuperAdministrador"
+            )
+        )
+        if db.execute(stmt_super).scalars().first():
+            if "SuperAdministrador" not in user_roles:
+                user_roles.append("SuperAdministrador")
+
+        user.roles = user_roles
         return access_token, raw_refresh_token, user, tenant
 
     @staticmethod
@@ -367,6 +390,32 @@ class AuthController:
         if tenant:
             user.tenant = TenantResponse.model_validate(tenant)
 
+        stmt_roles = (
+            select(Role.nombrerol)
+            .join(UsuarioTenantRol, UsuarioTenantRol.idrol == Role.idrol)
+            .join(UsuarioTenant, UsuarioTenant.idusuariotenant == UsuarioTenantRol.idusuariotenant)
+            .where(
+                UsuarioTenant.idusuario == user.idusuario,
+                UsuarioTenant.idtenant == tenant_id
+            )
+        )
+        user_roles = list(db.execute(stmt_roles).scalars().all())
+
+        stmt_super = (
+            select(Role.nombrerol)
+            .join(UsuarioTenantRol, UsuarioTenantRol.idrol == Role.idrol)
+            .join(UsuarioTenant, UsuarioTenant.idusuariotenant == UsuarioTenantRol.idusuariotenant)
+            .where(
+                UsuarioTenant.idusuario == user.idusuario,
+                Role.nombrerol == "SuperAdministrador"
+            )
+        )
+        if db.execute(stmt_super).scalars().first():
+            if "SuperAdministrador" not in user_roles:
+                user_roles.append("SuperAdministrador")
+
+        user.roles = user_roles
+
         return user
 
     @staticmethod
@@ -473,7 +522,8 @@ def login(
         email=user.email,
         activo=user.activo,
         fecharegistro=user.fecharegistro,
-        tenant=TenantResponse.model_validate(tenant)
+        tenant=TenantResponse.model_validate(tenant),
+        roles=getattr(user, "roles", [])
     )
 
     return TokenResponse(access_token=access_token, user=user_resp)
@@ -512,7 +562,15 @@ def logout(
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
     """Retornar datos del usuario autenticado actual."""
-    return UserResponse.model_validate(current_user)
+    return UserResponse(
+        idusuario=current_user.idusuario,
+        nombrecompleto=current_user.nombrecompleto,
+        email=current_user.email,
+        activo=current_user.activo,
+        fecharegistro=current_user.fecharegistro,
+        tenant=getattr(current_user, "tenant", None),
+        roles=getattr(current_user, "roles", [])
+    )
 
 
 @router.post("/switch-tenant/{idtenant}", response_model=TokenResponse)
@@ -523,13 +581,38 @@ def switch_tenant(
 ):
     """Cambiar contexto de empresa activa para el usuario (CU-001)."""
     access_token, tenant = AuthController.switch_tenant(db, idtenant, current_user)
+    stmt_roles = (
+        select(Role.nombrerol)
+        .join(UsuarioTenantRol, UsuarioTenantRol.idrol == Role.idrol)
+        .join(UsuarioTenant, UsuarioTenant.idusuariotenant == UsuarioTenantRol.idusuariotenant)
+        .where(
+            UsuarioTenant.idusuario == current_user.idusuario,
+            UsuarioTenant.idtenant == idtenant
+        )
+    )
+    user_roles = list(db.execute(stmt_roles).scalars().all())
+
+    stmt_super = (
+        select(Role.nombrerol)
+        .join(UsuarioTenantRol, UsuarioTenantRol.idrol == Role.idrol)
+        .join(UsuarioTenant, UsuarioTenant.idusuariotenant == UsuarioTenantRol.idusuariotenant)
+        .where(
+            UsuarioTenant.idusuario == current_user.idusuario,
+            Role.nombrerol == "SuperAdministrador"
+        )
+    )
+    if db.execute(stmt_super).scalars().first():
+        if "SuperAdministrador" not in user_roles:
+            user_roles.append("SuperAdministrador")
+
     user_resp = UserResponse(
         idusuario=current_user.idusuario,
         nombrecompleto=current_user.nombrecompleto,
         email=current_user.email,
         activo=current_user.activo,
         fecharegistro=current_user.fecharegistro,
-        tenant=TenantResponse.model_validate(tenant)
+        tenant=TenantResponse.model_validate(tenant),
+        roles=user_roles
     )
     return TokenResponse(access_token=access_token, user=user_resp)
 

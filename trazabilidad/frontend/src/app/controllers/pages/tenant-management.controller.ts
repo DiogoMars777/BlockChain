@@ -140,6 +140,19 @@ export class TenantManagementController implements OnInit {
     }
   }
 
+  switchToTenant(tenant: Tenant): void {
+    this.authService.switchTenant(tenant.idtenant).subscribe({
+      next: () => {
+        this.router.navigate(['/dashboard']).then(() => {
+          window.location.reload();
+        });
+      },
+      error: (err) => {
+        this.errorMessage.set(err.error?.detail || 'Error al cambiar a esta empresa.');
+      }
+    });
+  }
+
   navigateToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
