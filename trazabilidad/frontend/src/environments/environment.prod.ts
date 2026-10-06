@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://TU-BACKEND-RAILWAY.up.railway.app/api/v1'
+  apiUrl: 'https://blockchain-production-8de2.up.railway.app/api/v1'
 };

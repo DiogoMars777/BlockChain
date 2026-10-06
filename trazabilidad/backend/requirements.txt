@@ -49,4 +49,3 @@ websockets==16.0
 openpyxl>=3.1.5
 reportlab>=5.0.1
 google-genai>=2.28.0
-supabase>=2.13.0
