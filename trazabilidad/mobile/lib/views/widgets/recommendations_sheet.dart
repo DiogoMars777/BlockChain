@@ -107,7 +107,7 @@ class _RecommendationsSheetState extends State<RecommendationsSheet> {
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.auto_awesome, color: Color(0xFF38BDF8), size: 22),
+                          Icon(Icons.auto_awesome, color: Color(0xFFFDE047), size: 22),
                           SizedBox(width: 8),
                           Text(
                             'Recomendaciones de Pricing',

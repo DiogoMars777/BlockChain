@@ -104,7 +104,7 @@ class _VoiceAssistantSheetState extends State<VoiceAssistantSheet>
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.auto_awesome, color: Color(0xFF38BDF8), size: 22),
+                          Icon(Icons.auto_awesome, color: Color(0xFFFDE047), size: 22),
                           SizedBox(width: 8),
                           Text(
                             'Informes Dinámicos con IA',
@@ -261,27 +261,27 @@ class _VoiceAssistantSheetState extends State<VoiceAssistantSheet>
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       colors: ctrl.isListening
-                          ? [const Color(0xFF0284C7), const Color(0xFF38BDF8)]
-                          : [const Color(0xFF1E293B), const Color(0xFF0F172A)],
+                          ? [const Color(0xFFDC2626), const Color(0xFFEF4444)]
+                          : [const Color(0xFF0284C7), const Color(0xFF0EA5E9)],
                     ),
-                    boxShadow: ctrl.isListening
-                        ? [
-                            BoxShadow(
-                              color: const Color(0xFF38BDF8).withValues(alpha: 0.5),
-                              blurRadius: 20,
-                              spreadRadius: 4,
-                            )
-                          ]
-                        : null,
+                    boxShadow: [
+                      BoxShadow(
+                        color: ctrl.isListening
+                            ? const Color(0xFFEF4444).withValues(alpha: 0.6)
+                            : const Color(0xFF0284C7).withValues(alpha: 0.45),
+                        blurRadius: 18,
+                        spreadRadius: 2,
+                      ),
+                    ],
                     border: Border.all(
-                      color: ctrl.isListening ? Colors.white : const Color(0xFF38BDF8),
-                      width: 2,
+                      color: Colors.white,
+                      width: 2.5,
                     ),
                   ),
                   child: Icon(
                     ctrl.isListening ? Icons.stop_rounded : Icons.mic_rounded,
                     color: Colors.white,
-                    size: 34,
+                    size: 36,
                   ),
                 ),
               ),

@@ -65,27 +65,89 @@ class _DashboardViewState extends State<DashboardView> {
       backgroundColor: const Color(0xFF0F172A),
       appBar: AppBar(
         backgroundColor: const Color(0xFF1E293B),
+        elevation: 2,
         title: const Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.shield, color: Color(0xFF38BDF8)),
+            Icon(Icons.shield, color: Color(0xFF38BDF8), size: 22),
             SizedBox(width: 8),
-            Text('Trazabilidad Dashboard', style: TextStyle(fontSize: 18, color: Colors.white)),
+            Text(
+              'Trazabilidad',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 0.3),
+            ),
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.mic, color: Color(0xFF38BDF8)),
-            tooltip: 'Informes por Voz (IA)',
-            onPressed: () => VoiceAssistantSheet.show(context, _aiController),
+          // Botón Micrófono (Informes de Voz IA) - Botón Sólido Destacado
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 3),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () => VoiceAssistantSheet.show(context, _aiController),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0284C7),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFF38BDF8), width: 1.2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF0284C7).withValues(alpha: 0.35),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.mic, color: Colors.white, size: 17),
+                    SizedBox(width: 3),
+                    Text('Voz', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.auto_awesome, color: Color(0xFF38BDF8)),
-            tooltip: 'Recomendaciones de Pricing (IA)',
-            onPressed: () => RecommendationsSheet.show(context, _recommendationController),
+
+          // Botón Estrella (Recomendaciones de Pricing IA) - Botón Sólido Destacado
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 3),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () => RecommendationsSheet.show(context, _recommendationController),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF7C3AED),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFA78BFA), width: 1.2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF7C3AED).withValues(alpha: 0.35),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.auto_awesome, color: Color(0xFFFDE047), size: 16),
+                    SizedBox(width: 3),
+                    Text('IA', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            ),
           ),
+
+          // Bitácora
           IconButton(
-            icon: const Icon(Icons.receipt_long_outlined, color: Color(0xFF38BDF8)),
+            icon: const Icon(Icons.receipt_long_outlined, color: Color(0xFF94A3B8), size: 21),
             tooltip: 'Consultar Bitácora',
+            padding: const EdgeInsets.all(6),
+            constraints: const BoxConstraints(),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -94,10 +156,16 @@ class _DashboardViewState extends State<DashboardView> {
               );
             },
           ),
+
+          // Notificaciones
           Stack(
+            alignment: Alignment.center,
             children: [
               IconButton(
-                icon: const Icon(Icons.notifications_outlined, color: Color(0xFF38BDF8)),
+                icon: const Icon(Icons.notifications_outlined, color: Color(0xFF94A3B8), size: 21),
+                tooltip: 'Notificaciones',
+                padding: const EdgeInsets.all(6),
+                constraints: const BoxConstraints(),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -108,24 +176,29 @@ class _DashboardViewState extends State<DashboardView> {
               ),
               if (_notificationController.unreadCount > 0)
                 Positioned(
-                  right: 8,
+                  right: 2,
                   top: 8,
                   child: Container(
-                    padding: const EdgeInsets.all(4),
+                    padding: const EdgeInsets.all(3.5),
                     decoration: const BoxDecoration(
                       color: Colors.red,
                       shape: BoxShape.circle,
                     ),
                     child: Text(
                       '${_notificationController.unreadCount}',
-                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
             ],
           ),
+
+          // Logout
           IconButton(
-            icon: const Icon(Icons.logout, color: Color(0xFFF87171)),
+            icon: const Icon(Icons.logout, color: Color(0xFFF87171), size: 21),
+            tooltip: 'Cerrar Sesión',
+            padding: const EdgeInsets.all(6),
+            constraints: const BoxConstraints(),
             onPressed: () async {
               await widget.authController.logout();
               if (context.mounted) {
@@ -137,6 +210,7 @@ class _DashboardViewState extends State<DashboardView> {
               }
             },
           ),
+          const SizedBox(width: 4),
         ],
       ),
       body: SingleChildScrollView(
@@ -293,10 +367,21 @@ class _DashboardViewState extends State<DashboardView> {
                           ],
                         ),
                       ),
-                      const Icon(
-                        Icons.auto_awesome,
-                        size: 22,
-                        color: Color(0xFF38BDF8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0284C7),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFF38BDF8), width: 1.2),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.mic, size: 14, color: Colors.white),
+                            SizedBox(width: 4),
+                            Text('Hablar', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -381,10 +466,21 @@ class _DashboardViewState extends State<DashboardView> {
                           ],
                         ),
                       ),
-                      const Icon(
-                        Icons.auto_awesome,
-                        size: 22,
-                        color: Color(0xFFA78BFA),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF7C3AED),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFFA78BFA), width: 1.2),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.auto_awesome, size: 14, color: Color(0xFFFDE047)),
+                            SizedBox(width: 4),
+                            Text('Ver Precios', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
                       ),
                     ],
                   ),
