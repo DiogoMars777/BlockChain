@@ -1,5 +1,5 @@
 from datetime import datetime, timezone, timedelta
-from typing import Set
+from typing import Optional, Set
 
 from fastapi import Depends, HTTPException, Request, status
 from sqlalchemy import select
@@ -32,6 +32,33 @@ def get_user_tenant_id(db: Session, user: User) -> int:
             detail="El usuario no tiene un tenant asignado."
         )
     return ut.idtenant
+
+
+def resolve_tenant_id(db: Session, user: User, requested_tenant_id: Optional[int] = None) -> int:
+    """Resuelve la empresa objetivo de una operacion y verifica la pertenencia del usuario.
+
+    Prioridad de resolucion:
+      1. Empresa solicitada explicitamente por el cliente.
+      2. Empresa activa del token JWT (`user.tenant`, cambiada via /auth/switch-tenant).
+      3. Primer vinculo UsuarioTenant del usuario.
+
+    En todos los casos se exige que exista un vinculo UsuarioTenant legitimo: sin esta
+    validacion un usuario autenticado podia leer o escribir datos de otra empresa
+    simplemente pasando otro idtenant en el body o en la query.
+    """
+    active_tenant_id = getattr(getattr(user, "tenant", None), "idtenant", None)
+    target_tenant_id = requested_tenant_id or active_tenant_id or get_user_tenant_id(db, user)
+
+    stmt_link = select(UsuarioTenant.idtenant).where(
+        UsuarioTenant.idusuario == user.idusuario,
+        UsuarioTenant.idtenant == target_tenant_id
+    )
+    if db.execute(stmt_link).first() is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tiene permisos para operar sobre los datos de esa empresa."
+        )
+    return target_tenant_id
 
 
 def get_idusuariotenant(db: Session, user: User) -> int:

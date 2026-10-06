@@ -23,6 +23,7 @@ from app.controllers.cu019_envios_logisticos.shipment_controller import router a
 from app.controllers.cu020_asignacion_unidades_envio.shipment_unit_controller import router as shipment_unit_router
 from app.controllers.cu021_eventos_transporte.transport_event_controller import router as transport_event_router
 from app.controllers.cu022_ia.ai_report_controller import router as ai_report_router
+from app.controllers.cu001_tenants.backup_controller import router as backup_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -67,6 +68,7 @@ app.include_router(transport_event_router, prefix="/api/v1")
 # /{idenvio}/units no colisionan con /{idenvio} ni /{idenvio}/events.
 app.include_router(shipment_unit_router, prefix="/api/v1")
 app.include_router(ai_report_router, prefix="/api/v1")
+app.include_router(backup_router, prefix="/api/v1")
 
 
 import jwt

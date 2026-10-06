@@ -535,16 +535,17 @@ def run_master_seed():
         random.seed(42)
         FACTORY_PREFIXES = ["F17", "DNP", "G6T", "C39", "F2L", "DX3", "H02", "J8K", "M03", "K4L"]
         APPLE_TACS = ["35294111", "35849210", "35981208", "35401923", "35182944"]
-        estados_distribucion = ["disponible"] * 14 + ["en_transito"] * 5 + ["vendido"] * 3
+        estados_distribucion = ["vendido"] * 11 + ["disponible"] * 6 + ["en_transito"] * 4 + ["devuelto"] * 1
 
         for t in tenants_db:
             # 6.1 Catálogo Empresa
-            for v in todas_variantes:
+            # Diversificar márgenes para que las recomendaciones sean más realistas
+            for idx, v in enumerate(todas_variantes):
                 cat_t = db.execute(
                     select(CatalogoTenant).where(CatalogoTenant.idtenant == t.idtenant, CatalogoTenant.idvariante == v.idvariante)
                 ).scalars().first()
                 if not cat_t:
-                    margen = Decimal("1.25")
+                    margen = Decimal("1.20") if idx % 2 == 0 else Decimal("1.28")
                     db.add(CatalogoTenant(
                         idtenant=t.idtenant,
                         idvariante=v.idvariante,
@@ -724,10 +725,14 @@ def run_master_seed():
                     custodio_u = transportista.idactor
                     ubicacion_u = almacen_scz.idubicacion
                     fecha_v = None
-                else:
+                elif estado_u == "devuelto":
                     custodio_u = tienda_retail.idactor
                     ubicacion_u = tienda_scz.idubicacion
-                    fecha_v = get_now_bolivia() - timedelta(days=random.randint(1, 8))
+                    fecha_v = get_now_bolivia() - timedelta(days=random.randint(30, 60))
+                else:  # vendido
+                    custodio_u = tienda_retail.idactor
+                    ubicacion_u = tienda_scz.idubicacion
+                    fecha_v = get_now_bolivia() - timedelta(days=random.randint(1, 90))
 
                 fecha_ingreso = get_now_bolivia() - timedelta(days=random.randint(10, 25))
                 unit = UnidadProducto(
@@ -787,6 +792,13 @@ def run_master_seed():
 
         db.commit()
         print("  ✓ Unidades serializadas, códigos QR y telemetría de transporte creados con éxito.")
+
+        # -------------------------------------------------------------
+        # 6.7 RECOMENDACIONES DE PRICING E INVENTARIO CON IA (CU-008 + IA)
+        # -------------------------------------------------------------
+        print("\n[6.7/10] Sincronizando escenarios y datos de prueba para Recomendaciones IA...")
+        from populate_recommendation_data import populate_ai_recommendations
+        populate_ai_recommendations(db, [t.idtenant for t in tenants_db])
 
         # -------------------------------------------------------------
         # 7. SINCRONIZACIÓN DE SECUENCIAS EN POSTGRESQL

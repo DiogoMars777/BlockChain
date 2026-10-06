@@ -4,7 +4,9 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { Router } from '@angular/router';
 import { TenantService } from '../services/tenant.service';
 import { AuthService } from '../services/auth.service';
+import { BackupService } from '../services/backup.service';
 import { Tenant } from '../../models/auth.models';
+import { TenantBackup, BackupSchedule } from '../../models/backup.model';
 
 @Component({
   selector: 'app-tenant-management',
@@ -16,6 +18,7 @@ import { Tenant } from '../../models/auth.models';
 export class TenantManagementController implements OnInit {
   private tenantService = inject(TenantService);
   private authService = inject(AuthService);
+  private backupService = inject(BackupService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
 
@@ -29,6 +32,22 @@ export class TenantManagementController implements OnInit {
   selectedTenantId = signal<number | null>(null);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
+
+  // Estados para Copias de Seguridad (Backups)
+  showBackupModal = signal<boolean>(false);
+  activeBackupTab = signal<'history' | 'schedule'>('history');
+  selectedBackupTenant = signal<Tenant | null>(null);
+  backups = this.backupService.backupsSignal;
+  isLoadingBackups = this.backupService.isLoadingSignal;
+  isGeneratingBackup = this.backupService.isGeneratingSignal;
+  backupFeedback = signal<string | null>(null);
+
+  // Estados para Programación Automática de Copias
+  schedules = signal<BackupSchedule[]>([]);
+  isLoadingSchedules = signal<boolean>(false);
+  isSavingSchedule = signal<boolean>(false);
+  scheduleDateTime = signal<string>('');
+  scheduleFrequency = signal<string>('UNA_VEZ');
 
   tenantForm: FormGroup = this.fb.group({
     nombre: ['', [Validators.required, Validators.maxLength(100)]],
@@ -155,5 +174,64 @@ export class TenantManagementController implements OnInit {
 
   navigateToDashboard(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  // --- MÉTODOS DE COPIAS DE SEGURIDAD (SUPERADMIN) ---
+  openBackupModal(tenant: Tenant): void {
+    this.selectedBackupTenant.set(tenant);
+    this.backupFeedback.set(null);
+    this.showBackupModal.set(true);
+    this.loadBackups(tenant.idtenant);
+  }
+
+  closeBackupModal(): void {
+    this.showBackupModal.set(false);
+    this.selectedBackupTenant.set(null);
+    this.backupFeedback.set(null);
+  }
+
+  loadBackups(idtenant: number): void {
+    this.backupService.getBackups(idtenant).subscribe({
+      error: (err) => {
+        this.backupFeedback.set(err.error?.detail || 'Error al obtener las copias de seguridad.');
+      }
+    });
+  }
+
+  triggerBackup(): void {
+    const tenant = this.selectedBackupTenant();
+    if (!tenant) return;
+
+    this.backupFeedback.set(null);
+    this.backupService.createBackup(tenant.idtenant).subscribe({
+      next: (res) => {
+        this.backupFeedback.set(res.message);
+        this.loadBackups(tenant.idtenant);
+      },
+      error: (err) => {
+        this.backupFeedback.set(err.error?.detail || 'Error al generar la copia de seguridad.');
+      }
+    });
+  }
+
+  downloadBackup(backup: TenantBackup): void {
+    if (backup.estado !== 'COMPLETADO') return;
+
+    this.backupService.getDownloadUrl(backup.idtenant, backup.idbackup).subscribe({
+      next: (res) => {
+        this.backupService.downloadFileDirectly(res.download_url, res.nombre_archivo);
+      },
+      error: (err) => {
+        this.backupFeedback.set(err.error?.detail || 'Error al generar el enlace de descarga.');
+      }
+    });
+  }
+
+  formatBytes(bytes: number): string {
+    if (!bytes || bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 }

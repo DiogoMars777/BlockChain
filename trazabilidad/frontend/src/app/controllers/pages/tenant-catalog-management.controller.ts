@@ -5,7 +5,9 @@ import { Router } from '@angular/router';
 import { TenantCatalogService } from '../services/tenant-catalog.service';
 import { ProductService } from '../services/product.service';
 import { TenantService } from '../services/tenant.service';
+import { RecommendationService } from '../services/recommendation.service';
 import { TenantCatalogItem, TenantCatalogCreate, TenantCatalogUpdate, Product } from '../../models/auth.models';
+import { PricingRecommendationItem, RecommendationMetric } from '../../models/recommendation.model';
 
 @Component({
   selector: 'app-tenant-catalog-management',
@@ -19,10 +21,35 @@ export class TenantCatalogManagementController implements OnInit {
   private productService = inject(ProductService);
   private tenantService = inject(TenantService);
   private router = inject(Router);
+  private recommendationService = inject(RecommendationService);
 
   catalogItems = this.tenantCatalogService.catalogSignal;
   totalItems = this.tenantCatalogService.totalCatalogSignal;
   isLoading = this.tenantCatalogService.isLoadingSignal;
+
+  recommendations = this.recommendationService.recommendationsSignal;
+  isAnalyzing = this.recommendationService.isLoadingSignal;
+  recommendationError = this.recommendationService.errorMessageSignal;
+  isRecommendationsOpen = signal<boolean>(false);
+  priorityFilter = signal<string>('todas');
+
+  readonly priorityOptions = ['todas', 'critica', 'alta', 'media', 'baja'];
+  readonly recommendationTypes: Record<string, string> = {
+    MARGEN_NEGATIVO: 'Margen negativo',
+    SUBIR_PRECIO: 'Subir precio',
+    BAJAR_PRECIO: 'Bajar precio',
+    SOBRESTOCK: 'Sobrestock',
+    REPOSICION_URGENTE: 'Reposición urgente',
+    RIESGO_DEVOLUCION: 'Riesgo de devolución',
+    BRECHA_DEMANDA: 'Brecha de demanda'
+  };
+
+  readonly priorityLabels: Record<string, string> = {
+    critica: 'Crítica',
+    alta: 'Alta',
+    media: 'Media',
+    baja: 'Baja'
+  };
 
   products = this.productService.productsSignal;
   tenants = this.tenantService.tenantsSignal;
@@ -179,5 +206,91 @@ export class TenantCatalogManagementController implements OnInit {
 
   navigateToDashboard() {
     this.router.navigate(['/dashboard']);
+  }
+
+  // RECOMENDACIONES DE IA
+  openRecommendations() {
+    this.priorityFilter.set('todas');
+    this.isRecommendationsOpen.set(true);
+    this.generateRecommendations();
+  }
+
+  closeRecommendations() {
+    this.isRecommendationsOpen.set(false);
+  }
+
+  generateRecommendations() {
+    this.recommendationService.generateRecommendations(12, this.selectedTenantFilter()).subscribe({
+      error: () => {}
+    });
+  }
+
+  onPriorityFilterChange(priority: string) {
+    this.priorityFilter.set(priority);
+  }
+
+  filteredRecommendations(): PricingRecommendationItem[] {
+    const items = this.recommendations()?.recomendaciones || [];
+    const filter = this.priorityFilter();
+    if (filter === 'todas') {
+      return items;
+    }
+    return items.filter((item) => item.prioridad === filter);
+  }
+
+  countByPriority(priority: string): number {
+    const items = this.recommendations()?.recomendaciones || [];
+    if (priority === 'todas') {
+      return items.length;
+    }
+    return items.filter((item) => item.prioridad === priority).length;
+  }
+
+  typeLabel(tipo: string): string {
+    return this.recommendationTypes[tipo] || tipo;
+  }
+
+  priorityLabel(prioridad: string): string {
+    return this.priorityLabels[prioridad] || prioridad;
+  }
+
+  metricEntries(metricas: RecommendationMetric): { key: string; value: string }[] {
+    const metricKeys = Object.keys(metricas) as (keyof RecommendationMetric)[];
+    const labels: Record<string, string> = {
+      vendidas: 'Vendidas',
+      disponibles: 'Disponibles',
+      devueltas: 'Devueltas',
+      pedidas: 'Pedidas',
+      recibidas: 'Recibidas',
+      precioventa: 'Precio venta',
+      costopromedio: 'Costo prom.',
+      margen_pct: 'Margen %',
+      margen_abs_usd: 'Margen $',
+      rotacion_mensual: 'Rotación mensual',
+      devolucion_pct: 'Devolución %',
+      brecha_demanda: 'Brecha demanda',
+      precio_sugerido_usd: 'Precio sugerido'
+    };
+
+    const isMoneda = new Set([
+      'precioventa',
+      'costopromedio',
+      'margen_abs_usd',
+      'precio_sugerido_usd'
+    ]);
+
+    return metricKeys
+      .filter((key) => metricas[key] !== null && metricas[key] !== undefined)
+      .map((key) => {
+        const raw = metricas[key] as number;
+        const value = isMoneda.has(key)
+          ? `$${Number(raw).toFixed(2)}`
+          : key === 'margen_pct' || key === 'devolucion_pct'
+            ? `${Number(raw).toFixed(1)}%`
+            : key === 'rotacion_mensual'
+              ? Number(raw).toFixed(2)
+              : String(raw);
+        return { key, value: `${labels[key]}: ${value}` };
+      });
   }
 }

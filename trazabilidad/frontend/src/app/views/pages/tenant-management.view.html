@@ -17,26 +17,22 @@
   <main class="tenant-content">
     <!-- Mensajes -->
     @if (successMessage()) {
-      <div class="alert alert-success">
-        ✓ {{ successMessage() }}
-      </div>
+    <div class="alert alert-success">
+      ✓ {{ successMessage() }}
+    </div>
     }
     @if (errorMessage() && !showModal()) {
-      <div class="alert alert-danger">
-        ⚠ {{ errorMessage() }}
-      </div>
+    <div class="alert alert-danger">
+      ⚠ {{ errorMessage() }}
+    </div>
     }
 
     <!-- Barra de búsqueda y filtros -->
     <div class="filter-bar">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input 
-          type="text" 
-          placeholder="Buscar por Nombre, Razón Social o NIT..."
-          [ngModel]="searchQuery()" 
-          (ngModelChange)="searchQuery.set($event); onSearchChange()" 
-        />
+        <input type="text" placeholder="Buscar por Nombre, Razón Social o NIT..." [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event); onSearchChange()" />
       </div>
       <div class="total-count">
         Total empresas: <strong>{{ totalTenants() }}</strong>
@@ -45,134 +41,282 @@
 
     <!-- Tabla de empresas -->
     @if (isLoading()) {
-      <div class="loading-state">
-        <div class="spinner"></div>
-        Cargando listado de empresas...
-      </div>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      Cargando listado de empresas...
+    </div>
     } @else {
-      <div class="table-card">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre Comercial</th>
-              <th>Razón Social</th>
-              <th>NIT</th>
-              <th>Correo Contacto</th>
-              <th>Teléfono</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (tenant of tenants(); track tenant.idtenant) {
-              <tr>
-                <td class="code-id">#{{ tenant.idtenant }}</td>
-                <td class="font-bold">{{ tenant.nombre }}</td>
-                <td>{{ tenant.razonsocial || 'N/A' }}</td>
-                <td><span class="badge-nit">{{ tenant.nit }}</span></td>
-                <td>{{ tenant.email || 'N/A' }}</td>
-                <td>{{ tenant.telefono || 'N/A' }}</td>
-                <td>
-                  <span class="status-badge" [class.active]="tenant.activo" [class.inactive]="!tenant.activo">
-                    {{ tenant.activo ? 'Activo' : 'Inactivo' }}
-                  </span>
-                </td>
-                <td class="actions-cell">
-                  <button class="btn-sm btn-info" (click)="switchToTenant(tenant)" style="margin-right: 0.35rem; padding: 0.25rem 0.6rem; border-radius: 4px; background: #0284c7; color: white; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 600;" title="Ingresar al contexto de esta empresa">
-                    🚪 Gestionar
-                  </button>
-                  <button class="btn-icon edit" (click)="openEditModal(tenant)" title="Editar">
-                    ✏️
-                  </button>
-                  <button class="btn-icon delete" (click)="onDelete(tenant)" title="Desactivar">
-                    🗑️
-                  </button>
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="8" class="empty-state">
-                  No se encontraron empresas registradas.
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre Comercial</th>
+            <th>Razón Social</th>
+            <th>NIT</th>
+            <th>Correo Contacto</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tenant of tenants(); track tenant.idtenant) {
+          <tr>
+            <td class="code-id">#{{ tenant.idtenant }}</td>
+            <td class="font-bold">{{ tenant.nombre }}</td>
+            <td>{{ tenant.razonsocial || 'N/A' }}</td>
+            <td><span class="badge-nit">{{ tenant.nit }}</span></td>
+            <td>{{ tenant.email || 'N/A' }}</td>
+            <td>{{ tenant.telefono || 'N/A' }}</td>
+            <td>
+              <span class="status-badge" [class.active]="tenant.activo" [class.inactive]="!tenant.activo">
+                {{ tenant.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <button class="btn-sm btn-info" (click)="switchToTenant(tenant)"
+                style="margin-right: 0.35rem; padding: 0.25rem 0.6rem; border-radius: 4px; background: #0284c7; color: white; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 600;"
+                title="Ingresar al contexto de esta empresa">
+                🚪 Gestionar
+              </button>
+              <button class="btn-sm btn-backup" (click)="openBackupModal(tenant)"
+                style="margin-right: 0.35rem; padding: 0.25rem 0.6rem; border-radius: 4px; background: #059669; color: white; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 600;"
+                title="Copias de Seguridad en la Nube">
+                ☁️ Backup
+              </button>
+              <button class="btn-icon edit" (click)="openEditModal(tenant)" title="Editar">
+                ✏️
+              </button>
+              <button class="btn-icon delete" (click)="onDelete(tenant)" title="Desactivar">
+                🗑️
+              </button>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="8" class="empty-state">
+              No se encontraron empresas registradas.
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
     }
   </main>
 
   <!-- Formulario modal -->
   @if (showModal()) {
-    <div class="modal-backdrop" (click)="closeModal()">
-      <div class="modal-card" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h3>{{ isEditing() ? 'Editar Empresa' : 'Registrar Nueva Empresa' }}</h3>
-          <button class="btn-close" (click)="closeModal()">✕</button>
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ isEditing() ? 'Editar Empresa' : 'Registrar Nueva Empresa' }}</h3>
+        <button class="btn-close" (click)="closeModal()">✕</button>
+      </div>
+
+      @if (errorMessage()) {
+      <div class="alert alert-danger modal-alert">
+        {{ errorMessage() }}
+      </div>
+      }
+
+      <form [formGroup]="tenantForm" (ngSubmit)="onSubmit()" class="modal-body">
+        <div class="form-group">
+          <label>Nombre Comercial *</label>
+          <input type="text" formControlName="nombre" placeholder="ej. Importadora Bolivia S.A." />
+          @if (tenantForm.get('nombre')?.touched && tenantForm.get('nombre')?.invalid) {
+          <span class="field-error">El nombre comercial es obligatorio.</span>
+          }
         </div>
 
-        @if (errorMessage()) {
-          <div class="alert alert-danger modal-alert">
-            {{ errorMessage() }}
+        <div class="form-group">
+          <label>Razón Social *</label>
+          <input type="text" formControlName="razonsocial" placeholder="ej. Importadora Bolivia Sociedad Anónima" />
+          @if (tenantForm.get('razonsocial')?.touched && tenantForm.get('razonsocial')?.invalid) {
+          <span class="field-error">La razón social es obligatoria.</span>
+          }
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>NIT *</label>
+            <input type="text" formControlName="nit" placeholder="ej. 123456789" />
+            @if (tenantForm.get('nit')?.touched && tenantForm.get('nit')?.invalid) {
+            <span class="field-error">El NIT es obligatorio.</span>
+            }
           </div>
+
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="text" formControlName="telefono" placeholder="ej. 70000000" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Correo Electrónico *</label>
+          <input type="email" formControlName="email" placeholder="ej. contacto@empresa.com" />
+          @if (tenantForm.get('email')?.touched && tenantForm.get('email')?.invalid) {
+          <span class="field-error">Ingrese un correo electrónico válido.</span>
+          }
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="activo" />
+            <span>Empresa Activa</span>
+          </label>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button type="submit" class="btn-primary">
+            {{ isEditing() ? 'Guardar Cambios' : 'Registrar Empresa' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  }
+
+  <!-- Modal de Copias de Seguridad por Tenant (SuperAdministrador) -->
+  @if (showBackupModal()) {
+  <div class="modal-backdrop" (click)="closeBackupModal()">
+    <div class="modal-card backup-modal-card" (click)="$event.stopPropagation()" style="max-width: 850px; width: 95%;">
+      <div class="modal-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem;">
+        <div>
+          <h3 style="margin: 0; color: #0f172a; font-size: 1.25rem;">
+            ☁️ Copias de Seguridad en la Nube
+          </h3>
+          <p style="margin: 0.25rem 0 0 0; font-size: 0.85rem; color: #64748b;">
+            Empresa: <strong>{{ selectedBackupTenant()?.nombre }}</strong> | NIT: {{ selectedBackupTenant()?.nit }}
+          </p>
+        </div>
+        <button type="button" class="close-btn" (click)="closeBackupModal()">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.25rem 0;">
+        <!-- Banner de información -->
+        <div
+          style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+          <div>
+            <p style="margin: 0; font-weight: 600; color: #166534; font-size: 0.9rem;">
+              Aislamiento y Protección por Inquilino (SaaS)
+            </p>
+            <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: #15803d;">
+              Extrae el 100% de los datos relacionales de esta empresa, los comprime en formato gzip (.json.gz) y los
+              almacena de forma cifrada en Supabase Storage.
+            </p>
+          </div>
+          <button type="button" class="btn-primary" (click)="triggerBackup()" [disabled]="isGeneratingBackup()"
+            style="background: #059669; border: none; padding: 0.5rem 1rem; font-weight: 600; font-size: 0.85rem; white-space: nowrap; border-radius: 6px; cursor: pointer; color: white;">
+            @if (isGeneratingBackup()) {
+            ⏳ Generando respaldo...
+            } @else {
+            ⚡ Generar Nueva Copia
+            }
+          </button>
+        </div>
+
+        <!-- Mensaje de feedback -->
+        @if (backupFeedback()) {
+        <div
+          style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 0.65rem 0.85rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.85rem;">
+          ℹ️ {{ backupFeedback() }}
+        </div>
         }
 
-        <form [formGroup]="tenantForm" (ngSubmit)="onSubmit()" class="modal-body">
-          <div class="form-group">
-            <label>Nombre Comercial *</label>
-            <input type="text" formControlName="nombre" placeholder="ej. Importadora Bolivia S.A." />
-            @if (tenantForm.get('nombre')?.touched && tenantForm.get('nombre')?.invalid) {
-              <span class="field-error">El nombre comercial es obligatorio.</span>
-            }
-          </div>
+        <!-- Tabla de historial de backups -->
+        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: #334155;">
+          Historial de Respaldos de esta Empresa
+        </h4>
 
-          <div class="form-group">
-            <label>Razón Social *</label>
-            <input type="text" formControlName="razonsocial" placeholder="ej. Importadora Bolivia Sociedad Anónima" />
-            @if (tenantForm.get('razonsocial')?.touched && tenantForm.get('razonsocial')?.invalid) {
-              <span class="field-error">La razón social es obligatoria.</span>
-            }
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>NIT *</label>
-              <input type="text" formControlName="nit" placeholder="ej. 123456789" />
-              @if (tenantForm.get('nit')?.touched && tenantForm.get('nit')?.invalid) {
-                <span class="field-error">El NIT es obligatorio.</span>
+        @if (isLoadingBackups()) {
+        <div style="padding: 1.5rem; text-align: center; color: #64748b; font-size: 0.9rem;">
+          Cargando historial de copias...
+        </div>
+        } @else {
+        <div style="max-height: 280px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px;">
+          <table class="data-table" style="margin: 0; width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+            <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 1;">
+              <tr>
+                <th style="padding: 0.5rem 0.75rem; text-align: left;">ID / Archivo</th>
+                <th style="padding: 0.5rem 0.75rem; text-align: left;">Fecha Generación</th>
+                <th style="padding: 0.5rem 0.75rem; text-align: center;">Tamaño</th>
+                <th style="padding: 0.5rem 0.75rem; text-align: center;">Registros</th>
+                <th style="padding: 0.5rem 0.75rem; text-align: center;">Destino</th>
+                <th style="padding: 0.5rem 0.75rem; text-align: center;">Estado</th>
+                <th style="padding: 0.5rem 0.75rem; text-align: center;">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (b of backups(); track b.idbackup) {
+              <tr style="border-top: 1px solid #f1f5f9;">
+                <td style="padding: 0.5rem 0.75rem;">
+                  <span style="font-weight: 600; color: #0284c7;">#{{ b.idbackup }}</span>
+                  <div style="font-size: 0.75rem; color: #64748b; word-break: break-all;">
+                    {{ b.nombre_archivo }}
+                  </div>
+                </td>
+                <td style="padding: 0.5rem 0.75rem; white-space: nowrap;">
+                  {{ b.fechacreacion | date:'dd/MM/yyyy HH:mm:ss' }}
+                </td>
+                <td style="padding: 0.5rem 0.75rem; text-align: center; font-family: monospace;">
+                  {{ formatBytes(b.peso_bytes) }}
+                </td>
+                <td style="padding: 0.5rem 0.75rem; text-align: center; font-weight: 600;">
+                  {{ b.total_registros }}
+                </td>
+                <td style="padding: 0.5rem 0.75rem; text-align: center;">
+                  <span
+                    style="display: inline-block; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; background: #e0e7ff; color: #3730a3;">
+                    {{ b.cloud_storage === 'supabase' ? '☁️ Supabase' : '💾 Local' }}
+                  </span>
+                </td>
+                <td style="padding: 0.5rem 0.75rem; text-align: center;">
+                  <span
+                    style="display: inline-block; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600;"
+                    [style.background]="b.estado === 'COMPLETADO' ? '#dcfce7' : (b.estado === 'FALLIDO' ? '#fee2e2' : '#fef3c7')"
+                    [style.color]="b.estado === 'COMPLETADO' ? '#166534' : (b.estado === 'FALLIDO' ? '#991b1b' : '#92400e')">
+                    {{ b.estado }}
+                  </span>
+                </td>
+                <td style="padding: 0.5rem 0.75rem; text-align: center;">
+                  @if (b.estado === 'COMPLETADO') {
+                  <button type="button" (click)="downloadBackup(b)"
+                    style="padding: 0.25rem 0.55rem; background: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600;"
+                    title="Descargar copia (.json.gz)">
+                    ⬇️ Descargar
+                  </button>
+                  } @else if (b.estado === 'FALLIDO') {
+                  <span style="font-size: 0.75rem; color: #ef4444;" [title]="b.mensaje_error || 'Error desconocido'">⚠️
+                    Error</span>
+                  } @else {
+                  <span style="font-size: 0.75rem; color: #f59e0b;">⏳ Procesando...</span>
+                  }
+                </td>
+              </tr>
+              } @empty {
+              <tr>
+                <td colspan="7" style="padding: 1.5rem; text-align: center; color: #94a3b8;">
+                  No existen copias de seguridad generadas para esta empresa todavía.
+                </td>
+              </tr>
               }
-            </div>
+            </tbody>
+          </table>
+        </div>
+        }
+      </div>
 
-            <div class="form-group">
-              <label>Teléfono</label>
-              <input type="text" formControlName="telefono" placeholder="ej. 70000000" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Correo Electrónico *</label>
-            <input type="email" formControlName="email" placeholder="ej. contacto@empresa.com" />
-            @if (tenantForm.get('email')?.touched && tenantForm.get('email')?.invalid) {
-              <span class="field-error">Ingrese un correo electrónico válido.</span>
-            }
-          </div>
-
-          <div class="form-group checkbox-group">
-            <label class="checkbox-label">
-              <input type="checkbox" formControlName="activo" />
-              <span>Empresa Activa</span>
-            </label>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn-secondary" (click)="closeModal()">Cancelar</button>
-            <button type="submit" class="btn-primary">
-              {{ isEditing() ? 'Guardar Cambios' : 'Registrar Empresa' }}
-            </button>
-          </div>
-        </form>
+      <div class="modal-footer"
+        style="border-top: 1px solid #e2e8f0; padding-top: 0.75rem; display: flex; justify-content: flex-end;">
+        <button type="button" class="btn-secondary" (click)="closeBackupModal()"
+          style="padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer;">
+          Cerrar
+        </button>
       </div>
     </div>
+  </div>
   }
 </div>

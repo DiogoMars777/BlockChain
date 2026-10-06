@@ -1,4 +1,6 @@
 from app.models.cu001_tenants.tenant import Tenant
+from app.models.cu001_tenants.tenant_backup import TenantBackup
+from app.models.cu001_tenants.tenant_backup_schedule import TenantBackupSchedule
 from app.models.cu002_usuarios.user import User
 from app.models.cu002_usuarios.usuario_tenant import UsuarioTenant
 from app.models.cu004_autenticacion.password_reset_token import PasswordResetToken
@@ -31,6 +33,8 @@ from app.models.cu021_eventos_transporte.transport_event import (
 
 __all__ = [
     "Tenant",
+    "TenantBackup",
+    "TenantBackupSchedule",
     "User",
     "UsuarioTenant",
     "PasswordResetToken",

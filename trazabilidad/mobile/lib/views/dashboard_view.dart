@@ -13,6 +13,8 @@ import 'shipment_list_view.dart';
 import 'purchase_list_view.dart';
 import '../controllers/ai_assistant_controller.dart';
 import 'widgets/voice_assistant_sheet.dart';
+import '../controllers/recommendation_controller.dart';
+import 'widgets/recommendations_sheet.dart';
 
 class DashboardView extends StatefulWidget {
   final AuthController authController;
@@ -30,11 +32,13 @@ class _DashboardViewState extends State<DashboardView> {
   late final TransportController _transportController;
   late final PurchaseController _purchaseController;
   late final AiAssistantController _aiController;
+  late final RecommendationController _recommendationController;
 
   @override
   void initState() {
     super.initState();
     _aiController = AiAssistantController();
+    _recommendationController = RecommendationController();
     _notificationController = NotificationController(authController: widget.authController);
     _bitacoraController = BitacoraController();
     _qrController = QrController();
@@ -49,6 +53,7 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   void dispose() {
     _aiController.dispose();
+    _recommendationController.dispose();
     super.dispose();
   }
 
@@ -72,6 +77,11 @@ class _DashboardViewState extends State<DashboardView> {
             icon: const Icon(Icons.mic, color: Color(0xFF38BDF8)),
             tooltip: 'Informes por Voz (IA)',
             onPressed: () => VoiceAssistantSheet.show(context, _aiController),
+          ),
+          IconButton(
+            icon: const Icon(Icons.auto_awesome, color: Color(0xFF38BDF8)),
+            tooltip: 'Recomendaciones de Pricing (IA)',
+            onPressed: () => RecommendationsSheet.show(context, _recommendationController),
           ),
           IconButton(
             icon: const Icon(Icons.receipt_long_outlined, color: Color(0xFF38BDF8)),
@@ -287,6 +297,94 @@ class _DashboardViewState extends State<DashboardView> {
                         Icons.auto_awesome,
                         size: 22,
                         color: Color(0xFF38BDF8),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Tarjeta Destacada: Recomendaciones de Pricing e Inventario (IA)
+            Card(
+              color: const Color(0xFF1E293B),
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF7C3AED), width: 1.8),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () => RecommendationsSheet.show(context, _recommendationController),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xFF7C3AED).withValues(alpha: 0.18),
+                        const Color(0xFF1E293B),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(18.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF7C3AED).withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: const Color(0xFFA78BFA).withValues(alpha: 0.4)),
+                        ),
+                        child: const Icon(
+                          Icons.trending_up_rounded,
+                          size: 32,
+                          color: Color(0xFFA78BFA),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text(
+                                  'Recomendaciones de Pricing',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF7C3AED),
+                                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                                  ),
+                                  child: const Text('IA', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Análisis de márgenes, rotación, sobrestock y devoluciones del catálogo',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.auto_awesome,
+                        size: 22,
+                        color: Color(0xFFA78BFA),
                       ),
                     ],
                   ),

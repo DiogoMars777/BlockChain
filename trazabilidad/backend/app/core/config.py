@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     SMTP_STARTTLS: bool = True
 
     GEMINI_API_KEY: Optional[str] = None
+    SUPABASE_URL: Optional[str] = None
+    SUPABASE_SERVICE_ROLE_KEY: Optional[str] = None
+    SUPABASE_BACKUP_BUCKET: str = "tenant-backups"
+    LOCAL_BACKUP_DIR: str = "backups"
 
     model_config = SettingsConfigDict(
         env_file=".env",

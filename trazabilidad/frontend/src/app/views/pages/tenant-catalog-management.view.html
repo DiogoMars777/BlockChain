@@ -5,6 +5,9 @@
       <span class="brand-name">Catálogo de Productos por Empresa (CU-008)</span>
     </div>
     <div class="nav-actions">
+      <button class="btn-ai" (click)="openRecommendations()">
+        🤖 Recomendaciones IA
+      </button>
       <button class="btn-secondary" (click)="navigateToDashboard()">
         ← Volver al Dashboard
       </button>
@@ -228,6 +231,98 @@
         <div class="modal-footer">
           <button class="btn-secondary" (click)="closeEditModal()">Cancelar</button>
           <button class="btn-primary" (click)="saveEditItem()">Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Panel de recomendaciones de IA -->
+  @if (isRecommendationsOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card modal-card-wide">
+        <div class="modal-header">
+          <h3>🤖 Recomendaciones de Pricing e Inventario con IA</h3>
+          <button class="btn-close" (click)="closeRecommendations()">×</button>
+        </div>
+
+        <div class="ai-toolbar">
+          <button class="btn-primary" [disabled]="isAnalyzing()" (click)="generateRecommendations()">
+            {{ isAnalyzing() ? 'Analizando...' : '🔄 Volver a analizar' }}
+          </button>
+
+          @if (recommendations()) {
+            <span class="ai-timestamp">
+              Analizado el {{ recommendations()?.generated_at }} · {{ recommendations()?.total_recomendaciones }} hallazgos
+            </span>
+          }
+
+          <div class="ai-filters">
+            @for (p of priorityOptions; track p) {
+              <button
+                class="chip"
+                [class.chip-active]="priorityFilter() === p"
+                (click)="onPriorityFilterChange(p)"
+              >
+                {{ p === 'todas' ? 'Todas' : priorityLabel(p) }} ({{ countByPriority(p) }})
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (recommendationError()) {
+          <div class="alert-error">⚠️ {{ recommendationError() }}</div>
+        }
+
+        <div class="modal-body">
+          @if (isAnalyzing() && !recommendations()) {
+            <div class="loading-state">Analizando ventas, inventario y órdenes de compra del catálogo...</div>
+          } @else if (!filteredRecommendations().length) {
+            <div class="empty-state">
+              No hay recomendaciones para el filtro seleccionado.
+            </div>
+          } @else {
+            <div class="rec-list">
+              @for (rec of filteredRecommendations(); track rec.idvariante + rec.tipo) {
+                <article class="rec-card prio-{{ rec.prioridad }}">
+                  <div class="rec-head">
+                    <div class="rec-ident">
+                      <span class="rec-title">{{ rec.titulo }}</span>
+                      <span class="rec-sub">
+                        {{ rec.producto || 'Producto' }}
+                        @if (rec.capacidad || rec.color) {
+                          · {{ rec.capacidad }} {{ rec.color }}
+                        }
+                        @if (rec.sku) {
+                          · SKU {{ rec.sku }}
+                        }
+                      </span>
+                    </div>
+                    <div class="rec-tags">
+                      <span class="tag tag-{{ rec.prioridad }}">{{ priorityLabel(rec.prioridad) }}</span>
+                      <span class="tag tag-type">{{ typeLabel(rec.tipo) }}</span>
+                    </div>
+                  </div>
+
+                  <p class="rec-why">{{ rec.justificacion }}</p>
+                  <p class="rec-action">👉 {{ rec.accion_sugerida }}</p>
+
+                  <div class="rec-metrics">
+                    @for (m of metricEntries(rec.metricas); track m.key) {
+                      <span class="metric">{{ m.value }}</span>
+                    }
+                  </div>
+
+                  @if (rec.evidencia.length) {
+                    <ul class="rec-evidence">
+                      @for (ev of rec.evidencia; track ev) {
+                        <li>{{ ev }}</li>
+                      }
+                    </ul>
+                  }
+                </article>
+              }
+            </div>
+          }
         </div>
       </div>
     </div>
