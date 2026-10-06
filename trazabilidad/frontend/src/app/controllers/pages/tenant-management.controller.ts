@@ -22,9 +22,11 @@ export class TenantManagementController implements OnInit {
   private router = inject(Router);
   private fb = inject(FormBuilder);
 
+  currentUser = this.authService.currentUser;
   tenants = this.tenantService.tenantsSignal;
   totalTenants = this.tenantService.totalTenantsSignal;
   isLoading = this.tenantService.isLoadingSignal;
+  isSwitching = signal<boolean>(false);
 
   searchQuery = signal<string>('');
   showModal = signal<boolean>(false);
@@ -160,14 +162,24 @@ export class TenantManagementController implements OnInit {
   }
 
   switchToTenant(tenant: Tenant): void {
+    if (this.currentUser()?.tenant?.idtenant === tenant.idtenant) {
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+
+    this.isSwitching.set(true);
+    this.successMessage.set(`Cambiando al entorno de '${tenant.nombre}'...`);
+    this.errorMessage.set(null);
+
     this.authService.switchTenant(tenant.idtenant).subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']).then(() => {
-          window.location.reload();
-        });
+        this.isSwitching.set(false);
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
+        this.isSwitching.set(false);
         this.errorMessage.set(err.error?.detail || 'Error al cambiar a esta empresa.');
+        this.successMessage.set(null);
       }
     });
   }

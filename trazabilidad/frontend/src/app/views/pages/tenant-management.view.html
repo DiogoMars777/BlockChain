@@ -75,11 +75,18 @@
               </span>
             </td>
             <td class="actions-cell">
-              <button class="btn-sm btn-info" (click)="switchToTenant(tenant)"
+              @if (currentUser()?.tenant?.idtenant === tenant.idtenant) {
+              <span
+                style="margin-right: 0.35rem; padding: 0.25rem 0.6rem; border-radius: 4px; background: #064e3b; color: #a7f3d0; font-size: 0.75rem; font-weight: 700; border: 1px solid #059669; display: inline-block;">
+                ✓ Activa
+              </span>
+              } @else {
+              <button class="btn-sm btn-info" (click)="switchToTenant(tenant)" [disabled]="isSwitching()"
                 style="margin-right: 0.35rem; padding: 0.25rem 0.6rem; border-radius: 4px; background: #0284c7; color: white; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 600;"
-                title="Ingresar al contexto de esta empresa">
+                title="Ingresar a operar en esta empresa">
                 🚪 Gestionar
               </button>
+              }
               <button class="btn-sm btn-backup" (click)="openBackupModal(tenant)"
                 style="margin-right: 0.35rem; padding: 0.25rem 0.6rem; border-radius: 4px; background: #059669; color: white; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 600;"
                 title="Copias de Seguridad en la Nube">

@@ -125,9 +125,24 @@
   </header>
 
   <main class="dashboard-content">
-    <div class="status-banner">
-      <span class="status-icon">✓</span>
-      <h2>Sesión iniciada correctamente</h2>
+    <!-- Banner de Empresa Activa (Multi-Tenant Context) -->
+    <div
+      style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1.5px solid #0284c7; border-radius: 12px; padding: 0.9rem 1.25rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.15);">
+      <div>
+        <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: #38bdf8; font-weight: 700;">
+          🏢 Entorno de Empresa Activo
+        </span>
+        <h3 style="margin: 0.15rem 0 0 0; color: #ffffff; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+          {{ currentUser()?.tenant?.nombre || 'Empresa Principal' }}
+          <span style="font-size: 0.8rem; color: #94a3b8; font-weight: 500;">(NIT: {{ currentUser()?.tenant?.nit || 'N/A' }})</span>
+        </h3>
+      </div>
+      @if (canAccess('tenants')) {
+      <a routerLink="/tenants"
+        style="background: #0284c7; color: white; text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem;">
+        <span>⇄</span> Cambiar Empresa
+      </a>
+      }
     </div>
 
     <!-- Tarjeta Destacada de IA en Web -->
