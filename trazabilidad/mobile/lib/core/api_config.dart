@@ -1,34 +1,24 @@
 import 'dart:async';
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:http/http.dart' as http;
 import 'secure_storage.dart';
 
 class ApiConfig {
   /// Presets recomendados según el tipo de conexión:
+  static const String cloudProduction = 'https://blockchain-production-8de2.up.railway.app/api/v1';
   static const String usbLocalhost = 'http://127.0.0.1:8000/api/v1';
   static const String wifiLanHost = 'http://192.168.0.103:8000/api/v1';
   static const String emulatorHost = 'http://10.0.2.2:8000/api/v1';
 
   static const List<String> candidateHosts = [
+    cloudProduction,
     usbLocalhost,
     wifiLanHost,
     emulatorHost,
   ];
 
-  static String _activeBaseUrl = _defaultBaseUrl;
+  static String _activeBaseUrl = cloudProduction;
   static bool _initialized = false;
-
-  static String get _defaultBaseUrl {
-    if (kIsWeb) return usbLocalhost;
-    try {
-      if (Platform.isAndroid) {
-        // En celular físico con USB (adb reverse tcp:8000 tcp:8000), 127.0.0.1 es el canal directo
-        return usbLocalhost;
-      }
-    } catch (_) {}
-    return usbLocalhost;
-  }
 
   static String get baseUrl => _activeBaseUrl;
 
@@ -40,18 +30,24 @@ class ApiConfig {
     try {
       final saved = await SecureStorageService.getServerUrl();
       if (saved != null && saved.trim().isNotEmpty) {
+        final clean = saved.trim().toLowerCase();
+        // Si el usuario tenía configurado un host local antiguo, priorizar la nube
+        if (clean.contains('127.0.0.1') || clean.contains('localhost') || clean.contains('10.0.2.2') || clean.contains('192.168.')) {
+          _activeBaseUrl = cloudProduction;
+          await SecureStorageService.saveServerUrl(cloudProduction);
+          debugPrint('[ApiConfig] Migrando host local previo a la nube: $_activeBaseUrl');
+          return;
+        }
+
         _activeBaseUrl = _normalizeUrl(saved);
         debugPrint('[ApiConfig] Usando URL guardada: $_activeBaseUrl');
         return;
       }
 
-      // Auto-detección rápida inicial
-      final working = await autoDetectWorkingUrl();
-      if (working != null) {
-        _activeBaseUrl = working;
-        await SecureStorageService.saveServerUrl(working);
-        debugPrint('[ApiConfig] Auto-detectado host activo: $_activeBaseUrl');
-      }
+      // Si no hay guardada, fijar nube
+      _activeBaseUrl = cloudProduction;
+      await SecureStorageService.saveServerUrl(cloudProduction);
+      debugPrint('[ApiConfig] URL por defecto establecida en la nube: $_activeBaseUrl');
     } catch (e) {
       debugPrint('[ApiConfig] Error al inicializar: $e');
     }

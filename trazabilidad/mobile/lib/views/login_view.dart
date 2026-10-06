@@ -140,6 +140,19 @@ class _LoginViewState extends State<LoginView> {
                     runSpacing: 8,
                     children: [
                       ActionChip(
+                        avatar: const Icon(Icons.cloud_done, size: 16, color: Colors.lightBlueAccent),
+                        label: const Text('Nube Railway (Producción)'),
+                        backgroundColor: const Color(0xFF0F172A),
+                        labelStyle: const TextStyle(color: Colors.white, fontSize: 12),
+                        onPressed: () {
+                          setModalState(() {
+                            customUrlController.text = ApiConfig.cloudProduction;
+                            testResult = null;
+                            statusNote = 'Conexión a la nube Railway + Supabase. No requiere tener el backend encendido localmente.';
+                          });
+                        },
+                      ),
+                      ActionChip(
                         avatar: const Icon(Icons.usb, size: 16, color: Colors.cyanAccent),
                         label: const Text('USB (127.0.0.1:8000)'),
                         backgroundColor: const Color(0xFF0F172A),
