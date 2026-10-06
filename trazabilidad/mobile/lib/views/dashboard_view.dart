@@ -865,16 +865,6 @@ class _DashboardViewState extends State<DashboardView> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF0284C7),
-        elevation: 6,
-        icon: const Icon(Icons.mic, color: Colors.white),
-        label: const Text(
-          'Comando de Voz IA',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        onPressed: () => VoiceAssistantSheet.show(context, _aiController),
-      ),
     );
   }
 
