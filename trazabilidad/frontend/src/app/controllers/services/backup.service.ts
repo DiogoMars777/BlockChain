@@ -72,4 +72,11 @@ export class BackupService {
   cancelSchedule(idtenant: number, idschedule: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/tenants/${idtenant}/schedule/${idschedule}`);
   }
+
+  runScheduleNow(idtenant: number, idschedule: number): Observable<{ message: string; idbackup: number; total_registros: number }> {
+    return this.http.post<{ message: string; idbackup: number; total_registros: number }>(
+      `${this.apiUrl}/tenants/${idtenant}/schedule/${idschedule}/run-now`,
+      {}
+    );
+  }
 }

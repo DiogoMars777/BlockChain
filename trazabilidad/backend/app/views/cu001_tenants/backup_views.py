@@ -30,6 +30,7 @@ class CreateBackupResponse(BaseModel):
     idbackup: int
     estado: str
     nombre_archivo: str
+    total_registros: Optional[int] = 0
 
 
 class DownloadBackupResponse(BaseModel):

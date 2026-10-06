@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone, timedelta
 from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status, BackgroundTasks
 from fastapi.responses import FileResponse
@@ -36,19 +37,6 @@ router = APIRouter(prefix="/backups", tags=["Copias de Seguridad por Tenant (Sup
 solo_superadmin = require_roles("SuperAdministrador")
 
 
-@router.on_event("startup")
-async def ensure_backup_tables_and_scheduler():
-    """Asegura tablas de backups y arranca el scheduler de copias automáticas."""
-    try:
-        TenantBackup.__table__.create(bind=engine, checkfirst=True)
-        TenantBackupSchedule.__table__.create(bind=engine, checkfirst=True)
-    except Exception as e:
-        print(f"[Backup Table Check Warning]: {e}")
-
-    try:
-        asyncio.create_task(BackupSchedulerService.start_scheduler_loop())
-    except Exception as sched_err:
-        print(f"[Scheduler Startup Warning]: {sched_err}")
 
 
 @router.post("/tenants/{idtenant}", response_model=CreateBackupResponse, status_code=status.HTTP_201_CREATED)
@@ -107,7 +95,8 @@ def crear_copia_seguridad_tenant(
             message=f"Copia de seguridad generada con éxito para la empresa '{tenant.nombre}'. Registros respaldados: {backup_procesado.total_registros}.",
             idbackup=backup_procesado.idbackup,
             estado=backup_procesado.estado,
-            nombre_archivo=backup_procesado.nombre_archivo
+            nombre_archivo=backup_procesado.nombre_archivo,
+            total_registros=backup_procesado.total_registros
         )
     except Exception as proc_err:
         raise HTTPException(
@@ -345,3 +334,76 @@ def cancelar_programacion_backup(
         print(f"[Audit Cancel Schedule Error]: {audit_err}")
 
     return {"message": f"Programación #{idschedule} cancelada exitosamente."}
+
+
+@router.post("/tenants/{idtenant}/schedule/{idschedule}/run-now")
+def ejecutar_programacion_ahora(
+    idtenant: int,
+    idschedule: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(solo_superadmin)
+):
+    """Fuerza la ejecución inmediata de una programación de copia de seguridad."""
+    sched = db.get(TenantBackupSchedule, idschedule)
+    if not sched or sched.idtenant != idtenant:
+        raise HTTPException(status_code=404, detail="Programación no encontrada.")
+
+    try:
+        ahora = get_bolivia_now()
+        backup_rec = TenantBackup(
+            idtenant=sched.idtenant,
+            idusuario_creador=current_user.idusuario,
+            nombre_archivo=f"backup_auto_tenant_{sched.idtenant}_generando.json.gz",
+            cloud_storage="supabase",
+            cloud_path="",
+            estado="PENDIENTE",
+            fechacreacion=ahora
+        )
+        db.add(backup_rec)
+        db.commit()
+        db.refresh(backup_rec)
+
+        backup_procesado = TenantBackupService.procesar_backup(db, backup_rec.idbackup)
+
+        sched.ultimo_ejecutado = ahora
+        if sched.frecuencia == "UNA_VEZ":
+            sched.activo = False
+            sched.estado = "EJECUTADO"
+            sched.proxima_ejecucion = None
+            sched.mensaje_resultado = f"Copia completada (Backup #{backup_procesado.idbackup})"
+        elif sched.frecuencia == "DIARIO":
+            sched.proxima_ejecucion = ahora + timedelta(days=1)
+            sched.mensaje_resultado = f"Copia completada (Backup #{backup_procesado.idbackup})"
+        elif sched.frecuencia == "SEMANAL":
+            sched.proxima_ejecucion = ahora + timedelta(weeks=1)
+            sched.mensaje_resultado = f"Copia completada (Backup #{backup_procesado.idbackup})"
+        elif sched.frecuencia == "MENSUAL":
+            sched.proxima_ejecucion = ahora + timedelta(days=30)
+            sched.mensaje_resultado = f"Copia completada (Backup #{backup_procesado.idbackup})"
+        db.commit()
+
+        # Auditoría
+        try:
+            idut = get_idusuariotenant(db, current_user)
+            db.add(Bitacora(
+                idusuariotenant=idut,
+                accion="BACKUP_AUTOMATICO_MANUAL_RUN",
+                entidad="TenantBackupSchedule",
+                identidad=sched.idschedule,
+                ip=get_client_ip(request),
+                fechahora=ahora
+            ))
+            db.commit()
+        except Exception:
+            pass
+
+        return {
+            "message": f"Copia programada #{idschedule} ejecutada con éxito.",
+            "idbackup": backup_procesado.idbackup,
+            "total_registros": backup_procesado.total_registros
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error al ejecutar: {str(e)}")
+

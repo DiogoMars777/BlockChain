@@ -25,12 +25,36 @@ from app.controllers.cu021_eventos_transporte.transport_event_controller import 
 from app.controllers.cu022_ia.ai_report_controller import router as ai_report_router
 from app.controllers.cu001_tenants.backup_controller import router as backup_router
 
+from contextlib import asynccontextmanager
+import asyncio
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: asegurar tablas de backup y arrancar scheduler
+    try:
+        from app.models.cu001_tenants.tenant_backup import TenantBackup
+        from app.models.cu001_tenants.tenant_backup_schedule import TenantBackupSchedule
+        from app.db.session import engine
+        from app.services.backup_scheduler import BackupSchedulerService
+
+        TenantBackup.__table__.create(bind=engine, checkfirst=True)
+        TenantBackupSchedule.__table__.create(bind=engine, checkfirst=True)
+        asyncio.create_task(BackupSchedulerService.start_scheduler_loop())
+        print("[Startup] Tablas de backup verificadas y Scheduler iniciado exitosamente.")
+    except Exception as e:
+        print(f"[Lifespan Startup Error]: {e}")
+    yield
+    # Shutdown
+
+
 app = FastAPI(
     title=settings.APP_NAME,
     description="API Enterprise Multi-Tenant de Trazabilidad en arquitectura MVC",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 # Configuración de CORS

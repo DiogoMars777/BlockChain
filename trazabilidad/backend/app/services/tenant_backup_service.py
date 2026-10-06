@@ -170,6 +170,7 @@ class TenantBackupService:
 
         eventos_unidades_dicts = []
         alertas_dicts = []
+        condiciones_dicts = []
         if ideventos:
             eventos_unidades = db.execute(
                 select(EventoUnidad).where(EventoUnidad.idevento.in_(ideventos))
@@ -181,10 +182,10 @@ class TenantBackupService:
             ).scalars().all()
             alertas_dicts = [model_to_dict(al) for al in alertas]
 
-        condiciones = db.execute(
-            select(CondicionTransporte).where(CondicionTransporte.idtenant == idtenant)
-        ).scalars().all()
-        condiciones_dicts = [model_to_dict(c) for c in condiciones]
+            condiciones = db.execute(
+                select(CondicionTransporte).where(CondicionTransporte.idevento.in_(ideventos))
+            ).scalars().all()
+            condiciones_dicts = [model_to_dict(c) for c in condiciones]
 
         # 12. Bitácora de auditoría asociada al tenant
         bitacora_dicts = []
@@ -359,9 +360,9 @@ class TenantBackupService:
                 backup_record.cloud_path = cloud_path
             else:
                 # Almacenamiento local seguro (fallback para desarrollo u offline)
-                local_dir = os.path.join(settings.LOCAL_BACKUP_DIR, f"tenant_{backup_record.idtenant}")
+                local_dir = os.path.abspath(os.path.join(settings.LOCAL_BACKUP_DIR, f"tenant_{backup_record.idtenant}"))
                 os.makedirs(local_dir, exist_ok=True)
-                local_file_path = os.path.join(local_dir, nombre_archivo)
+                local_file_path = os.path.abspath(os.path.join(local_dir, nombre_archivo))
                 with open(local_file_path, "wb") as f:
                     f.write(compressed_bytes)
                 backup_record.cloud_storage = "local"
@@ -379,7 +380,12 @@ class TenantBackupService:
 
         except Exception as err:
             db.rollback()
-            backup_record.estado = "FALLIDO"
-            backup_record.mensaje_error = str(err)
-            db.commit()
+            try:
+                rec_err = db.get(TenantBackup, idbackup)
+                if rec_err:
+                    rec_err.estado = "FALLIDO"
+                    rec_err.mensaje_error = str(err)
+                    db.commit()
+            except Exception:
+                pass
             raise err

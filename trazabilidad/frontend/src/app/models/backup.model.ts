@@ -23,6 +23,7 @@ export interface CreateBackupResponse {
   idbackup: number;
   estado: string;
   nombre_archivo: string;
+  total_registros?: number;
 }
 
 export interface DownloadBackupResponse {

@@ -182,11 +182,11 @@
   <!-- Modal de Copias de Seguridad por Tenant (SuperAdministrador) -->
   @if (showBackupModal()) {
   <div class="modal-backdrop" (click)="closeBackupModal()">
-    <div class="modal-card backup-modal-card" (click)="$event.stopPropagation()" style="max-width: 850px; width: 95%;">
+    <div class="modal-card backup-modal-card" (click)="$event.stopPropagation()" style="max-width: 920px; width: 95%;">
       <div class="modal-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem;">
         <div>
           <h3 style="margin: 0; color: #0f172a; font-size: 1.25rem;">
-            ☁️ Copias de Seguridad en la Nube
+            ☁️ Gestión de Copias de Seguridad (Backups)
           </h3>
           <p style="margin: 0.25rem 0 0 0; font-size: 0.85rem; color: #64748b;">
             Empresa: <strong>{{ selectedBackupTenant()?.nombre }}</strong> | NIT: {{ selectedBackupTenant()?.nit }}
@@ -195,7 +195,36 @@
         <button type="button" class="close-btn" (click)="closeBackupModal()">✕</button>
       </div>
 
-      <div class="modal-body" style="padding: 1.25rem 0;">
+      <!-- Pestañas de Navegación: Manual vs Programada -->
+      <div style="display: flex; gap: 0.5rem; border-bottom: 2px solid #e2e8f0; padding: 0.75rem 0 0 0; margin-bottom: 1rem;">
+        <button type="button" (click)="setBackupTab('history')"
+          [style.border-bottom]="activeBackupTab() === 'history' ? '3px solid #0284c7' : '3px solid transparent'"
+          [style.color]="activeBackupTab() === 'history' ? '#0284c7' : '#64748b'"
+          [style.font-weight]="activeBackupTab() === 'history' ? '700' : '500'"
+          style="background: none; border: none; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">
+          📁 Copia Manual e Historial
+        </button>
+        <button type="button" (click)="setBackupTab('schedule')"
+          [style.border-bottom]="activeBackupTab() === 'schedule' ? '3px solid #0284c7' : '3px solid transparent'"
+          [style.color]="activeBackupTab() === 'schedule' ? '#0284c7' : '#64748b'"
+          [style.font-weight]="activeBackupTab() === 'schedule' ? '700' : '500'"
+          style="background: none; border: none; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">
+          ⏰ Programación Automática (Scheduler)
+        </button>
+      </div>
+
+      <!-- Mensaje de feedback general -->
+      @if (backupFeedback()) {
+      <div
+        style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 0.65rem 0.85rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.85rem;">
+        {{ backupFeedback() }}
+      </div>
+      }
+
+      <div class="modal-body" style="padding: 0.5rem 0;">
+
+        <!-- TAB 1: COPIA MANUAL E HISTORIAL -->
+        @if (activeBackupTab() === 'history') {
         <!-- Banner de información -->
         <div
           style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
@@ -205,7 +234,7 @@
             </p>
             <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: #15803d;">
               Extrae el 100% de los datos relacionales de esta empresa, los comprime en formato gzip (.json.gz) y los
-              almacena de forma cifrada en Supabase Storage.
+              almacena de forma cifrada en Supabase Storage (o almacenamiento local seguro).
             </p>
           </div>
           <button type="button" class="btn-primary" (click)="triggerBackup()" [disabled]="isGeneratingBackup()"
@@ -213,20 +242,11 @@
             @if (isGeneratingBackup()) {
             ⏳ Generando respaldo...
             } @else {
-            ⚡ Generar Nueva Copia
+            ⚡ Generar Nueva Copia Inmediata
             }
           </button>
         </div>
 
-        <!-- Mensaje de feedback -->
-        @if (backupFeedback()) {
-        <div
-          style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 0.65rem 0.85rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.85rem;">
-          ℹ️ {{ backupFeedback() }}
-        </div>
-        }
-
-        <!-- Tabla de historial de backups -->
         <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: #334155;">
           Historial de Respaldos de esta Empresa
         </h4>
@@ -306,6 +326,131 @@
             </tbody>
           </table>
         </div>
+        }
+        }
+
+        <!-- TAB 2: PROGRAMACIÓN AUTOMÁTICA (SCHEDULER) -->
+        @if (activeBackupTab() === 'schedule') {
+        <!-- Formulario de programación de copias -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1.25rem;">
+          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: #1e293b;">
+            ⏰ Nueva Programación de Respaldo Automático
+          </h4>
+          <p style="margin: 0 0 0.85rem 0; font-size: 0.8rem; color: #64748b;">
+            El motor en segundo plano de FastAPI ejecutará las copias automáticamente a la fecha y frecuencia indicadas.
+          </p>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
+            <div style="flex: 1; min-width: 200px;">
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.25rem;">
+                Fecha y Hora de Inicio
+              </label>
+              <input type="datetime-local" [(ngModel)]="scheduleDateTime"
+                style="width: 100%; padding: 0.45rem 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; color: #0f172a; background: #ffffff;" />
+            </div>
+            <div style="flex: 1; min-width: 180px;">
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.25rem;">
+                Frecuencia de Repetición
+              </label>
+              <select [(ngModel)]="scheduleFrequency"
+                style="width: 100%; padding: 0.45rem 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; color: #0f172a; background: #ffffff;">
+                <option value="UNA_VEZ">Una sola vez</option>
+                <option value="DIARIO">Diariamente (Cada 24 hrs)</option>
+                <option value="SEMANAL">Semanalmente (Cada 7 días)</option>
+                <option value="MENSUAL">Mensualmente (Cada 30 días)</option>
+              </select>
+            </div>
+            <button type="button" (click)="createSchedule()" [disabled]="isSavingSchedule()"
+              style="padding: 0.48rem 1.1rem; background: #2563eb; color: #ffffff; border: none; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; white-space: nowrap;">
+              @if (isSavingSchedule()) {
+              ⏳ Programando...
+              } @else {
+              📅 Programar Copia
+              }
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabla de tareas programadas -->
+        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: #334155;">
+          Tareas Programadas Activas e Históricas
+        </h4>
+
+        @if (isLoadingSchedules()) {
+        <div style="padding: 1.5rem; text-align: center; color: #64748b; font-size: 0.9rem;">
+          Cargando programaciones...
+        </div>
+        } @else {
+        <div style="max-height: 280px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px;">
+          <table class="data-table" style="margin: 0; width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+            <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 1;">
+              <tr>
+                <th style="padding: 0.5rem 0.75rem; text-align: left;">ID / Frecuencia</th>
+                <th style="padding: 0.5rem 0.75rem; text-align: left;">Fecha Programada</th>
+                <th style="padding: 0.5rem 0.75rem; text-align: left;">Próxima Ejecución</th>
+                <th style="padding: 0.5rem 0.75rem; text-align: left;">Última Ejecución</th>
+                <th style="padding: 0.5rem 0.75rem; text-align: center;">Estado</th>
+                <th style="padding: 0.5rem 0.75rem; text-align: center;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of schedules(); track s.idschedule) {
+              <tr style="border-top: 1px solid #f1f5f9;">
+                <td style="padding: 0.5rem 0.75rem;">
+                  <span style="font-weight: 600; color: #2563eb;">#{{ s.idschedule }}</span>
+                  <div style="font-size: 0.75rem; color: #64748b; font-weight: 600;">
+                    {{ s.frecuencia }}
+                  </div>
+                  @if (s.mensaje_resultado) {
+                  <div style="font-size: 0.7rem; color: #059669; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" [title]="s.mensaje_resultado">
+                    {{ s.mensaje_resultado }}
+                  </div>
+                  }
+                </td>
+                <td style="padding: 0.5rem 0.75rem; white-space: nowrap;">
+                  {{ s.fecha_hora_programada | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+                <td style="padding: 0.5rem 0.75rem; white-space: nowrap;">
+                  {{ s.proxima_ejecucion ? (s.proxima_ejecucion | date:'dd/MM/yyyy HH:mm') : '—' }}
+                </td>
+                <td style="padding: 0.5rem 0.75rem; white-space: nowrap;">
+                  {{ s.ultimo_ejecutado ? (s.ultimo_ejecutado | date:'dd/MM/yyyy HH:mm') : 'Sin ejecuciones' }}
+                </td>
+                <td style="padding: 0.5rem 0.75rem; text-align: center;">
+                  <span
+                    style="display: inline-block; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600;"
+                    [style.background]="s.estado === 'PROGRAMADO' ? '#dbeafe' : (s.estado === 'EJECUTADO' ? '#dcfce7' : (s.estado === 'CANCELADO' ? '#f1f5f9' : '#fee2e2'))"
+                    [style.color]="s.estado === 'PROGRAMADO' ? '#1e40af' : (s.estado === 'EJECUTADO' ? '#166534' : (s.estado === 'CANCELADO' ? '#64748b' : '#991b1b'))">
+                    {{ s.estado }}
+                  </span>
+                </td>
+                <td style="padding: 0.5rem 0.75rem; text-align: center;">
+                  <div style="display: flex; gap: 0.35rem; justify-content: center;">
+                    <button type="button" (click)="runScheduleNow(s)"
+                      style="padding: 0.25rem 0.5rem; background: #059669; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600;"
+                      title="Ejecutar copia de esta programación inmediatamente">
+                      ⚡ Forzar Ahora
+                    </button>
+                    @if (s.activo && s.estado === 'PROGRAMADO') {
+                    <button type="button" (click)="cancelSchedule(s)"
+                      style="padding: 0.25rem 0.5rem; background: #dc2626; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600;"
+                      title="Cancelar programación">
+                      ✕ Cancelar
+                    </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+              } @empty {
+              <tr>
+                <td colspan="6" style="padding: 1.5rem; text-align: center; color: #94a3b8;">
+                  No existen programaciones automáticas configuradas para esta empresa.
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        }
         }
       </div>
 

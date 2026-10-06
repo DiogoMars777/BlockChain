@@ -179,14 +179,27 @@ export class TenantManagementController implements OnInit {
   // --- MÉTODOS DE COPIAS DE SEGURIDAD (SUPERADMIN) ---
   openBackupModal(tenant: Tenant): void {
     this.selectedBackupTenant.set(tenant);
+    this.activeBackupTab.set('history');
     this.backupFeedback.set(null);
     this.showBackupModal.set(true);
+
+    // Sugerir fecha/hora por defecto (1 hora en el futuro) para el input datetime-local
+    const future = new Date(Date.now() + 60 * 60 * 1000);
+    future.setMinutes(future.getMinutes() - future.getTimezoneOffset());
+    this.scheduleDateTime.set(future.toISOString().slice(0, 16));
+
     this.loadBackups(tenant.idtenant);
+    this.loadSchedules(tenant.idtenant);
   }
 
   closeBackupModal(): void {
     this.showBackupModal.set(false);
     this.selectedBackupTenant.set(null);
+    this.backupFeedback.set(null);
+  }
+
+  setBackupTab(tab: 'history' | 'schedule'): void {
+    this.activeBackupTab.set(tab);
     this.backupFeedback.set(null);
   }
 
@@ -205,7 +218,7 @@ export class TenantManagementController implements OnInit {
     this.backupFeedback.set(null);
     this.backupService.createBackup(tenant.idtenant).subscribe({
       next: (res) => {
-        this.backupFeedback.set(res.message);
+        this.backupFeedback.set(`✅ ${res.message} (Registros: ${res.total_registros})`);
         this.loadBackups(tenant.idtenant);
       },
       error: (err) => {
@@ -223,6 +236,78 @@ export class TenantManagementController implements OnInit {
       },
       error: (err) => {
         this.backupFeedback.set(err.error?.detail || 'Error al generar el enlace de descarga.');
+      }
+    });
+  }
+
+  // --- MÉTODOS DE PROGRAMACIÓN AUTOMÁTICA ---
+  loadSchedules(idtenant: number): void {
+    this.isLoadingSchedules.set(true);
+    this.backupService.getSchedules(idtenant).subscribe({
+      next: (res) => {
+        this.schedules.set(res.items);
+        this.isLoadingSchedules.set(false);
+      },
+      error: (err) => {
+        this.isLoadingSchedules.set(false);
+        this.backupFeedback.set(err.error?.detail || 'Error al cargar las programaciones.');
+      }
+    });
+  }
+
+  createSchedule(): void {
+    const tenant = this.selectedBackupTenant();
+    if (!tenant) return;
+
+    if (!this.scheduleDateTime()) {
+      this.backupFeedback.set('⚠️ Por favor especifique fecha y hora para la copia automática.');
+      return;
+    }
+
+    const isoDate = new Date(this.scheduleDateTime()).toISOString();
+    this.isSavingSchedule.set(true);
+    this.backupFeedback.set(null);
+
+    this.backupService.createSchedule(tenant.idtenant, {
+      fecha_hora_programada: isoDate,
+      frecuencia: this.scheduleFrequency() as any
+    }).subscribe({
+      next: (created) => {
+        this.isSavingSchedule.set(false);
+        this.backupFeedback.set(`✅ Programación #${created.idschedule} configurada con éxito (${created.frecuencia}).`);
+        this.loadSchedules(tenant.idtenant);
+      },
+      error: (err) => {
+        this.isSavingSchedule.set(false);
+        this.backupFeedback.set(err.error?.detail || 'Error al crear la programación de copia.');
+      }
+    });
+  }
+
+  cancelSchedule(sched: BackupSchedule): void {
+    if (!confirm(`¿Desea cancelar la programación #${sched.idschedule}?`)) return;
+
+    this.backupService.cancelSchedule(sched.idtenant, sched.idschedule).subscribe({
+      next: () => {
+        this.backupFeedback.set(`Programación #${sched.idschedule} cancelada.`);
+        this.loadSchedules(sched.idtenant);
+      },
+      error: (err) => {
+        this.backupFeedback.set(err.error?.detail || 'Error al cancelar la programación.');
+      }
+    });
+  }
+
+  runScheduleNow(sched: BackupSchedule): void {
+    this.backupFeedback.set(`⏳ Ejecutando programación #${sched.idschedule} ahora mismo...`);
+    this.backupService.runScheduleNow(sched.idtenant, sched.idschedule).subscribe({
+      next: (res) => {
+        this.backupFeedback.set(`✅ ${res.message} (Backup #${res.idbackup}, ${res.total_registros} registros)`);
+        this.loadSchedules(sched.idtenant);
+        this.loadBackups(sched.idtenant);
+      },
+      error: (err) => {
+        this.backupFeedback.set(err.error?.detail || 'Error al forzar la ejecución de la copia.');
       }
     });
   }

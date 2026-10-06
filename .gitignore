@@ -21,5 +21,9 @@ Thumbs.db
 .DS_Store
 *.log
 
+# Backups locales
+backups/
+*.json.gz
+
 # Claude Code local settings
 .claude/settings.local.json
