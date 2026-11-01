@@ -77,6 +77,14 @@ class TenantController:
         db.add(tenant)
         db.commit()
         db.refresh(tenant)
+
+        try:
+            from app.packages.p1_seguridad.controllers.cu036_planes.subscription_controller import SubscriptionService
+            SubscriptionService.asignar_trial_por_defecto(db, tenant.idtenant)
+            db.commit()
+        except Exception:
+            pass
+
         return TenantResponse.model_validate(tenant)
 
     @staticmethod

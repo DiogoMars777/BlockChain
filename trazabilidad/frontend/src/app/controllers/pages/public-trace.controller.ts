@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TraceService } from '../services/trace.service';
 import { CertificateService } from '../services/certificate.service';
 import { PublicTraceResponse } from '../../models/trace.model';
@@ -9,7 +9,7 @@ import { UnitCertificateResponse } from '../../models/certificate.model';
 @Component({
   selector: 'app-public-trace',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: '../../views/pages/public-trace.view.html',
   styleUrls: ['../../views/pages/public-trace.view.css']
 })

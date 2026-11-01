@@ -1,32 +1,73 @@
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
+from decimal import Decimal
 from pydantic import BaseModel, Field
 
 
-# Esquemas para el reporte público de sospecha de falsificación (CU-023)
-class ReportarSospechaRequest(BaseModel):
-    uuidpublico: Optional[str] = Field(
-        None, max_length=100, description="UUID público leído del código QR de la unidad"
-    )
-    numeroserie: Optional[str] = Field(
-        None, max_length=100, description="Número de serie de la unidad (alternativo al UUID)"
-    )
-    motivo: str = Field(
-        ...,
-        min_length=3,
-        max_length=100,
-        description="Motivo breve de la sospecha (ej. producto_falso, empaque_alterado, serial_duplicado)",
-    )
-    descripcion: Optional[str] = Field(
-        None, max_length=2000, description="Detalle de la irregularidad observada"
-    )
-    evidencia: Optional[str] = Field(
-        None, max_length=500, description="URL o referencia de la evidencia (foto, factura, etc.)"
-    )
-    nombrereportante: Optional[str] = Field(None, max_length=100)
-    contactoreportante: Optional[str] = Field(None, max_length=150)
+class EvidenciaResponse(BaseModel):
+    idevidencia: int
+    nombrearchivo: str
+    tipomime: str
+    tamanobytes: int
+    urlalmacenamiento: str
+    hashsha256: str
+    creadoen: datetime
+
+    class Config:
+        from_attributes = True
 
 
 class ReporteSospechaResponse(BaseModel):
+    idreporte: int
+    codigoticket: str
+    idtenant: int
+    idunidad: int
+    numeroserie: Optional[str] = None
+    uuidpublico: Optional[str] = None
+    idusuario: Optional[int] = None
+    tipoanomalia: str
+    descripcion: str
+    latitud: Optional[Decimal] = None
+    longitud: Optional[Decimal] = None
+    estado: str
+    gravedad: str
+    observacionresolucion: Optional[str] = None
+    idalerta: Optional[int] = None
+    score_ml: Optional[Decimal] = None
+    sugerencia_ml: Optional[str] = None
+    creadoen: datetime
+    actualizadoen: datetime
+    evidencias: List[EvidenciaResponse] = []
+    mensaje: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class ReporteSospechaListResponse(BaseModel):
+    total: int
+    skip: int
+    limit: int
+    items: List[ReporteSospechaResponse]
+
+
+class UpdateReporteEstadoRequest(BaseModel):
+    estado: str = Field(..., description="Nuevo estado: pendiente, en_revision, resuelta, rechazada")
+    observacion: Optional[str] = Field(None, description="Observación obligatoria para cierre o rechazo")
+
+
+# Shims de compatibilidad hacia los DTOs anteriores de CU-023
+class ReportarSospechaRequest(BaseModel):
+    uuidpublico: Optional[str] = None
+    numeroserie: Optional[str] = None
+    motivo: str = Field("fraude_autenticidad", description="Motivo / tipo de anomalía")
+    descripcion: Optional[str] = None
+    evidencia: Optional[str] = None
+    nombrereportante: Optional[str] = None
+    contactoreportante: Optional[str] = None
+
+
+class ReporteSospechaLegacyResponse(BaseModel):
     idalerta: int
     referencia: str
     tipoalerta: str

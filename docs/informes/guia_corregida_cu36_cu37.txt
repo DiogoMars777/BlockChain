@@ -1,0 +1,359 @@
+Guía corregida: CU-036 y CU-037 en el Sprint 3
+Perfecto. Ajusto la distribución: CU-036 y CU-037 pasan al Sprint 3 junto con los casos de trazabilidad y blockchain. Los demás (CU-038, CU-039, CU-040) se mantienen en Sprint 4 o como alcance futuro.
+A. Distribución corregida de los CU por Sprint
+CU nuevo
+Nombre
+Sprint
+Motivo
+CU-036
+Gestionar Planes de Suscripción
+Sprint 3
+Se implementa junto con el módulo SaaS dentro del sprint de mayor complejidad técnica
+CU-037
+Suscribir Empresa a un Plan
+Sprint 3
+Se integra con CU-001, que ya existe desde Sprint 0
+CU-038
+Gestionar Pagos de Suscripción
+Sprint 4 (o futuro)
+Depende de CU-037
+CU-039
+Generar Factura de Suscripción
+Sprint 4 (o futuro)
+Depende de CU-038
+CU-040
+Control de Límites por Plan
+Sprint 4 (o futuro)
+Depende de CU-036/037
+Nota importante: como CU-036 y CU-037 ahora viven en Sprint 3, el Sprint 3 pasa de 12 tareas (T038-T049) a 16 tareas (T038-T049 + T050S-T053S). Debes recalcular esfuerzo, burndown y burnup del Sprint 3.
+B. Secciones del documento a modificar (corregidas)
+1. Sección 4.2. Objetivos Específicos (pág. 23-24)
+Sin cambios respecto a la versión anterior: agregar el objetivo del módulo SaaS.
+2. Sección 5. ALCANCE (pág. 24-29)
+Agregar 5.1.9. Módulo de suscripción SaaS (igual que antes), pero añadir una nota:
+“La gestión de planes y la suscripción de empresas se implementan en el Sprint 3 (CU-036 y CU-037). El registro de pagos, la facturación y el control de límites quedan planificados para el Sprint 4 (CU-038, CU-039 y CU-040).”
+3. Sección 3.2.1. Dominio Funcional (pág. 61)
+Agregar la fila “Suscripción y Facturación SaaS” (igual que antes).
+4. Sección 3.4. Definiciones (pág. 64-66)
+Agregar los términos (igual que antes).
+5. Sección 3.5. Funciones del Producto (pág. 67-73)
+Agregar el bloque “Módulo de Suscripción SaaS”, pero marcar qué funciones corresponden a Sprint 3 y cuáles a Sprint 4:
+Función
+Descripción
+Actor
+Sprint
+Gestionar Planes
+Crear, editar, activar/desactivar planes con precios y límites
+Super Administrador
+3
+Suscribir Empresa
+Asignar plan a una empresa con vigencia y estado
+Super Administrador
+3
+Cambiar Plan
+Cambiar el plan de una empresa conservando histórico
+Super Administrador
+3
+Consultar Suscripción
+Ver plan, vigencia y estado
+Administrador de Empresa
+3
+Registrar Pago
+Registrar pagos manuales o con referencia externa
+Super Administrador
+4
+Generar Factura
+Emitir factura con hash SHA-256 del PDF
+Super Administrador
+4
+Controlar Límites
+Validar límites antes de crear usuarios/unidades/reportes
+Sistema
+4
+6. Sección 3.6. Product Backlog (pág. 74-83)
+En SPRINT 3 (después de T049, con nomenclatura T050S-T053S para no chocar con T050 del Sprint 4):
+ID
+Rol
+Característica / Funcionalidad
+Prioridad
+Tiempo estimado
+Plataforma
+T050S
+Development Team (Backend)
+Implementación de gestión de planes (API REST)
+Alta
+5h
+Backend
+T051S
+Development Team (Frontend)
+Interfaz de gestión de planes (UI Angular)
+Alta
+4h
+Web
+T052S
+Development Team (Backend)
+Suscripción de empresa a plan + integración con CU-001
+Alta
+5h
+Backend
+T053S
+Development Team (Frontend)
+Interfaz de suscripción de empresa (UI Angular)
+Alta
+4h
+Web
+En SPRINT 4 (junto a T050-T061, renumerar para evitar choque):
+ID
+Rol
+Característica / Funcionalidad
+Prioridad
+Tiempo estimado
+Plataforma
+T062
+Development Team (Backend)
+Registro de pagos de suscripción (API REST)
+Alta
+5h
+Backend
+T063
+Development Team (Backend)
+Generación de facturas de suscripción con hash (API REST)
+Media
+4h
+Backend
+T064
+Development Team (Backend)
+Control de límites por plan (servicio interno)
+Alta
+4h
+Backend
+T065
+Development Team (Frontend)
+Panel de suscripción y pagos (UI Angular)
+Alta
+5h
+Web
+T066
+Development Team (Mobile)
+Vista “Mi suscripción” en Flutter (opcional)
+Media
+3h
+Móvil
+7. Sección 3.7. Requisitos Funcionales (pág. 83-87)
+Agregar:
+RF-31 Gestión de planes de suscripción (Sprint 3).
+RF-32 Suscripción de empresas a planes (Sprint 3).
+RF-33 Registro de pagos de suscripción (Sprint 4).
+RF-34 Generación de facturas de suscripción (Sprint 4).
+RF-35 Control de límites por plan (Sprint 4).
+RF-36 Suspensión/reactivación automática por estado de suscripción (Sprint 4).
+8. Sección 3.8. Requisitos No Funcionales (pág. 87-89)
+Agregar RNF-20 a RNF-23 (igual que antes).
+9. Sección 3.9. Lista de Casos de Uso (pág. 89-90)
+ID
+Caso de uso
+Sprint
+Web
+Móvil
+Prioridad
+CU-036
+Gestionar Planes de Suscripción
+3
+✓
+—
+Alta
+CU-037
+Suscribir Empresa a un Plan
+3
+✓
+—
+Alta
+CU-038
+Gestionar Pagos de Suscripción
+4
+✓
+✓ (lectura)
+Alta
+CU-039
+Generar Factura de Suscripción
+4
+✓
+—
+Media
+CU-040
+Control de Límites por Plan
+4
+✓
+—
+Alta
+10. Sección 3.10. Paquetes y Casos de Uso (pág. 91-94)
+Actualizar P1 – Seguridad y Multi-Tenant (pág. 91): agregar relación <<trace>> desde CU-001 hacia CU-037, y desde P1 hacia CU-036 y CU-037.
+Agregar P8 – Suscripción SaaS (nuevo, pág. 94):
+CU-036 Gestionar Planes
+CU-037 Suscribir Empresa
+CU-038 Gestionar Pagos (dependencia futura)
+CU-039 Generar Factura (dependencia futura)
+CU-040 Control de Límites (dependencia futura)
+Relación <<include>> desde CU-037 hacia CU-001.
+Relación <<include>> desde CU-038 hacia CU-039.
+11. Sección 3.11. Planificación Sprint – Gantt (pág. 94-96)
+Gantt Sprint 3: agregar T050S-T053S.
+Gantt Sprint 4: agregar T062-T066.
+12. CAPÍTULO 4 – Sprint 3 (pág. 278-356)
+Esta es la sección donde más cambia. Debes insertar en orden:
+4.1.1. Objetivos del Sprint (pág. 279)Agregar al objetivo:
+“Adicionalmente, implementar el módulo de suscripción SaaS: gestión de planes y suscripción de empresas a un plan, integrado con la gestión de empresas existente (CU-001).”
+4.1.2. Historias de Usuario (pág. 280-286)Agregar 2 historias nuevas:
+CU-036: Gestionar Planes de SuscripciónT050S / T051SEsta tarea consiste en implementar la gestión de planes de suscripción SaaS (crear, editar, activar/desactivar) con precios y límites de uso, desde la API REST y la interfaz web.Alta — 5 Story PointsCriterios de Aceptación:a) Se implementarán endpoints CRUD de planes (crear, listar, editar, activar/desactivar).b) Cada plan tendrá código único, nombre, precios mensual/anual, moneda y límites (usuarios, unidades, reportes, almacenamiento).c) Solo el Super Administrador podrá crear/editar/desactivar planes; el Administrador de Empresa podrá consultarlos.d) La interfaz web permitirá gestionar los planes con validaciones.e) Se registrará en bitácora cada operación sobre planes.f) Se probará con pruebas unitarias e integración.
+CU-037: Suscribir Empresa a un PlanT052S / T053SEsta tarea consiste en implementar la suscripción de una empresa (tenant) a un plan, con vigencia y estado, integrándose con CU-001 para asignar plan trial por defecto al crear empresa.Alta — 5 Story PointsCriterios de Aceptación:a) Se implementará endpoint para suscribir una empresa a un plan.b) Se implementará endpoint para consultar la suscripción actual de una empresa.c) Se implementará cambio de plan conservando histórico (suscripción anterior pasa a estado vencida o cancelada).d) Al crear una empresa sin plan, se asigna automáticamente plan trial con fecha_fin = fecha_inicio + dias_trial.e) Al suspender una empresa, se suspende su suscripción.f) Toda operación queda registrada en bitácora.g) Aislamiento multi-tenant: el Administrador de Empresa solo ve su suscripción.h) Se probará con pruebas unitarias e integración.
+4.1.3. Contexto del sistema (pág. 287)Agregar CU-036 y CU-037 al diagrama de contexto del Sprint 3.
+4.1.4. Sprint Backlog (pág. 287-290)Agregar T050S-T053S con:
+Tipo: Implementación / Configuración.
+Estimación: 5h, 4h, 5h, 4h.
+Responsable: Development Team (Backend/Frontend).
+Estado: Completo.
+Prioridad: Alta.
+4.1.5. Equipo SCRUM (pág. 290)Sin cambios.
+4.2.1. Diseño de la arquitectura (pág. 291-294)
+4.2.1.1.1 Diagrama de Despliegue: sin cambios mayores.
+4.2.1.1.2 Diagrama de Paquetes: agregar paquete suscripcion.
+4.2.1.2. Diseño de datos (pág. 294): actualizar el modelo ER con plan, suscripcion, pago_suscripcion, factura_suscripcion, limite_consumo y la FK empresa.suscripcion_actual_id.
+4.2.1.3. Diagrama de comunicación (pág. 294-297): agregar CU-036 y CU-037.
+4.2.1.3.2. Diagrama de secuencia (pág. 297-300): agregar secuencias de CU-036 y CU-037.
+4.2.1.3.3. Diagrama de estado (pág. 301-307): agregar estado de Suscripcion (trial, activa, vencida, suspendida, cancelada).
+4.2.1.3.4. Diagrama de tiempo (pág. 308): agregar si aplica.
+4.2.1.3.5. Diagrama de navegación (pág. 309-312): agregar navegación de planes y suscripción.
+4.2.2. Implementación (pág. 313-314)Agregar:
+Backend: modelos SQLAlchemy, schemas Pydantic, servicios, controladores, permisos, bitácora.
+Migración Alembic con las tablas nuevas.
+Seed de planes (trial, basico, pro, enterprise).
+Frontend Angular: panel de planes (Super Admin) y vista “Mi suscripción” (Admin de Empresa).
+Servicio interno validar_limite (aunque su uso completo sea Sprint 4, dejarlo preparado).
+4.2.3. Pruebas (pág. 315-333)Agregar pruebas para:
+T050S: CRUD de planes, validación de código único, permisos.
+T051S: interfaz de planes, validaciones, responsive.
+T052S: suscribir empresa, asignación trial por defecto, cambio de plan, aislamiento multi-tenant.
+T053S: interfaz de suscripción, visualización de vigencia y estado.
+4.3. Daily SCRUM (pág. 334-345)Agregar entradas de los nuevos CU en los días correspondientes (al menos 2-3 días con menciones a CU-036 y CU-037).
+4.4. Sprint Review (pág. 345-349)Agregar en la presentación del incremento:
+“Gestión de planes – T050S, T051S”.
+“Suscripción de empresa – T052S, T053S”.Y en “Cumplimiento del objetivo” mencionar el módulo SaaS.
+4.5. Sprint Retrospective (pág. 350-353)Agregar lecciones sobre:
+Complejidad de integrar suscripción con CU-001.
+Definición temprana de planes y límites.
+Coordinación Backend/Frontend para panel de planes.
+4.6. Burndown and BurnUp (pág. 354)Recalcular con las 16 tareas (T038-T049 + T050S-T053S). Ajustar puntos e horas.
+4.7. Gráfica de esfuerzo (pág. 355)Actualizar esfuerzo estimado vs. real incluyendo T050S-T053S.
+4.8. Scrum Taskboard (pág. 356)Agregar tarjetas de T050S-T053S.
+13. CAPÍTULO 4 – Sprint 4 (no desarrollado)
+Si se desarrolla: crear sección completa con T062-T066.
+Si no se desarrolla: en la sección 5 (Alcance) indicar que CU-038, CU-039 y CU-040 quedan como trabajo futuro planificado para Sprint 4.
+14. Sección 2.9.3 SAAS (pág. 57)
+Ampliar párrafo indicando que el modelo SaaS se implementa con planes y suscripción en el Sprint 3 (CU-036 y CU-037), y facturación/límites en Sprint 4.
+15. Sección 7.1. Tecnología para el Desarrollo (pág. 30-32)
+Agregar pasarela de pago opcional (Stripe/PayPal) detrás de feature flag.
+16. Sección 8.2 Software (pág. 35)
+Agregar costos de pasarela de pago y facturación electrónica (opcional).
+17. Sección 10. Bibliografía (pág. 357)
+Agregar referencias SaaS.
+18. Sección 11. Anexos (pág. 359)
+Agregar:
+11.3 Modelo de datos del módulo SaaS.
+11.4 Flujo de suscripción.
+11.5 Ejemplos de request/response.
+C. Resumen visual corregido
+#
+Sección del documento
+Página aprox.
+Acción
+1
+4.2 Objetivos Específicos
+23-24
+Agregar objetivo SaaS
+2
+5.1.9 Módulo de suscripción SaaS
+29
+Nueva subsección + nota de sprint
+3
+3.2.1 Dominio Funcional
+61
+Nueva fila
+4
+3.4 Definiciones
+64-66
+Nuevos términos
+5
+3.5 Funciones del Producto
+67-73
+Nuevo bloque con columna “Sprint”
+6
+3.6 Product Backlog
+74-83
+T050S-T053S en Sprint 3 y T062-T066 en Sprint 4
+7
+3.7 Requisitos Funcionales
+83-87
+RF-31 a RF-36
+8
+3.8 Requisitos No Funcionales
+87-89
+RNF-20 a RNF-23
+9
+3.9 Lista de Casos de Uso
+89-90
+CU-036 y CU-037 en Sprint 3
+10
+3.10 Paquetes y CU
+91-94
+P8 nuevo + actualizar P1
+11
+3.11 Gantt
+94-96
+T050S-T053S en Gantt Sprint 3
+12
+Cap. 4 – Sprint 3
+278-356
+Insertar CU-036 y CU-037 en todas las subsecciones
+13
+Cap. 4 – Sprint 4
+(nuevo/futuro)
+T062-T066 o marcar como futuro
+14
+2.9.3 SAAS
+57
+Ampliar párrafo
+15
+7.1 Tecnología
+30-32
+Pasarela opcional
+16
+8.2 Costos
+35
+Costos pasarela
+17
+10 Bibliografía
+357
+Referencias SaaS
+18
+11 Anexos
+359
+Modelo ER, flujos, ejemplos API
+D. Checklist corregido
+□ 
+CU-036 y CU-037 ubicados en Sprint 3 en lista de CU (pág. 89).
+□ 
+T050S-T053S agregadas al Product Backlog del Sprint 3 (pág. 79-81).
+□ 
+T050S-T053S agregadas al Gantt del Sprint 3 (pág. 94-96).
+□ 
+Sprint 3 (pág. 278-356) actualizado en: objetivos, historias, contexto, backlog, equipo, diseño (arquitectura, datos, comunicación, secuencia, estado, tiempo, navegación), implementación, pruebas, daily, review, retro, burndown/burnup, esfuerzo y taskboard.
+□ 
+P1 actualizado con relación a CU-036 y CU-037.
+□ 
+P8 nuevo con CU-036 a CU-040.
+□ 
+Modelo de datos del Sprint 3 (pág. 294) actualizado con plan, suscripcion, pago_suscripcion, factura_suscripcion, limite_consumo y FK en empresa.
+□ 
+Nota en 5.1.9 aclarando qué queda en Sprint 3 y qué en Sprint 4.
+□ 
+Decisión tomada sobre Sprint 4 (desarrollar o marcar futuro).

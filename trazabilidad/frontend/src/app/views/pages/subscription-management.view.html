@@ -1,0 +1,299 @@
+<div class="subs-container">
+  <!-- Header -->
+  <div class="header-section">
+    <div>
+      <div class="breadcrumbs">
+        <a routerLink="/dashboard">Dashboard</a> &gt; <span>Suscripciones</span>
+      </div>
+      <h1 class="page-title">
+        {{ isSuperAdmin() ? 'Gestión de Suscripciones por Empresa' : 'Suscripción de mi Empresa' }}
+      </h1>
+      <p class="subtitle">
+        {{ isSuperAdmin() 
+          ? 'Supervisión centralizada del estado SaaS, renovaciones y contratos activos (CU-037).' 
+          : 'Consulta y actualización del plan de servicio de tu empresa.' 
+        }}
+      </p>
+    </div>
+    <div class="header-actions">
+      <button *ngIf="isSuperAdmin()" class="btn btn-outline" routerLink="/subscription-plans">
+        <i class="icon">⚙️</i> Catálogo de Planes
+      </button>
+      <button *ngIf="isSuperAdmin()" class="btn btn-primary" (click)="abrirSuscribirModal()">
+        <i class="icon">+</i> Suscribir Empresa
+      </button>
+    </div>
+  </div>
+
+  <!-- Alertas -->
+  <div *ngIf="successMessage()" class="alert alert-success">
+    <span>✓ {{ successMessage() }}</span>
+  </div>
+  <div *ngIf="errorMessage()" class="alert alert-error">
+    <span>⚠ {{ errorMessage() }}</span>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando información de suscripción...</p>
+  </div>
+
+  <!-- VISTA 1: ADMIN DE EMPRESA (MI SUSCRIPCIÓN) -->
+  <div *ngIf="!isLoading() && !isSuperAdmin()" class="my-sub-wrapper">
+    <div *ngIf="miSuscripcion() as sub; else sinSuscripcion" class="subscription-hero-card">
+      <div class="hero-header">
+        <div>
+          <span class="badge" [ngClass]="'badge-' + sub.estado">{{ sub.estado | uppercase }}</span>
+          <h2 class="sub-plan-title">{{ sub.nombreplan || 'Plan Activo' }}</h2>
+          <span class="tenant-name">Empresa: <strong>{{ sub.nombretenant }}</strong></span>
+        </div>
+        <div class="days-remaining">
+          <span class="days-number">{{ sub.diasrestantes }}</span>
+          <span class="days-label">días restantes</span>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="sub-details-grid">
+        <div class="detail-box">
+          <span class="detail-label">Fecha de Inicio</span>
+          <span class="detail-val">{{ sub.fechainicio | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="detail-box">
+          <span class="detail-label">Fecha de Vencimiento</span>
+          <span class="detail-val">{{ sub.fechafin | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="detail-box">
+          <span class="detail-label">Renovación Automática</span>
+          <span class="detail-val">{{ sub.renovacionautomatica ? 'Sí' : 'No' }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="sub.plan as p" class="plan-quotas">
+        <h3>Límites y Capacidades Asignadas</h3>
+        <div class="quotas-grid">
+          <div class="quota-item">
+            <span class="q-icon">👥</span>
+            <div>
+              <span class="q-title">Usuarios</span>
+              <span class="q-val">Hasta {{ p.limiteusuarios }} cuentas</span>
+            </div>
+          </div>
+          <div class="quota-item">
+            <span class="q-icon">📦</span>
+            <div>
+              <span class="q-title">Unidades Físicas</span>
+              <span class="q-val">{{ p.limiteunidades }} dispositivos</span>
+            </div>
+          </div>
+          <div class="quota-item">
+            <span class="q-icon">📊</span>
+            <div>
+              <span class="q-title">Reportes / Mes</span>
+              <span class="q-val">{{ p.limitereportesmes }} reportes</span>
+            </div>
+          </div>
+          <div class="quota-item">
+            <span class="q-icon">💾</span>
+            <div>
+              <span class="q-title">Almacenamiento</span>
+              <span class="q-val">{{ p.limitealmacenamientomb }} MB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary" (click)="abrirCambiarModal(sub)">
+          🚀 Mejorar o Cambiar Plan
+        </button>
+      </div>
+    </div>
+
+    <ng-template #sinSuscripcion>
+      <div class="empty-state">
+        <p>No se encontró una suscripción activa para su empresa.</p>
+        <button class="btn btn-primary" routerLink="/dashboard">Volver al Dashboard</button>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- VISTA 2: SUPERADMINISTRADOR (TABLA GLOBAL DE TODAS LAS EMPRESAS) -->
+  <div *ngIf="!isLoading() && isSuperAdmin()" class="admin-table-wrapper">
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Empresa</th>
+            <th>Plan Actual</th>
+            <th>Estado</th>
+            <th>Vigencia</th>
+            <th>Días Restantes</th>
+            <th>Renovación</th>
+            <th class="text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of suscripciones()">
+            <td>#{{ s.idsuscripcion }}</td>
+            <td class="font-bold">{{ s.nombretenant || ('Empresa #' + s.idtenant) }}</td>
+            <td>
+              <span class="plan-pill">{{ s.nombreplan || s.codigoplan }}</span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + s.estado">{{ s.estado }}</span>
+            </td>
+            <td>
+              {{ s.fechainicio | date:'dd/MM/yy' }} - {{ s.fechafin | date:'dd/MM/yy' }}
+            </td>
+            <td>
+              <span [class.text-danger]="s.diasrestantes === 0">{{ s.diasrestantes }} días</span>
+            </td>
+            <td>{{ s.renovacionautomatica ? 'Sí' : 'No' }}</td>
+            <td class="text-right actions-cell">
+              <button class="btn-icon" title="Cambiar Plan" (click)="abrirCambiarModal(s)">
+                🔄
+              </button>
+              <button 
+                *ngIf="s.estado !== 'suspendida'" 
+                class="btn-icon btn-icon-danger" 
+                title="Suspender Suscripción" 
+                (click)="abrirSuspenderModal(s)"
+              >
+                ⏸️
+              </button>
+              <button 
+                *ngIf="s.estado === 'suspendida'" 
+                class="btn-icon btn-icon-success" 
+                title="Reactivar Suscripción" 
+                (click)="reactivarSuscripcion(s)"
+              >
+                ▶️
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="suscripciones().length === 0">
+            <td colspan="8" class="text-center py-4">No hay suscripciones registradas.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal 1: Suscribir Empresa (SuperAdmin) -->
+  <div *ngIf="isSuscribirModalOpen()" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2>Suscribir Empresa a un Plan SaaS</h2>
+        <button class="close-btn" (click)="cerrarModales()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Empresa (Tenant) *</label>
+          <select class="form-control" [(ngModel)]="formSuscribir().idtenant">
+            <option *ngFor="let t of tenants()" [value]="t.idtenant">
+              {{ t.nombre }} (NIT: {{ t.nit }})
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Plan de Suscripción *</label>
+          <select class="form-control" [(ngModel)]="formSuscribir().idplan">
+            <option *ngFor="let p of planes()" [value]="p.idplan">
+              {{ p.nombre }} - ${{ p.preciomensual }}/mes ({{ p.limiteunidades }} unidades)
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Días de Vigencia</label>
+          <input type="number" class="form-control" [(ngModel)]="formSuscribir().diasvigencia" />
+        </div>
+
+        <div class="form-group form-check">
+          <label class="check-label">
+            <input type="checkbox" [(ngModel)]="formSuscribir().renovacionautomatica" />
+            <span>Habilitar Renovación Automática</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" (click)="cerrarModales()">Cancelar</button>
+        <button class="btn btn-primary" (click)="guardarSuscripcion()">Confirmar Suscripción</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Cambiar Plan -->
+  <div *ngIf="isCambiarModalOpen()" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2>Cambiar Plan de Suscripción</h2>
+        <button class="close-btn" (click)="cerrarModales()">×</button>
+      </div>
+      <div class="modal-body">
+        <p *ngIf="selectedSub() as s" class="mb-3">
+          Cambiando plan para: <strong>{{ s.nombretenant || ('Empresa #' + s.idtenant) }}</strong>
+        </p>
+
+        <div class="form-group">
+          <label>Nuevo Plan *</label>
+          <select class="form-control" [(ngModel)]="formCambiar().idplan">
+            <option *ngFor="let p of planes()" [value]="p.idplan">
+              {{ p.nombre }} - ${{ p.preciomensual }}/mes
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Días de Vigencia desde Hoy</label>
+          <input type="number" class="form-control" [(ngModel)]="formCambiar().diasvigencia" />
+        </div>
+
+        <div class="form-group form-check">
+          <label class="check-label">
+            <input type="checkbox" [(ngModel)]="formCambiar().renovacionautomatica" />
+            <span>Renovación Automática</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" (click)="cerrarModales()">Cancelar</button>
+        <button class="btn btn-primary" (click)="guardarCambioPlan()">Aplicar Cambio de Plan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Suspender Suscripción -->
+  <div *ngIf="isSuspenderModalOpen()" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2>Suspender Suscripción</h2>
+        <button class="close-btn" (click)="cerrarModales()">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-danger">
+          ¿Está seguro de suspender el acceso y beneficios SaaS a esta empresa?
+        </p>
+        <div class="form-group">
+          <label>Motivo de la Suspensión *</label>
+          <textarea 
+            class="form-control" 
+            rows="3" 
+            [(ngModel)]="motivoSuspension"
+            placeholder="Indique el motivo administrativo o técnico..."
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" (click)="cerrarModales()">Cancelar</button>
+        <button class="btn btn-warning" (click)="confirmarSuspension()">Suspender Ahora</button>
+      </div>
+    </div>
+  </div>
+</div>
+

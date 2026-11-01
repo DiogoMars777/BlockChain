@@ -16,6 +16,11 @@
         <div class="not-found-icon">⚠️</div>
         <h2>Producto no encontrado</h2>
         <p>El código QR escaneado no corresponde a una unidad registrada y activa en el sistema.</p>
+        <div style="margin-top: 1.5rem;">
+          <a routerLink="/report-suspicion" class="btn-report-alert">
+            🚨 Denunciar Posible Falsificación (CU-023)
+          </a>
+        </div>
       </div>
     }
 
@@ -82,6 +87,12 @@
       } @else if (isLoadingCert()) {
         <div class="loading">Cargando certificado...</div>
       }
+
+      <div style="text-align: center; margin: 2rem 0;">
+        <a [routerLink]="['/report-suspicion']" [queryParams]="{ uuid: t.uuidpublico, serial: t.numeroserie }" class="btn-report-alert">
+          🚨 ¿Sospechas de adulteración en esta unidad? Reportar Incidencia (CU-023)
+        </a>
+      </div>
     }
   </main>
 </div>

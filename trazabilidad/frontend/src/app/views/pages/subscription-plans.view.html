@@ -1,0 +1,226 @@
+<div class="plans-container">
+  <!-- Header con título y acción -->
+  <div class="header-section">
+    <div>
+      <div class="breadcrumbs">
+        <a routerLink="/dashboard">Dashboard</a> &gt; <span>Planes SaaS</span>
+      </div>
+      <h1 class="page-title">Catálogo de Planes de Suscripción</h1>
+      <p class="subtitle">Gestión centralizada de paquetes, capacidades y límites para empresas clientes (CU-036).</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline" routerLink="/subscriptions">
+        <i class="icon">🏢</i> Ver Suscripciones de Empresas
+      </button>
+      <button class="btn btn-primary" (click)="abrirCrearModal()">
+        <i class="icon">+</i> Nuevo Plan
+      </button>
+    </div>
+  </div>
+
+  <!-- Alertas -->
+  <div *ngIf="successMessage()" class="alert alert-success">
+    <span>✓ {{ successMessage() }}</span>
+  </div>
+  <div *ngIf="errorMessage()" class="alert alert-error">
+    <span>⚠ {{ errorMessage() }}</span>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando planes de suscripción...</p>
+  </div>
+
+  <!-- Tarjetas de Planes (Grid) -->
+  <div *ngIf="!isLoading()" class="plans-grid">
+    <div *ngFor="let plan of planes()" class="plan-card" [class.inactive]="!plan.activo">
+      <div class="card-badge" [class.badge-active]="plan.activo" [class.badge-inactive]="!plan.activo">
+        {{ plan.activo ? 'ACTIVO' : 'INACTIVO' }}
+      </div>
+
+      <div class="plan-header">
+        <h3 class="plan-name">{{ plan.nombre }}</h3>
+        <span class="plan-code">Cod: {{ plan.codigo }}</span>
+      </div>
+
+      <div class="plan-price">
+        <span class="currency">{{ plan.moneda }}</span>
+        <span class="amount">${{ plan.preciomensual }}</span>
+        <span class="period">/ mes</span>
+      </div>
+      <div class="annual-price">
+        o ${{ plan.precioanual }} facturado anualmente
+      </div>
+
+      <p class="plan-desc">{{ plan.descripcion || 'Sin descripción detallada.' }}</p>
+
+      <hr class="divider" />
+
+      <ul class="features-list">
+        <li>
+          <span class="feature-icon">👥</span>
+          <span><strong>{{ plan.limiteusuarios }}</strong> Usuarios permitidos</span>
+        </li>
+        <li>
+          <span class="feature-icon">📦</span>
+          <span><strong>{{ plan.limiteunidades }}</strong> Unidades trazadas</span>
+        </li>
+        <li>
+          <span class="feature-icon">📊</span>
+          <span><strong>{{ plan.limitereportesmes }}</strong> Reportes / mes</span>
+        </li>
+        <li>
+          <span class="feature-icon">💾</span>
+          <span><strong>{{ plan.limitealmacenamientomb }} MB</strong> Almacenamiento</span>
+        </li>
+        <li>
+          <span class="feature-icon">⏱️</span>
+          <span><strong>{{ plan.diastrial }} días</strong> de prueba gratuita</span>
+        </li>
+      </ul>
+
+      <div class="card-actions">
+        <button class="btn btn-secondary btn-sm" (click)="abrirEditarModal(plan)">
+          Editar
+        </button>
+        <button 
+          class="btn btn-sm" 
+          [class.btn-warning]="plan.activo" 
+          [class.btn-success]="!plan.activo" 
+          (click)="toggleEstado(plan)"
+        >
+          {{ plan.activo ? 'Desactivar' : 'Activar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Crear / Editar Plan -->
+  <div *ngIf="isModalOpen()" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2>{{ isEditing() ? 'Editar Plan de Suscripción' : 'Crear Nuevo Plan SaaS' }}</h2>
+        <button class="close-btn" (click)="cerrarModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group" *ngIf="!isEditing()">
+            <label>Código Identificador *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="ej. standard, enterprise_pro"
+              [(ngModel)]="formPlan().codigo"
+            />
+            <small class="helper-text">Identificador único del sistema en minúsculas.</small>
+          </div>
+
+          <div class="form-group" [class.col-span-2]="isEditing()">
+            <label>Nombre del Plan *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="ej. Plan Profesional Plus"
+              [(ngModel)]="formPlan().nombre"
+            />
+          </div>
+
+          <div class="form-group col-span-2">
+            <label>Descripción</label>
+            <textarea 
+              class="form-control" 
+              rows="2" 
+              placeholder="Beneficios y características principales..."
+              [(ngModel)]="formPlan().descripcion"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Precio Mensual (USD) *</label>
+            <input 
+              type="number" 
+              step="0.01" 
+              class="form-control" 
+              [(ngModel)]="formPlan().preciomensual"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Precio Anual (USD) *</label>
+            <input 
+              type="number" 
+              step="0.01" 
+              class="form-control" 
+              [(ngModel)]="formPlan().precioanual"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Límite de Usuarios</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              [(ngModel)]="formPlan().limiteusuarios"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Límite de Unidades (Seriales)</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              [(ngModel)]="formPlan().limiteunidades"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Límite Reportes / Mes</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              [(ngModel)]="formPlan().limitereportesmes"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Almacenamiento (MB)</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              [(ngModel)]="formPlan().limitealmacenamientomb"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Días de Trial</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              [(ngModel)]="formPlan().diastrial"
+            />
+          </div>
+
+          <div class="form-group form-check">
+            <label class="check-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="formPlan().activo"
+              />
+              <span>Plan Activo para contratación</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn btn-primary" (click)="guardarPlan()">
+          {{ isEditing() ? 'Guardar Cambios' : 'Crear Plan' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

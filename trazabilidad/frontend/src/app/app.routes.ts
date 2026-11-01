@@ -7,6 +7,8 @@ import { TenantManagementController } from './controllers/pages/tenant-managemen
 import { UserManagementController } from './controllers/pages/user-management.controller';
 import { RoleManagementController } from './controllers/pages/role-management.controller';
 import { AuditNotificationController } from './controllers/pages/audit-notification.controller';
+import { SubscriptionPlansController } from './controllers/pages/subscription-plans.controller';
+import { SubscriptionManagementController } from './controllers/pages/subscription-management.controller';
 import { CategoryManagementController } from './controllers/pages/category-management.controller';
 import { ProductManagementController } from './controllers/pages/product-management.controller';
 import { CertificationManagementController } from './controllers/pages/certification-management.controller';
@@ -23,6 +25,7 @@ import { DocumentManagementController } from './controllers/pages/document-manag
 import { CertificateManagementController } from './controllers/pages/certificate-management.controller';
 import { TraceabilityController } from './controllers/pages/traceability.controller';
 import { PublicTraceController } from './controllers/pages/public-trace.controller';
+import { ReportSuspicionController } from './controllers/pages/report-suspicion.controller';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 
@@ -36,6 +39,8 @@ export const routes: Routes = [
   { path: 'users', component: UserManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa'])] },
   { path: 'roles', component: RoleManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa'])] },
   { path: 'bitacora', component: AuditNotificationController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'Auditor'])] },
+  { path: 'subscription-plans', component: SubscriptionPlansController, canActivate: [authGuard, roleGuard(['SuperAdministrador'])] },
+  { path: 'subscriptions', component: SubscriptionManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'Auditor'])] },
   { path: 'categories', component: CategoryManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones'])] },
   { path: 'products', component: ProductManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones', 'GestorVentasPostventa'])] },
   { path: 'certifications', component: CertificationManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones'])] },
@@ -52,5 +57,6 @@ export const routes: Routes = [
   { path: 'certificates', component: CertificateManagementController, canActivate: [authGuard, roleGuard(['SuperAdministrador', 'AdministradorEmpresa', 'GestorOperaciones', 'Auditor'])] },
   { path: 'traceability', component: TraceabilityController, canActivate: [authGuard] },
   { path: 'trace/:uuid', component: PublicTraceController },
+  { path: 'report-suspicion', component: ReportSuspicionController },
   { path: '**', redirectTo: 'login' }
 ];

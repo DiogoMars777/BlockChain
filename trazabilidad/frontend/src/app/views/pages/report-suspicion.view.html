@@ -1,0 +1,193 @@
+<div class="suspicion-wrapper">
+  <header class="suspicion-header">
+    <div class="brand">
+      <span class="logo-icon">🛡️</span>
+      <span class="brand-name">Sistema de Trazabilidad y Autenticidad</span>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/traceability" class="back-link">🔍 Consultar Trazabilidad</a>
+    </div>
+  </header>
+
+  <main class="suspicion-main">
+    <div class="card-container">
+      <div class="card-header">
+        <div class="icon-badge">⚠️</div>
+        <h1>Reporte de Sospecha de Falsificación (CU-023)</h1>
+        <p class="subtitle">
+          Canal público y confidencial para reportar irregularidades, dispositivos Apple no auténticos o inconsistencias en la cadena de custodia.
+        </p>
+      </div>
+
+      @if (successResult(); as res) {
+        <div class="success-banner">
+          <div class="success-icon">✓</div>
+          <h2>Reporte Registrado con Éxito</h2>
+          <p class="ref-code">Código de Seguimiento: <strong>{{ res.referencia }}</strong></p>
+          <p class="success-msg">{{ res.mensaje }}</p>
+          <div class="status-pill">Estado: {{ res.estado | uppercase }}</div>
+
+          <div class="banner-actions">
+            <button class="btn btn-secondary" (click)="resetForm()">Enviar Otro Reporte</button>
+            <a routerLink="/traceability" class="btn btn-primary">Volver a Consultas</a>
+          </div>
+        </div>
+      } @else {
+        @if (errorMessage()) {
+          <div class="error-banner">
+            <span>⚠️</span> {{ errorMessage() }}
+          </div>
+        }
+
+        <form (ngSubmit)="onSubmit()" class="suspicion-form">
+          <div class="form-section">
+            <label class="section-title">1. Identificación del Producto</label>
+            <p class="section-desc">Seleccione cómo identificará el equipo objeto de la denuncia:</p>
+
+            <div class="radio-tabs">
+              <button
+                type="button"
+                class="tab-btn"
+                [class.active]="identificadorTipo() === 'uuid'"
+                (click)="setIdentificadorTipo('uuid')"
+              >
+                🔲 Código UUID / QR Público
+              </button>
+              <button
+                type="button"
+                class="tab-btn"
+                [class.active]="identificadorTipo() === 'serial'"
+                (click)="setIdentificadorTipo('serial')"
+              >
+                🏷️ Número de Serie (S/N)
+              </button>
+            </div>
+
+            @if (identificadorTipo() === 'uuid') {
+              <div class="form-group">
+                <label for="uuidInput">UUID Público de la Unidad *</label>
+                <input
+                  id="uuidInput"
+                  type="text"
+                  class="form-control"
+                  placeholder="Ej: f47ac10b-58cc-4372-a567-0e02b2c3d479"
+                  [ngModel]="uuidpublico()"
+                  (ngModelChange)="uuidpublico.set($event)"
+                  name="uuidpublico"
+                  required
+                />
+                <span class="help-text">Se obtiene del escaneo del código QR oficial impreso en el empaque o equipo.</span>
+              </div>
+            } @else {
+              <div class="form-group">
+                <label for="serialInput">Número de Serie Oficial (S/N) *</label>
+                <input
+                  id="serialInput"
+                  type="text"
+                  class="form-control"
+                  placeholder="Ej: DEMO-1-SN-001 o C392J46FV2T"
+                  [ngModel]="numeroserie()"
+                  (ngModelChange)="numeroserie.set($event)"
+                  name="numeroserie"
+                  required
+                />
+                <span class="help-text">Grabado en el chasis del dispositivo o en la etiqueta de la caja Apple.</span>
+              </div>
+            }
+          </div>
+
+          <div class="form-section">
+            <label class="section-title">2. Motivo de la Denuncia</label>
+            <div class="form-group">
+              <label for="motivoSelect">Tipo de irregularidad detectada *</label>
+              <select
+                id="motivoSelect"
+                class="form-control"
+                [ngModel]="motivo()"
+                (ngModelChange)="motivo.set($event)"
+                name="motivo"
+              >
+                @for (m of motivos; track m.value) {
+                  <option [value]="m.value">{{ m.label }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="descInput">Detalle y observaciones del caso</label>
+              <textarea
+                id="descInput"
+                class="form-control"
+                rows="3"
+                placeholder="Describa qué anomalías notó en el equipo, empaque, software iOS o vendedor..."
+                [ngModel]="descripcion()"
+                (ngModelChange)="descripcion.set($event)"
+                name="descripcion"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="evidenciaInput">Evidencia complementaria (URL / Enlace o Referencia)</label>
+              <input
+                id="evidenciaInput"
+                type="text"
+                class="form-control"
+                placeholder="Ej: Enlace a fotos en la nube, factura de compra o datos de tienda"
+                [ngModel]="evidencia()"
+                (ngModelChange)="evidencia.set($event)"
+                name="evidencia"
+              />
+            </div>
+          </div>
+
+          <div class="form-section">
+            <label class="section-title">3. Datos del Reportante (Opcional)</label>
+            <p class="section-desc">Puede realizar el reporte de forma totalmente anónima o dejar sus datos para contacto:</p>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombreInput">Nombre Completo</label>
+                <input
+                  id="nombreInput"
+                  type="text"
+                  class="form-control"
+                  placeholder="Opcional"
+                  [ngModel]="nombrereportante()"
+                  (ngModelChange)="nombrereportante.set($event)"
+                  name="nombrereportante"
+                />
+              </div>
+              <div class="form-group">
+                <label for="contactoInput">Teléfono o Correo de Contacto</label>
+                <input
+                  id="contactoInput"
+                  type="text"
+                  class="form-control"
+                  placeholder="Opcional"
+                  [ngModel]="contactoreportante()"
+                  (ngModelChange)="contactoreportante.set($event)"
+                  name="contactoreportante"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn btn-primary submit-btn"
+              [disabled]="isSubmitting()"
+            >
+              @if (isSubmitting()) {
+                <span>⏳ Procesando reporte...</span>
+              } @else {
+                <span>🚨 Registrar Reporte de Falsificación</span>
+              }
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  </main>
+</div>
+

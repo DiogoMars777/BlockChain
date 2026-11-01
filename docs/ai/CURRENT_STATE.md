@@ -9,7 +9,7 @@
 
 ## 1. Resumen Ejecutivo de la Base de Código
 
-* **Estado de la Suite de Pruebas:** **162 PASSED | 0 FAILED | 0 ERRORS** (100% verde en PostgreSQL `blacktest`).
+* **Estado de la Suite de Pruebas:** **167 PASSED | 0 FAILED | 0 ERRORS** (100% verde en PostgreSQL `blacktest`).
 * **Base de Datos de Pruebas:** PostgreSQL 18 en base de datos dedicada `blacktest`.
 * **Empaquetado Modular Completado al 100% (ADR-003):**
   * **Paquete 1 (Seguridad y Multi-Tenant):** Físico en `app/packages/p1_seguridad/` (CU-001 a CU-005) con router en `main.py`.
