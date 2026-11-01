@@ -2,12 +2,12 @@
 
 > **Documento:** Referencia Canónica de Casos de Uso (Diátaxis Framework)  
 > **Ubicación:** `docs/USE_CASES_MAP.md`  
-> **Metodología:** SCRUM · **Sprint Activo:** **Sprint 3**  
-> **Estado de Implementación:** Sprints 0, 1 y 2 **Implementados y Verificados (120 tests verdes)**; Sprint 3 **En Desarrollo**; Sprint 4 **Planificado**  
+> **Metodología:** SCRUM · **Sprint Activo:** **Sprint 3 (Trazabilidad, Blockchain, SaaS y Autenticidad)**  
+> **Estado de Implementación:** Sprints 0, 1, 2 y CU-023/CU-024/CU-032/CU-036/CU-037 **Implementados y Verificados (167 tests verdes)**; Sprint 3 **En Desarrollo**; Sprint 4 **Planificado**  
 
 ---
 
-## 1. Tabla Maestra Consolidada (35 Casos de Uso)
+## 1. Tabla Maestra Consolidada (37 Casos de Uso)
 
 | ID | Caso de Uso | Descripción Breve | Actor(es) Principal(es) | Plataforma | Paquete | Sprint | Estado |
 | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: |
@@ -33,8 +33,8 @@
 | **CU-020** | Asignar Unidades a Envío | Asociación y retiro de unidades específicas en envíos. | Gestor de Operaciones | Web | P4 | S2 | **Implementado** |
 | **CU-021** | Eventos y Transporte | Registro de hitos y sensores (temperatura, vibración). | Gestor de Operaciones | Web / Móvil | P4 | S2 | **Implementado** |
 | **CU-022** | Historial y Autenticidad | Cronología completa de la unidad y verificación original. | Consumidor, Anónimo, Auditor | Web / Móvil | P4 | S3 | **En Desarrollo** |
-| **CU-023** | Reporte de Falsificación | Denuncia formal de equipo adulterado con evidencia. | Consumidor, Anónimo | Móvil | P4 | S3 | **En Desarrollo** |
-| **CU-024** | Alertas e Incidencias | Gestión y resolución de anomalías logísticas en ruta. | Operaciones, Admin Empresa | Web / Móvil | P4 | S4 | **Implementado** |
+| **CU-023** | Reporte de Falsificación | Denuncia con fotos, ubicación y evaluación Machine Learning. | Consumidor, Anónimo, Auditor | Web / Móvil | P4 | S3 | **Implementado** |
+| **CU-024** | Alertas e Incidencias | Gestión y resolución de anomalías logísticas en ruta. | Operaciones, Admin Empresa | Web / Móvil | P4 | S4 / S3 | **Implementado** |
 | **CU-025** | Gestionar Ventas | Registro de salida comercial de unidades al consumidor. | Gestor de Ventas | Web | P5 | S4 | **Planificado** |
 | **CU-026** | Asignar Unidades a Venta | Vinculación del serial/IMEI exacto al comprobante. | Gestor de Ventas | Web | P5 | S4 | **Planificado** |
 | **CU-027** | Registrar Estado de Pago | Registro del estado de cobro (referencial, sin pasarela). | Gestor de Ventas, SuperAdmin | Web | P5 | S4 | **Planificado** |
@@ -42,10 +42,12 @@
 | **CU-029** | Gestionar Devoluciones | Registro de devoluciones con justificación y estado. | Gestor de Ventas | Web | P5 | S4 | **Planificado** |
 | **CU-030** | Asignar a Devolución | Reintegro físico de seriales a estado devuelto/almacén. | Gestor de Ventas | Web | P5 | S4 | **Planificado** |
 | **CU-031** | Garantías por Unidad | Control de vigencia y términos de cobertura de garantía. | Gestor de Ventas, Consumidor | Web | P5 | S4 | **Planificado** |
-| **CU-032** | Documentos de Unidades | Adjuntar facturas, pólizas aduaneras con hash SHA-256. | Gestor de Ventas | Web | P5 | S3 | **Implementado** |
+| **CU-032** | Documentos de Unidades | Facturas, pólizas aduaneras DUI con hash SHA-256 (265 docs). | Gestor de Ventas, Operaciones | Web | P5 | S3 | **Implementado** |
 | **CU-033** | Registrar en Blockchain | Notarización inmutable de eventos críticos en Ethereum. | Sistema (Web3 / Smart Contract) | Backend | P6 | S3 | **En Desarrollo** |
 | **CU-034** | Consultar Blockchain y PDF | Verificación on-chain y descarga de certificado PDF. | Auditor, SuperAdmin, Consumidor | Web / Móvil | P6 | S3 | **En Desarrollo** |
 | **CU-035** | Reportes y Dashboards | Métricas consolidadas de importación, tiempos y ventas. | Admin Empresa, SuperAdmin | Web | P7 | S4 | **Planificado** |
+| **CU-036** | Gestionar Planes SaaS | Catálogo de planes, cuotas (unidades, usuarios, storage). | Super Administrador | Web | P1 | S3 | **Implementado** |
+| **CU-037** | Suscribir Empresa a Plan | Contratación, cambios de plan, vigencia y suspensión SaaS. | SuperAdmin, Admin Empresa | Web | P1 | S3 | **Implementado** |
 
 ---
 
@@ -53,20 +55,20 @@
 
 ```mermaid
 flowchart LR
-    P1["P1. Seguridad y Multi-Tenant\n[CU-001 al CU-005]"]
+    P1["P1. Seguridad, Multi-Tenant y SaaS\n[CU-001 al CU-005, CU-036, CU-037]"]
     P2["P2. Catálogo y Abastecimiento\n[CU-006 al CU-012]"]
     P3["P3. Actores y Ubicaciones\n[CU-013, CU-014]"]
     P4["P4. Inventario y Trazabilidad (Core)\n[CU-015 al CU-024]"]
-    P5["P5. Comercialización\n[CU-025 al CU-032]"]
+    P5["P5. Comercialización y Documentos\n[CU-025 al CU-032]"]
     P6["P6. Blockchain y Certificados\n[CU-033, CU-034]"]
     P7["P7. Reportes y Dashboards\n[CU-035]"]
 ```
 
-* **P1. Seguridad y Multi-Tenant (5 CUs):** `CU-001`, `CU-002`, `CU-003`, `CU-004`, `CU-005`. Todos implementados en backend.
-* **P2. Catálogo y Abastecimiento (7 CUs):** `CU-006`, `CU-007`, `CU-008`, `CU-009`, `CU-010`, `CU-011`, `CU-012`. Todos implementados en backend y probados.
+* **P1. Seguridad, Multi-Tenant y SaaS (7 CUs):** `CU-001`, `CU-002`, `CU-003`, `CU-004`, `CU-005`, `CU-036`, `CU-037`. Implementados 100% en backend y web.
+* **P2. Catálogo y Abastecimiento (7 CUs):** `CU-006`, `CU-007`, `CU-008`, `CU-009`, `CU-010`, `CU-011`, `CU-012`. Todos implementados y probados.
 * **P3. Actores y Ubicaciones (2 CUs):** `CU-013`, `CU-014`. Implementados en backend y web.
 * **P4. Inventario y Trazabilidad (Core) (10 CUs):** `CU-015`, `CU-016`, `CU-017`, `CU-018`, `CU-019`, `CU-020`, `CU-021`, `CU-022`, `CU-023`, `CU-024`. Núcleo transaccional del sistema.
-* **P5. Comercialización (8 CUs):** `CU-025`, `CU-026`, `CU-027`, `CU-028`, `CU-029`, `CU-030`, `CU-031`, `CU-032`.
+* **P5. Comercialización y Documentos (8 CUs):** `CU-025`, `CU-026`, `CU-027`, `CU-028`, `CU-029`, `CU-030`, `CU-031`, `CU-032`.
 * **P6. Blockchain y Certificados (2 CUs):** `CU-033`, `CU-034`. Smart Contracts Solidity + Web3.py. Foco de desarrollo de **Sprint 3**.
 * **P7. Reportes y Dashboards (1 CU transversal):** `CU-035`. Dashboards analíticos.
 
@@ -85,14 +87,18 @@ flowchart LR
 
 ### Plataforma Web Administrativa (Angular)
 * Administración multi-empresa (`CU-001`), usuarios (`CU-002`), roles (`CU-003`).
+* Gestión de suscripciones y planes SaaS (`CU-036`, `CU-037`).
 * Gestión completa de catálogo Apple (`CU-006` al `CU-009`).
 * Gestión logística y órdenes de compra (`CU-010` al `CU-012`, `CU-019` al `CU-021`).
 * Emisión y descarga de códigos QR masivos (`CU-016`).
+* Gestión documental con hash SHA-256 (`CU-032`).
+* Gestión de alertas e incidencias (`CU-024`) y reportes de falsificación (`CU-023`).
 * Gestión de ventas, garantías, devoluciones y reportes (`CU-025` al `CU-035`).
 
-### Servicios Transversales de Backend (FastAPI / Cron / Eventos)
+### Servicios Transversales de Backend (FastAPI / Cron / Eventos / ML)
 * `CU-005`: Middleware automático de auditoría en base de datos PostgreSQL.
 * `CU-018`: Registro automático de telemetría y geolocalización aproximada de escaneos.
+* `CU-023`: Servicio de Machine Learning (`SuspicionMLService`) para inferencia heurística de riesgo de fraude.
 * `CU-033`: Conector Web3.py para firma y minado de transacciones en la red Ethereum.
 
 ---
@@ -106,7 +112,7 @@ flowchart LR
 | **RF-03** (Registro de Usuarios) | CU-002, CU-004 | P1 | S0, S1 |
 | **RF-04** (Recuperación Contraseña) | CU-004 | P1 | S1 |
 | **RF-05** (Bitácora de Auditoría) | CU-005 | P1 | S0/S4 |
-| **RF-06** (Gestión Multi-Tenant) | CU-001 | P1 | S0 |
+| **RF-06** (Gestión Multi-Tenant) | CU-001, CU-036, CU-037 | P1 | S0, S3 |
 | **RF-07** (Catálogo de Productos) | CU-006, CU-008 | P2 | S1 |
 | **RF-08** (Categorías y Atributos) | CU-009 | P2 | S1 |
 | **RF-09** (Certificaciones Técnicas) | CU-007 | P2 | S1 |
@@ -116,7 +122,7 @@ flowchart LR
 | **RF-13** (Movimientos Logísticos) | CU-019, CU-020 | P4 | S2 |
 | **RF-14** (Actores Externos) | CU-013, CU-021 | P3, P4 | S1, S2 |
 | **RF-15** (Condiciones de Transporte) | CU-021 | P4 | S2 |
-| **RF-16** (Incidencias y Alertas) | CU-024 | P4 | S4 |
+| **RF-16** (Incidencias y Alertas) | CU-024 | P4 | S4/S3 |
 | **RF-17** (Devoluciones y Garantías) | CU-029, CU-030, CU-031 | P5 | S4 |
 | **RF-18** (Historial de Trazabilidad) | CU-022 | P4 | S3 |
 | **RF-19** (Registro en Blockchain) | CU-033 | P6 | S3 |

@@ -2,7 +2,7 @@
 
 > **Documento:** Guía de Ejecución y Hoja de Ruta (Diátaxis Framework)  
 > **Metodología:** SCRUM con seguimiento en Jira · **Equipo:** Grupo 5  
-> **Alcance:** 5 Sprints (Sprint 0 al Sprint 4), 35 Casos de Uso (CU), 61 Tareas (T001–T061), 271 Horas  
+> **Alcance:** 5 Sprints (Sprint 0 al Sprint 4), 37 Casos de Uso (CU), 65 Tareas, 285 Horas  
 > **Audiencia:** Scrum Master, Desarrolladores Fullstack y Agentes Autónomos de Codificación  
 
 ---
@@ -22,7 +22,7 @@ El desarrollo del sistema de trazabilidad blockchain se ejecuta de forma iterati
 2. **Aislamiento Multi-Tenant:** Toda consulta de lectura/escritura filtra estrictamente por `tenant_id` (salvo bypass explícito de SuperAdmin).
 3. **Auditoría Automática:** Endpoints sensibles integrados con el middleware de bitácora (`CU-005`).
 4. **Pruebas Automatizadas Verdes:** Tests unitarios y de integración agregados en `trazabilidad/backend/tests/` ejecutados exitosamente con `pytest` contra la base de datos de prueba (`blacktest`).
-5. **Cero Regresiones:** Los tests previos (actualmente 120 tests pasando) deben mantenerse en verde (`100% passed`).
+5. **Cero Regresiones:** Los tests previos (actualmente **167 tests pasando al 100%**) deben mantenerse en verde (`100% passed`).
 
 ---
 
@@ -33,8 +33,8 @@ El desarrollo del sistema de trazabilidad blockchain se ejecuta de forma iterati
 | **S0** | Arquitectura, Multi-Tenant, Usuarios y Roles | **P1** | CU-001, CU-002, CU-003 | 3 | **Completado / Auditado** |
 | **S1** | Autenticación, Catálogo y Actores | **P1, P2, P3** | CU-004, CU-006, CU-007, CU-008, CU-009, CU-013, CU-014 | 7 | **Completado / Auditado** |
 | **S2** | Compras, Unidades Físicas y Logística | **P2, P4** | CU-010, CU-011, CU-012, CU-015, CU-016, CU-019, CU-020, CU-021 | 8 | **Completado (120/120 Tests)** |
-| **S3** | Trazabilidad Digital, Blockchain y Autenticidad | **P4, P5, P6** | CU-017, CU-018, CU-022, CU-023, CU-032, CU-033, CU-034 | 7 | **Próximo / En Desarrollo** |
-| **S4** | Comercialización, Devoluciones, Reportes | **P1, P4, P5, P7** | CU-005, CU-024, CU-025, CU-026, CU-027, CU-028, CU-029, CU-030, CU-031, CU-035 | 10 | **Planificado** |
+| **S3** | Trazabilidad Digital, Blockchain, SaaS y Autenticidad | **P1, P4, P5, P6** | CU-017, CU-018, CU-022, CU-023, CU-024, CU-032, CU-033, CU-034, CU-036, CU-037 | 10 | **Avanzado (167 Tests Verdes)** |
+| **S4** | Comercialización, Devoluciones, Reportes | **P1, P5, P7** | CU-005, CU-025, CU-026, CU-027, CU-028, CU-029, CU-030, CU-031, CU-035 | 9 | **Planificado** |
 
 ---
 
@@ -61,67 +61,69 @@ El desarrollo del sistema de trazabilidad blockchain se ejecuta de forma iterati
 
 ---
 
-### Sprint 1: Autenticación y Gestión de Productos (51 horas)
+### Sprint 1: Autenticación, Catálogo y Ubicaciones (54 horas)
 *Estado: Completado y auditado.*
 
 | ID | Rol | Tarea / Funcionalidad | Plataforma | Horas | Paquete |
 | :--- | :--- | :--- | :--- | :---: | :---: |
-| **T014** | Dev Team (Backend) | Autenticación y recuperación de contraseña (JWT + OAuth2) | Backend | 5 | P1 |
-| **T015** | Dev Team (Frontend) | Interfaz de inicio de sesión y recuperación de contraseña | Web | 4 | P1 |
-| **T016** | Dev Team (Mobile) | Interfaz de autenticación de usuarios en Flutter | Móvil | 4 | P1 |
-| **T017** | Dev Team (Backend) | Gestión de productos y variantes Apple (API REST) | Backend | 5 | P2 |
-| **T018** | Dev Team (Frontend) | Interfaz de registro y edición de productos y variantes | Web | 5 | P2 |
-| **T019** | Dev Team (Backend) | Categorías y atributos de productos (API REST) | Backend | 4 | P2 |
-| **T020** | Dev Team (Frontend) | Interfaz de gestión de categorías y catálogo por empresa | Web | 4 | P2 |
-| **T021** | Dev Team (Backend) | Certificaciones técnicas y garantías (API REST) | Backend | 4 | P2 |
-| **T022** | Dev Team (Frontend) | Interfaz de gestión de certificaciones técnicas | Web | 4 | P2 |
-| **T023** | Dev Team (Backend) | Gestión de actores de la cadena de suministro (API REST) | Backend | 4 | P3 |
-| **T024** | Dev Team (Backend) | Gestión de ubicaciones físicas y almacenes (API REST) | Backend | 4 | P3 |
-| **T025** | Dev Team (Frontend) | Interfaz de actores y ubicaciones físicas | Web | 4 | P3 |
+| **T014** | Dev Team (Backend) | Implementación de autenticación JWT y refresh token | Backend | 5 | P1 |
+| **T015** | Dev Team (Frontend) | Pantallas de login, logout y guards por rol en Angular | Web | 4 | P1 |
+| **T016** | Dev Team (Mobile) | Módulo de autenticación en Flutter | Móvil | 4 | P1 |
+| **T017** | Dev Team (Backend) | Gestión de productos Apple y variantes (color, capacidad) | Backend | 5 | P2 |
+| **T018** | Dev Team (Frontend) | Catálogo administrativo de productos y variantes | Web | 4 | P2 |
+| **T019** | Dev Team (Backend) | Gestión de certificaciones técnicas de dispositivos | Backend | 4 | P2 |
+| **T020** | Dev Team (Backend) | Catálogo específico y precios por empresa (CatalogoTenant) | Backend | 4 | P2 |
+| **T021** | Dev Team (Frontend) | Vista de asignación de productos al catálogo de empresa | Web | 4 | P2 |
+| **T022** | Dev Team (Backend) | Clasificación de dispositivos en categorías taxonómicas | Backend | 4 | P2 |
+| **T023** | Dev Team (Backend) | Registro maestro de actores de la cadena de suministro | Backend | 4 | P3 |
+| **T024** | Dev Team (Frontend) | Interfaz para gestión de proveedores y transportistas | Web | 4 | P3 |
+| **T025** | Dev Team (Backend) | Registro de ubicaciones físicas y coordenadas GPS | Backend | 4 | P3 |
+| **T026** | Dev Team (Frontend) | Interfaz de ubicaciones georreferenciadas | Web | 4 | P3 |
 
 ---
 
-### Sprint 2: Compras, Unidades y Logística (53 horas)
-*Estado: Completado — 25/25 tests de CU verificados, suite total de 120 tests en verde.*
+### Sprint 2: Compras, Inventario y Logística (53 horas)
+*Estado: Completado y verificado (120 tests).*
 
 | ID | Rol | Tarea / Funcionalidad | Plataforma | Horas | Paquete |
 | :--- | :--- | :--- | :--- | :---: | :---: |
-| **T026** | Dev Team (Backend) | Gestión de órdenes de compra a proveedores EE.UU. | Backend | 5 | P2 |
-| **T027** | Dev Team (Frontend) | Interfaz de creación y consulta de órdenes de compra | Web | 4 | P2 |
-| **T028** | Dev Team (Backend) | Flujo de aprobación y rechazo de órdenes de compra | Backend | 4 | P2 |
-| **T029** | Dev Team (Backend) | Recepción de mercancía y actualización de existencias | Backend | 5 | P2 |
-| **T030** | Dev Team (Frontend) | Interfaz de recepción y consulta de mercancía | Web | 4 | P2 |
-| **T031** | Dev Team (Backend) | Registro y gestión de unidades individuales Apple | Backend | 5 | P4 |
-| **T032** | Dev Team (Backend) | Asignación de identificadores (Serial / IMEI / EID) | Backend | 4 | P4 |
-| **T033** | Dev Team (Frontend) | Interfaz de administración de unidades individuales | Web | 4 | P4 |
-| **T034** | Dev Team (Backend) | Generación de códigos QR únicos por unidad | Backend | 4 | P4 |
-| **T035** | Dev Team (Frontend) | Interfaz de generación y descarga de códigos QR | Web | 4 | P4 |
-| **T036** | Dev Team (Backend) | Envíos logísticos, movimientos y asignación de unidades | Backend | 5 | P4 |
-| **T037** | Dev Team (Mobile) | Registro de recepción, transporte y condiciones (App) | Móvil | 5 | P4 |
+| **T027** | Dev Team (Backend) | Órdenes de compra y detalle de importación (API REST) | Backend | 5 | P2 |
+| **T028** | Dev Team (Frontend) | Formulario de registro y detalle de orden de compra | Web | 4 | P2 |
+| **T029** | Dev Team (Backend) | Flujo de aprobación y cancelación de órdenes de compra | Backend | 4 | P2 |
+| **T030** | Dev Team (Backend) | Recepción física de mercancía y actas de ingreso | Backend | 5 | P2 |
+| **T031** | Dev Team (Frontend) | Pantalla de control de recepción de compras | Web | 4 | P2 |
+| **T032** | Dev Team (Backend) | Individualización de unidades físicas (Serial/IMEI/EID) | Backend | 5 | P4 |
+| **T033** | Dev Team (Frontend) | Carga y gestión de inventario de unidades serializadas | Web | 4 | P4 |
+| **T034** | Dev Team (Backend) | Generación criptográfica de códigos QR para unidades | Backend | 4 | P4 |
+| **T035** | Dev Team (Frontend) | Visualización y descarga en lote de etiquetas QR | Web | 4 | P4 |
+| **T036** | Dev Team (Backend) | Envíos logísticos y manifiesto de transporte | Backend | 5 | P4 |
+| **T037** | Dev Team (Frontend) | Monitoreo y despacho de envíos logísticos | Web | 5 | P4 |
 
 ---
 
-### Sprint 3: Trazabilidad, Blockchain y Autenticidad (55 horas)
-*Estado: En Desarrollo / Foco Inmediato.*
+### Sprint 3: Trazabilidad Digital, Blockchain, SaaS y Autenticidad (64 horas)
+*Estado: En ejecución avanzada (167 tests verdes).*
 
-| ID | Rol | Tarea / Funcionalidad | Plataforma | Horas | Paquete |
-| :--- | :--- | :--- | :--- | :---: | :---: |
-| **T038** | Dev Team (Backend) | Registro de eventos de trazabilidad y condiciones (API REST) | Backend | 5 | P4 |
-| **T039** | Dev Team (Blockchain) | Conexión con la red Blockchain Ethereum (Testnet Sepolia/Amoy) | Blockchain | 4 | P6 |
-| **T040** | Dev Team (Blockchain) | Diseño del Smart Contract (Solidity) para notarización | Blockchain | 5 | P6 |
-| **T041** | Dev Team (Blockchain) | Minado y registro de eventos mediante Smart Contract | Blockchain | 5 | P6 |
-| **T042** | Dev Team (Backend) | Integración de FastAPI con Web3.py y Smart Contract | Backend | 5 | P6 |
-| **T043** | Dev Team (Backend) | Asociación de eventos con actor, ubicación, fecha y txHash | Backend | 4 | P4 |
-| **T044** | Dev Team (Backend) | Persistencia de hashes e identificadores blockchain en PostgreSQL | Backend | 4 | P4 / P6 |
-| **T045** | Dev Team (Blockchain) | Consulta y validación de integridad criptográfica | Blockchain | 5 | P6 |
-| **T046** | Dev Team (Mobile) | Escaneo de códigos QR mediante cámara (Flutter) | Móvil | 4 | P4 |
-| **T047** | Dev Team (Mobile) | Consulta del historial de trazabilidad mediante QR (Flutter) | Móvil | 5 | P4 |
-| **T048** | Dev Team (Backend) | Verificación de autenticidad y reporte de falsificación | Backend | 5 | P4 |
-| **T049** | Dev Team (Backend) | Carga y asociación de documentos a unidades (Cloud Storage) | Backend | 4 | P5 |
+| ID | Rol | Tarea / Funcionalidad | Plataforma | Horas | Paquete | Estado |
+| :--- | :--- | :--- | :--- | :---: | :---: | :---: |
+| **T038** | Dev Team (Backend) | Endpoints de eventos de trazabilidad y sensores ambientales | Backend | 5 | P4 | **Completado** |
+| **T039** | Dev Team (Blockchain) | Conexión con testnet Ethereum (Sepolia/Amoy) vía Web3.py | Blockchain | 4 | P6 | **En Conexión** |
+| **T040** | Dev Team (Blockchain) | Smart Contract Solidity para notarización inmutable | Blockchain | 5 | P6 | **Estructurado** |
+| **T041** | Dev Team (Blockchain) | Lógica de cálculo y almacenamiento de hashes on-chain | Blockchain | 4 | P6 | **Estructurado** |
+| **T042** | Dev Team (Backend) | Integración de servicio Web3.py con controladores FastAPI | Backend | 5 | P6 | **En Conexión** |
+| **T043** | Dev Team (Backend) | Enriquecimiento de eventos con actor, ubicación y fecha | Backend | 4 | P4 | **Completado** |
+| **T044** | Dev Team (Backend) | Persistencia de txHash y blockNumber en PostgreSQL | Backend | 4 | P4 / P6 | **Completado** |
+| **T045** | Dev Team (Blockchain) | Endpoint de verificación de integridad criptográfica (CU-033) | Blockchain | 5 | P6 | **En Conexión** |
+| **T046** | Dev Team (Mobile) | Escaneo de códigos QR mediante cámara nativa (Flutter) | Móvil | 4 | P4 | **En Desarrollo** |
+| **T047** | Dev Team (Mobile) | Consulta del historial de trazabilidad mediante QR (Flutter) | Móvil | 5 | P4 | **En Desarrollo** |
+| **T048** | Dev Team (Backend/Web) | Reporte de sospecha de falsificación y Machine Learning (CU-023) | Fullstack | 5 | P4 | **Completado** |
+| **T049** | Dev Team (Backend) | Carga de documentos con hashing SHA-256 (CU-032) | Backend | 4 | P5 | **Completado (265 docs)** |
+| **T050S** | Dev Team (Fullstack) | Gestión de Planes de Suscripción SaaS (CU-036) | Fullstack | 5 | P1 | **Completado** |
+| **T052S** | Dev Team (Fullstack) | Suscripción de Empresas a Planes SaaS (CU-037) | Fullstack | 5 | P1 | **Completado** |
 
 ---
 
-### Sprint 4: Ventas, Consumidor, Devoluciones y Reportes (55 horas)
+### Sprint 4: Ventas, Consumidor, Devoluciones y Reportes (57 horas)
 *Estado: Planificado.*
 
 | ID | Rol | Tarea / Funcionalidad | Plataforma | Horas | Paquete |
@@ -143,8 +145,6 @@ El desarrollo del sistema de trazabilidad blockchain se ejecuta de forma iterati
 
 ## 4. Guía Operativa para Agentes de Codificación
 
-Cuando un agente autónomo tome una tarea del backlog, debe adherirse estrictamente al siguiente protocolo de ejecución:
-
 ```mermaid
 flowchart TD
     Start["Tomar Tarea del Sprint"] --> Step1["Identificar Paquete Destino (P1 a P7)"]
@@ -153,16 +153,7 @@ flowchart TD
     Step3 --> Step4["Verificar Aislamiento Multi-Tenant (idtenant)"]
     Step4 --> Step5["Escribir Test Automatizado en tests/"]
     Step5 --> Step6["Ejecutar Pytest contra DB blacktest"]
-    Step6 --> Decision{"¿100% Verde (≥120 tests)?"}
+    Step6 --> Decision{"¿100% Verde (≥167 tests)?"}
     Decision -- No --> Fix["Depurar sin alterar contratos ajenos"] --> Step6
     Decision -- Sí --> Done["Tarea Finalizada (DoD Cumplida)"]
 ```
-
-### Reglas Críticas de Desarrollo
-1. **Nunca alterar rutas existentes:** No modifiques rutas como `/api/v1/auth/login`, `/api/v1/units`, o `/api/v1/trace/{uuid}`. Cualquier cambio romperá la compatibilidad con el frontend y los clientes móviles.
-2. **Harness de Pruebas:** Ejecutar siempre las pruebas con:
-   ```bash
-   pytest tests/ -v
-   ```
-   Asegurando que la variable `DATABASE_URL` apunte a la base de datos de pruebas configurada (PostgreSQL `blacktest`).
-3. **Manejo de Transacciones:** Toda operación en base de datos debe ejecutarse dentro de un bloque `with SessionLocal() as db:` o inyectada con `Depends(get_db)`, asegurando `db.commit()` y rollback automático ante excepciones.

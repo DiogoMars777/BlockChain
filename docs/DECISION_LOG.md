@@ -15,6 +15,8 @@ Este documento registra cronológicamente las decisiones arquitectónicas fundam
 * [ADR-003: Organización en 7 Paquetes mediante Fachadas de Enrutamiento sin Rotura de APIs](#adr-003-organización-en-7-paquetes-mediante-fachadas-de-enrutamiento-sin-rotura-de-apis)
 * [ADR-004: Aislamiento de Suite de Pruebas Automatizadas con Base de Datos Local Dedicada](#adr-004-aislamiento-de-suite-de-pruebas-automatizadas-con-base-de-datos-local-dedicada)
 * [ADR-005: Bypass de Gobernanza y Auditoría para SuperAdministrador](#adr-005-bypass-de-gobernanza-y-auditoría-para-superadministrador)
+* [ADR-006: Inclusión del Módulo SaaS (Planes y Suscripciones) en Paquete P1 durante Sprint 3](#adr-006-inclusión-del-módulo-saas-planes-y-suscripciones-en-paquete-p1-durante-sprint-3)
+* [ADR-007: Motor Heurístico de Machine Learning Ligero Off-Chain para Sospecha de Fraude (CU-023)](#adr-007-motor-heurístico-de-machine-learning-ligero-off-chain-para-sospecha-de-fraude-cu-023)
 
 ---
 
@@ -48,11 +50,10 @@ Este documento registra cronológicamente las decisiones arquitectónicas fundam
 
 * **Estado:** Aceptado
 * **Fecha:** Sprint 2 / Sprint 3
-* **Contexto:** El backend creció con 26 carpetas individuales por Caso de Uso (`cu001` a `cu034`), generando más de 25 inclusiones de routers en `main.py`. Mover físicamente los archivos de inmediato rompería los 120 tests unitarios y las rutas consumidas por Angular y Flutter.
-* **Decisión:** Implementar un patrón de Módulos Profundos mediante **Fachadas de Enrutamiento por Paquete** (`app/routers/p1_seguridad.py` ... `p7_reportes.py`). Los controladores actuales se mantienen en sus carpetas, pero se agrupan y exponen a través de 7 routers limpios en `main.py`.
+* **Contexto:** El backend creció con 26 carpetas individuales por Caso de Uso (`cu001` a `cu034`), generando más de 25 inclusiones de routers en `main.py`. Mover físicamente los archivos de inmediato rompería los tests unitarios y las rutas consumidas por Angular y Flutter.
+* **Decisión:** Implementar un patrón de Módulos Profundos mediante empaquetado físico en `app/packages/` (P1 a P7) y fachadas `router.py`, manteniendo shims retrocompatibles en las rutas históricas de `app/controllers/`, `app/models/` y `app/views/`.
 * **Consecuencias:**
   * *Positivas:* Rutas HTTP (`/api/v1/...`) 100% preservadas, cero roturas en los clientes frontend/móvil y preservación de la suite de pruebas.
-  * *Siguiente paso:* Modularización física gradual asistida una vez completados los contratos inter-paquete (*seams*).
 
 ---
 
@@ -63,7 +64,7 @@ Este documento registra cronológicamente las decisiones arquitectónicas fundam
 * **Contexto:** Las pruebas de integración en pytest presentaban fallos aleatorios por colisión de IDs y mutación de estado compartido al ejecutarse sobre bases de datos en desarrollo.
 * **Decisión:** Configurar un arnés de pruebas con una base de datos local dedicada PostgreSQL (`blacktest`), aislando los fixtures de sesión y ejecutando limpieza controlada tras cada suite.
 * **Consecuencias:**
-  * *Positivas:* 100% de reproducibilidad (120 tests pasando consecutivamente). Pruebas seguras sin riesgo de corromper datos de desarrollo.
+  * *Positivas:* 100% de reproducibilidad (167 tests pasando consecutivamente). Pruebas seguras sin riesgo de corromper datos de desarrollo.
 
 ---
 
@@ -76,3 +77,25 @@ Este documento registra cronológicamente las decisiones arquitectónicas fundam
 * **Consecuencias:**
   * *Positivas:* Flexibilidad operativa total para el administrador global de la plataforma.
   * *Contramedida:* Trazabilidad obligatoria de auditoría en cada petición mediante el middleware HTTP.
+
+---
+
+### ADR-006: Inclusión del Módulo SaaS (Planes y Suscripciones) en Paquete P1 durante Sprint 3
+
+* **Estado:** Aceptado
+* **Fecha:** Sprint 3 (2026-11-01)
+* **Contexto:** La plataforma requiere monetización multi-tenant y control de cuotas para las empresas clientes (límite de dispositivos trazados, almacenamiento, usuarios y días de prueba gratuita) según la guía rectora de CU-036 y CU-037.
+* **Decisión:** Implementar `CU-036` (Planes de Suscripción) y `CU-037` (Suscripción de Empresa) dentro del Paquete P1 (Seguridad y Multi-Tenant) durante el Sprint 3, estableciendo un hook automático en `TenantController.create_tenant` que asigna inmediatamente un plan `trial` a toda empresa nueva. El control activo de límites duros se delega a Sprint 4 (`CU-040`).
+* **Consecuencias:**
+  * *Positivas:* Permite a las empresas clientes ver claramente sus cuotas de servicio y al SuperAdmin gestionar el catálogo SaaS sin alterar el alcance de ventas de Sprint 4.
+
+---
+
+### ADR-007: Motor Heurístico de Machine Learning Ligero Off-Chain para Sospecha de Fraude (CU-023)
+
+* **Estado:** Aceptado
+* **Fecha:** Sprint 3 (2026-11-01)
+* **Contexto:** Las denuncias públicas de falsificación de dispositivos Apple requieren una evaluación objetiva preliminar para priorizar alertas y despachar verificaciones aduaneras o técnicas sin incurrir en costos de servicios externos de LLM ni latencia excesiva.
+* **Decisión:** Implementar un servicio heurístico nativo de Machine Learning (`SuspicionMLService`) en Python, basado en TF-IDF simplificado, scoring ponderado de términos de fraude (`falso`, `clon`, `sellos rotos`, `caja china`) y normalización léxica en una escala de 0.0 a 1.0.
+* **Consecuencias:**
+  * *Positivas:* Sin dependencias pesadas de GPU ni llamadas a APIs de pago; tiempo de respuesta inferior a 5ms y persistencia del score en la tabla `reportesospecha`.
